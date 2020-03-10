@@ -1,3 +1,2 @@
-print("脑瘫睿智女对战暗黑战神")
-print("脑瘫睿智女对战暗黑战神")
-print("脑瘫睿智女对战暗黑战神")
+for x in range(1, 6):
+    print("Number %d" % (x))

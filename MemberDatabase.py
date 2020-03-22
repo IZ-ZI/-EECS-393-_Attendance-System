@@ -1,5 +1,5 @@
-class MemberDatabase(object):
-    def __int__(self):
+class MemberDatabase:
+    def __init__(self):
         self.database = []
 
     def is_present(self, member_id):

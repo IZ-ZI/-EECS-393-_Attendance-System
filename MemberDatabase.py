@@ -1,1 +1,2 @@
-class MemberDatabase:
+class MemberDatabase(object):
+    database = []

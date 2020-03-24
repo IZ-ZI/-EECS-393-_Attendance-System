@@ -7,7 +7,6 @@ import AttendanceRecord
 
 
 class Member:
-    memberCount = 0
 
     def __init__(self, first_name, last_name, student_ID, face_ID, score):
         # initializing class member
@@ -17,7 +16,6 @@ class Member:
         self.__face_ID = face_ID
         self.__score = score
         self.__attendanceRecord = []
-        Member.memberCount += 1
 
     def getName(self) -> str:
         # returns name of member: first name + last name

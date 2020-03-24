@@ -29,7 +29,7 @@ class MemberDatabase:
             if i.get_id() == member_id:
                 return i
 
-        print("This member is not in the database.")
+        print("The member with the ID:", member_id, " is not in the database.")
 
     def delete(self, member_id):
         for i in self.database:

@@ -13,7 +13,7 @@ class WaitList:
     def request_permit(self, member, administrator) -> bool:
         if self.is_admin_in(administrator):
             if not self.is_member_in(member, administrator):
-                self.wait_list.get(administrator)[member] = False;
+                self.wait_list.get(administrator)[member] = False
                 return True
         else:
             return False
@@ -29,7 +29,7 @@ class WaitList:
 
     def permit(self, member, administrator):
         if self.is_member_in(member, administrator):
-            self.wait_list.get(administrator)[member] = True;
+            self.wait_list.get(administrator)[member] = True
             self.delete(member, administrator)
 
     def reject(self, member, administrator):
@@ -40,4 +40,4 @@ class WaitList:
         return member in self.wait_list.get(administrator).keys()
 
     def is_admin_in(self, administrator) -> bool:
-        return administrator in self.wait_list.keys();
+        return administrator in self.wait_list.keys()

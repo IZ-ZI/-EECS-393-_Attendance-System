@@ -8,14 +8,14 @@ import AttendanceRecord as AttendanceRecord
 class Member:
     memberCount = 0
 
-    def _init_(self, first_name, last_name, student_ID, face_ID, score):
+    def __init__(self, first_name, last_name, student_ID, face_ID, score):
         # initializing class member
-        self.first_name = first_name
-        self.last_name = last_name
-        self.student_ID = student_ID
-        self.face_ID = face_ID
-        self.score = score
-        self.attendanceRecord = AttendanceRecord()
+        self.__first_name = first_name
+        self.__last_name = last_name
+        self.__student_ID = student_ID
+        self.__face_ID = face_ID
+        self.__score = score
+        self.__attendanceRecord = []
         Member.memberCount += 1
 
     def get_name(self) -> str:
@@ -26,24 +26,24 @@ class Member:
         # returns the student id of the member
         return self.student_ID
 
-    def getFaceID(self): # -> FaceIdentification
+    def getFaceID(self):  # -> FaceIdentification
         # returns the face id object of the member
         return self.face_ID
 
-    def averageScore(self): # -> Score
+    def averageScore(self):  # -> Score
         # returns the average attendance score of the member
         return self.score
 
     def setFaceID(self, face_data):
         # sets the facial id data for the member
-        self.face_ID = face_data
+        self.__face_ID = face_data
 
     def requestPermission(self) -> bool:
         # To do
         return True
 
     def joinActivity(self, activity: Activity) -> bool:
-        #To do
+        # To do
         return True
 
     def attendanceRecord(self) -> AttendanceRecord:
@@ -52,7 +52,3 @@ class Member:
     def __modifyAttendanceRecord(self) -> bool:
         # To do
         return True
-
-
-
-

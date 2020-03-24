@@ -24,7 +24,7 @@ class MemberDatabase:
                 return True
         return False
 
-    def retrieve(self, member_id):
+    def retrieve(self, member_id): 
         for i in self.database:
             if i.get_id() == member_id:
                 return i
@@ -33,7 +33,7 @@ class MemberDatabase:
 
     def delete(self, member_id):
         for i in self.database:
-            if i.get_id() == member_id():
+            if i.get_id() == member_id:
                 self.database.remove(i)
                 return True
 

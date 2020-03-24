@@ -2,8 +2,8 @@
 This class represents a member object in the system. Its job is to store the personal information
 associated with a specific member of certain organization(s).
 """
-from .Activity import Activity as Activity
-from .AttendanceRecord import AttendanceRecord as AttendanceRecord
+import Activity as Activity
+import AttendanceRecord as AttendanceRecord
 
 class Member:
     memberCount = 0
@@ -18,11 +18,11 @@ class Member:
         self.attendanceRecord = AttendanceRecord()
         Member.memberCount += 1
 
-    def getName(self) -> str:
+    def get_name(self) -> str:
         # returns name of member: first name + last name
         return "%s %s" % (self.first_name, self.last_name)
 
-    def getID(self) -> int:
+    def get_id(self) -> int:
         # returns the student id of the member
         return self.student_ID
 

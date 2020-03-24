@@ -11,12 +11,12 @@ class Member:
 
     def __init__(self, first_name, last_name, student_ID, face_ID, score):
         # initializing class member
-        self.first_name = first_name
-        self.last_name = last_name
-        self.student_ID = student_ID
-        self.face_ID = face_ID
-        self.score = score
-        self.attendanceRecord = []
+        self.__first_name = first_name
+        self.__last_name = last_name
+        self.__student_ID = student_ID
+        self.__face_ID = face_ID
+        self.__score = score
+        self.__attendanceRecord = []
         Member.memberCount += 1
 
     def getName(self) -> str:
@@ -37,7 +37,7 @@ class Member:
 
     def setFaceID(self, face_data):
         # sets the facial id data for the member
-        self.face_ID = face_data
+        self.__face_ID = face_data
 
     def requestPermission(self) -> bool:
         # To do

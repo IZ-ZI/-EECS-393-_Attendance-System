@@ -1,9 +1,11 @@
-"""Member calss.
+"""Member class.
 This class represents a member object in the system. Its job is to store the personal information
 associated with a specific member of certain organization(s).
 """
 import Activity
+import Administrator
 import AttendanceRecord
+import sendEmail as se
 
 
 class Member:
@@ -45,8 +47,8 @@ class Member:
         # sets the facial id data for the member
         #self.__face_ID = face_data
 
-    def requestPermission(self) -> bool:
-        # To do
+    def requestPermission(self, admin: Administrator) -> bool:
+        se.send_email(self.email_address, 'placeholder', admin.get_email_adderss())
         return True
 
     def joinActivity(self, activity: Activity) -> bool:

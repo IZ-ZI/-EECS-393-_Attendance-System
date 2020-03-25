@@ -9,17 +9,18 @@ def main_screen():
 
     Label(screen, text="Club/Organization ID", width = "20", height= "2", font=("new roman", 15)).grid(row=1,column=0)
     Entry(screen,width = "20").grid(row=2, column=0)
+
+
     Label(screen, text="Password",  width = "20", height= "2", font=("new roman", 15)).grid(row=3)
+
     Entry(screen,width = "20").grid(row=4, column=0)
     Label(screen, text="").grid(row=5)
 
     # highlightbackground = 'green'
     Button(screen, text="Login", height= "3", width = "20", command = login, fg='black').grid(row=6, column=0)
 
-
     Button(screen, text="Administrator", height= "3", width = "20", command = admin, fg='black', ).grid(row=2, column=2)
     Button(screen, text="Member", height= "3", width = "20", command = member, fg='black', ).grid(row=3, column=2)
-
 
     Button(screen, text="Login", height= "3", width = "20", command = login, fg='black').grid(row=6, column=0)
     Button(screen, text="Forget/Reset Password", height= "3", width = "20", command = forget, fg='black').grid(row=6, column=1)
@@ -33,11 +34,29 @@ def main_screen():
 
     screen.mainloop()
 
-# def changeText():
-#     if (button['text'] == 'Submit'):
-#         button['text'] = 'Submitted'
+# def changeLabel():
+#     if (label['text'] == 'Submit'):
+#         label['text'] = 'Submitted'
 #     else:
-#         button['text'] = 'Submit'
+#         label['text'] = 'Submit'
+
+def club_register_check():
+
+    if(club_password.get() != club_confirm_password.get()):
+        club_register_feedback['text'] = 'Password difference'
+        # club_register_feedback.set("Password Difference")
+    elif(club_id.get() =='' or club_name.get()=='' or club_email.get()==''  or club_password.get()=='' or club_confirm_password.get() ==''):
+        club_register_feedback['text'] = 'Please fill all the spaces'
+    else:
+        club_info()
+
+def member_register_check():
+    if(member_password.get() != member_confirm_password.get()):
+        member_register_feedback['text'] = 'Password difference'
+    elif(member_id.get() =='' or member_name.get()=='' or member_email.get()==''  or member_password.get()=='' or member_confirm_password.get() =='' or member_apply_club_id.get() ==''):
+        member_register_feedback['text'] = 'Please fill all the spaces'
+    else:
+        member_info()
 
 def club_info():
 
@@ -55,7 +74,8 @@ def club_info():
     club_password_entry.delete(0,END)
     club_confirm_password_entry.delete(0,END)
 
-    Label(screen1, text = "Registration sent", fg = "green", font=("new roman", 15)).pack()
+    club_register_feedback['text'] = 'Registration successful'
+
 
 def member_info():
 
@@ -75,13 +95,14 @@ def member_info():
     member_confirm_password_entry.delete(0,END)
     member_apply_club_id_entry.delete(0,END)
 
-    Label(screen1, text = "Registration sent", fg = "green", font=("new roman", 15)).pack()
+    member_register_feedback['text'] = "Registration sent"
 
 def member_register():
     global screen1
+    global member_register_feedback
     screen1 = Toplevel(screen)
-    screen1.title("New Club Registration")
-    screen1.geometry("600x570")
+    screen1.title("New Member Registration")
+    screen1.geometry("600x650")
 
     global member_id
     global member_name
@@ -136,11 +157,17 @@ def member_register():
     member_apply_club_id_entry.pack()
     # 7
     Label(screen1, text="").pack()
-    Button(screen1, text="Register", height="3", width="20", command= member_info).pack()
+    Button(screen1, text="Register", height="3", width="20", command= member_register_check).pack()
 
+    # 8
+    Label(screen1, text = "").pack()
+    member_register_feedback = Label(screen1, text=" ", fg="green", font=("new roman", 15))
+    member_register_feedback.pack()
 
 def club_register():
     global screen1
+    global club_register_feedback
+
     screen1 = Toplevel(screen)
     screen1.title("New Club Registration")
     screen1.geometry("600x570")
@@ -191,7 +218,12 @@ def club_register():
 
     # 6
     Label(screen1, text = "").pack()
-    Button(screen1, text="Register", height= "3", width = "20", command = club_info).pack()
+    Button(screen1, text="Register", height= "3", width = "20", command = club_register_check).pack()
+
+    # 7
+    Label(screen1, text = "").pack()
+    club_register_feedback = Label(screen1, text=" ", fg="green", font=("new roman", 15))
+    club_register_feedback.pack()
 
 
 def admin():
@@ -199,11 +231,9 @@ def admin():
     Label(screen, text="Password",  width = "20", height= "2", font=("new roman", 15)).grid(row=3)
     Button(screen, text="New Club Register", height= "3", width = "20", command = club_register, fg='black').grid(row=6, column=2)
 
-
 def member():
     Label(screen, text="User ID", width = "20", height= "2", font=("new roman", 15)).grid(row=1,column=0)
     Button(screen, text="New Member Register", height= "3", width = "20", command = member_register, fg='black').grid(row=6, column=2)
-
 
 def login():
     print("Login session started")

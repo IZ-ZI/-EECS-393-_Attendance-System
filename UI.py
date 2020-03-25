@@ -57,6 +57,87 @@ def club_info():
 
     Label(screen1, text = "Registration sent", fg = "green", font=("new roman", 15)).pack()
 
+def member_info():
+
+    file = open(member_id.get() + ".txt", "w")
+    file.write(member_id.get() + "\n")
+    file.write(member_name.get() + "\n")
+    file.write(member_email.get() + "\n")
+    file.write(member_password.get() + "\n")
+    file.write(member_confirm_password.get() + "\n")
+    file.write(member_apply_club_id.get() + "\n")
+    file.close()
+
+    member_id_entry.delete(0,END)
+    member_name_entry.delete(0,END)
+    member_email_entry.delete(0,END)
+    member_password_entry.delete(0,END)
+    member_confirm_password_entry.delete(0,END)
+    member_apply_club_id_entry.delete(0,END)
+
+    Label(screen1, text = "Registration sent", fg = "green", font=("new roman", 15)).pack()
+
+def member_register():
+    global screen1
+    screen1 = Toplevel(screen)
+    screen1.title("New Club Registration")
+    screen1.geometry("600x570")
+
+    global member_id
+    global member_name
+    global member_email
+    global member_password
+    global member_confirm_password
+    global member_apply_club_id
+
+    member_id = StringVar()
+    member_name = StringVar()
+    member_email = StringVar()
+    member_password = StringVar()
+    member_confirm_password = StringVar()
+    member_apply_club_id = StringVar()
+
+    global member_id_entry
+    global member_name_entry
+    global member_email_entry
+    global member_password_entry
+    global member_confirm_password_entry
+    global member_apply_club_id_entry
+
+    # 1
+    Label(screen1, text="").pack()
+    Label(screen1, text="User ID").pack()
+    member_id_entry = Entry(screen1, textvariable=member_id)
+    member_id_entry.pack()
+    # 2
+    Label(screen1, text="").pack()
+    Label(screen1, text="Name").pack()
+    member_name_entry = Entry(screen1, textvariable=member_name)
+    member_name_entry.pack()
+    # 3
+    Label(screen1, text="").pack()
+    Label(screen1, text="Email").pack()
+    member_email_entry = Entry(screen1, textvariable=member_email)
+    member_email_entry.pack()
+    # 4
+    Label(screen1, text="").pack()
+    Label(screen1, text="Password").pack()
+    member_password_entry = Entry(screen1, textvariable=member_password)
+    member_password_entry.pack()
+    # 5
+    Label(screen1, text="").pack()
+    Label(screen1, text="Confirm Password").pack()
+    member_confirm_password_entry = Entry(screen1, textvariable=member_confirm_password)
+    member_confirm_password_entry.pack()
+    # 6
+    Label(screen1, text="").pack()
+    Label(screen1, text="Club/Organization ID").pack()
+    member_apply_club_id_entry = Entry(screen1, textvariable=member_apply_club_id)
+    member_apply_club_id_entry.pack()
+    # 7
+    Label(screen1, text="").pack()
+    Button(screen1, text="Register", height="3", width="20", command= member_info).pack()
+
 
 def club_register():
     global screen1
@@ -111,53 +192,6 @@ def club_register():
     # 6
     Label(screen1, text = "").pack()
     Button(screen1, text="Register", height= "3", width = "20", command = club_info).pack()
-
-
-def member_register():
-    global screen1
-    screen1 = Toplevel(screen)
-    screen1.title("New Club Registration")
-    screen1.geometry("600x570")
-
-    global username
-    global password
-    global username_entry
-    global password_entry
-    username = StringVar()
-    password = StringVar()
-    # 1
-    Label(screen1, text="").pack()
-    Label(screen1, text="Name").pack()
-    username_entry = Entry(screen1, textvariable=username)
-    username_entry.pack()
-    # 2
-    Label(screen1, text="").pack()
-    Label(screen1, text="User ID").pack()
-    password_entry = Entry(screen1, textvariable=password)
-    password_entry.pack()
-    # 3
-    Label(screen1, text="").pack()
-    Label(screen1, text="Email").pack()
-    password_entry = Entry(screen1, textvariable=password)
-    password_entry.pack()
-    # 4
-    Label(screen1, text="").pack()
-    Label(screen1, text="Password").pack()
-    password_entry = Entry(screen1, textvariable=password)
-    password_entry.pack()
-    # 5
-    Label(screen1, text="").pack()
-    Label(screen1, text="Confirm Password").pack()
-    password_entry = Entry(screen1, textvariable=password)
-    password_entry.pack()
-    # 6
-    Label(screen1, text="").pack()
-    Label(screen1, text="Club/Organization ID").pack()
-    password_entry = Entry(screen1, textvariable=password)
-    password_entry.pack()
-    # 7
-    Label(screen1, text="").pack()
-    Button(screen1, text="Register", height="3", width="20", command= club_info).pack()
 
 
 def admin():

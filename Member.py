@@ -8,12 +8,13 @@ import AttendanceRecord
 
 class Member:
 
-    def __init__(self, first_name, last_name, student_ID, face_ID, score):
+    def __init__(self, first_name, last_name, email_address, password, student_ID, score):
         # initializing class member
         self.__first_name = first_name
         self.__last_name = last_name
+        self.email_address = email_address
+        self.password = password
         self.__student_ID = student_ID
-        self.__face_ID = face_ID
         self.__score = score
         self.__attendanceRecord = []
 
@@ -25,17 +26,24 @@ class Member:
         # returns the student id of the member
         return self.student_ID
 
-    def getFaceID(self):  # -> FaceIdentification
+    def get_email_adderss(self) -> str:
+        return self.email_address
+
+    def get_password(self) -> str:
+        return self.password
+
+
+    #def getFaceID(self):  # -> FaceIdentification
         # returns the face id object of the member
-        return self.face_ID
+        #return self.face_ID
 
     def averageScore(self):  # -> Score
         # returns the average attendance score of the member
         return self.score
 
-    def setFaceID(self, face_data):
+    #def setFaceID(self, face_data):
         # sets the facial id data for the member
-        self.__face_ID = face_data
+        #self.__face_ID = face_data
 
     def requestPermission(self) -> bool:
         # To do

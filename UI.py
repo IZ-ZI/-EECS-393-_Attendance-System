@@ -46,19 +46,6 @@ def main_screen():
 #         button['text'] = 'Submitted'
 #     else:
 #         button['text'] = 'Submit'
-
-def club_info():
-    waitlist = Waitlist()
-    admin = Administrator(club_id.get(), club_name.get(), club_email.get(), club_password.get(), waitlist)
-
-    club_id_entry.delete(0, END)
-    club_name_entry.delete(0, END)
-    club_email_entry.delete(0, END)
-    club_password_entry.delete(0, END)
-    club_confirm_password_entry.delete(0, END)
-
-    Label(screen1, text="Registration sent", fg="green", font=("new roman", 15)).pack()
-
 def member_info():
 
     file = open(member_id.get() + ".txt", "w")
@@ -78,6 +65,21 @@ def member_info():
     member_apply_club_id_entry.delete(0,END)
 
     Label(screen1, text = "Registration sent", fg = "green", font=("new roman", 15)).pack()
+
+
+def club_info():
+    waitlist = Waitlist()
+    admin = Administrator(club_id.get(), club_name.get(), club_email.get(), club_password.get(), waitlist)
+
+    club_id_entry.delete(0, END)
+    club_name_entry.delete(0, END)
+    club_email_entry.delete(0, END)
+    club_password_entry.delete(0, END)
+    club_confirm_password_entry.delete(0, END)
+
+    Label(screen1, text="Registration sent", fg="green", font=("new roman", 15)).pack()
+
+
 
 def member_register():
     global screen1
@@ -197,56 +199,7 @@ def club_register():
     Button(screen1, text="Register", height="3", width="20", command=club_info).pack()
 
 
-<<<<<<< HEAD
-def member_register():
-    global screen1
-    screen1 = Toplevel(screen)
-    screen1.title("New Club Registration")
-    screen1.geometry("600x570")
 
-    global username
-    global password
-    global username_entry
-    global password_entry
-    username = StringVar()
-    password = StringVar()
-    # 1
-    Label(screen1, text="").pack()
-    Label(screen1, text="Name").pack()
-    username_entry = Entry(screen1, textvariable=username)
-    username_entry.pack()
-    # 2
-    Label(screen1, text="").pack()
-    Label(screen1, text="User ID").pack()
-    password_entry = Entry(screen1, textvariable=password)
-    password_entry.pack()
-    # 3
-    Label(screen1, text="").pack()
-    Label(screen1, text="Email").pack()
-    password_entry = Entry(screen1, textvariable=password)
-    password_entry.pack()
-    # 4
-    Label(screen1, text="").pack()
-    Label(screen1, text="Password").pack()
-    password_entry = Entry(screen1, textvariable=password)
-    password_entry.pack()
-    # 5
-    Label(screen1, text="").pack()
-    Label(screen1, text="Confirm Password").pack()
-    password_entry = Entry(screen1, textvariable=password)
-    password_entry.pack()
-    # 6
-    Label(screen1, text="").pack()
-    Label(screen1, text="Club/Organization ID").pack()
-    password_entry = Entry(screen1, textvariable=password)
-    password_entry.pack()
-    # 7
-    Label(screen1, text="").pack()
-    Button(screen1, text="Register", height="3", width="20", command=club_info).pack()
-
-
-=======
->>>>>>> Marcus
 def admin():
     Label(screen, text="Club/Organization ID", width="20", height="2", font=("new roman", 15)).grid(row=1, column=0)
     Label(screen, text="Password", width="20", height="2", font=("new roman", 15)).grid(row=3)

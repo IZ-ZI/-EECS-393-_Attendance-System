@@ -1,6 +1,23 @@
 import smtplib, ssl
 import pymsgbox as pgbox
+import tkinter as tk
 import re
+
+def construct_email(e1, e2, smtp_server, sender, receiver, password, port, master):
+    message = """\
+                From: %s
+                \nTo: %s
+                \nSubject: %s
+                \n%s
+                """ % (sender, receiver, e1.get(), e2.get('1.0', 'end'))
+
+    with smtplib.SMTP(smtp_server, port) as server:
+        server.starttls()
+        server.ehlo()  # Can be omitted
+        server.login(sender, password)
+        server.sendmail(sender, receiver, message)
+        server.close()
+    tk.Label(master, text="Email sent successfully").grid(column=0, row=4, sticky=tk.W)
 
 def send_email(sender_email: str, sender_password: str, receiver_email: str):
     port = 587  # For starttls
@@ -9,18 +26,31 @@ def send_email(sender_email: str, sender_password: str, receiver_email: str):
         sender = sender_email
         receiver = receiver_email
     password = sender_password
-    message = """\
-    Subject: Message Subject
-    
-    Message Body."""
 
-    context = ssl.create_default_context()
-    with smtplib.SMTP(smtp_server, port) as server:
-        server.ehlo()  # Can be omitted
-        server.starttls(context=context)
-        server.ehlo()  # Can be omitted
-        server.login(sender, password)
-        server.sendmail(sender, receiver, message)
+    master = tk.Tk()
+    master.title("Send Email Notification")
+    master.geometry("600x300")
+    tk.Label(master, text="Subject: ").grid(row=0)
+    tk.Label(master, text="Notification: ").grid(row=1)
+
+    e1 = tk.Entry(master)
+    e2 = tk.Text(master, width=60, height=10)
+
+    e1.grid(row=0, column=1)
+    e2.grid(row=1, column=1)
+
+    tk.Button(master,
+              text='Cancel',
+              command=master.quit).grid(row=3,
+                                        column=0,
+                                        sticky=tk.W,
+                                        pady=4)
+    tk.Button(master,
+              text='Confirm', command=lambda : construct_email(e1, e2, smtp_server, sender, receiver, password, port, master)).grid(row=3,
+                                                           column=1,
+                                                           sticky=tk.W,
+                                                           pady=4)
+    master.mainloop()
 
 def valid_email_addr(email_addr: str) -> bool:
     regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
@@ -30,5 +60,3 @@ def valid_email_addr(email_addr: str) -> bool:
     else:
         pgbox.alert('Invalid Email Address %s' %email_addr, 'Alert');
         return False
-
-

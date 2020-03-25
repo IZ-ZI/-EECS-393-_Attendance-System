@@ -2,7 +2,7 @@ from MemberDatabase import MemberDatabase
 
 
 class Administrator:
-    def __init__(self, organization_id, organization_name, email_address, password, wait_list):
+    def __init__(self, organization_id: str, organization_name: str, email_address: str, password: str, wait_list: str) -> object:
         self.organization_id = organization_id
         self.organization_name = organization_name
         self.email_address = email_address
@@ -11,7 +11,7 @@ class Administrator:
         self.wait_list = wait_list
         self.wait_list.create_wait_list(self)
 
-    def get_organization_id(self) -> int:
+    def get_organization_id(self) -> str:
         return self.organization_id
 
     def get_organization_name(self) -> str:
@@ -22,7 +22,6 @@ class Administrator:
 
     def get_password(self) -> str:
         return self.password
-
 
     def delete_member(self, member_id) -> bool:
         self.memberDatabase.delete(member_id)

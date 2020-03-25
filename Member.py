@@ -4,25 +4,26 @@ associated with a specific member of certain organization(s).
 """
 import Activity
 import AttendanceRecord
-
+import Administrator
+import sendEmail as se
+import WaitList
 
 class Member:
 
-    def __init__(self, first_name, last_name, email_address, password, student_ID, score):
+    def __init__(self, name, student_ID, email_address, password, wait_list: WaitList):
         # initializing class member
-        self.__first_name = first_name
-        self.__last_name = last_name
+        self.name = name
         self.email_address = email_address
         self.password = password
         self.__student_ID = student_ID
-        self.__score = score
+        self.wait_list = wait_list
         self.__attendanceRecord = []
 
     def getName(self) -> str:
         # returns name of member: first name + last name
-        return "%s %s" % (self.first_name, self.last_name)
+        return self.name
 
-    def getID(self) -> int:
+    def getID(self) -> str:
         # returns the student id of the member
         return self.student_ID
 
@@ -45,8 +46,9 @@ class Member:
         # sets the facial id data for the member
         #self.__face_ID = face_data
 
-    def requestPermission(self) -> bool:
-        # To do
+    def requestPermission(self, admin: Administrator) -> bool:
+        se.send_email(self.email_address, 'placeholder', admin.get_email_adderss)
+        self.wait_list.request_permit(self, admin)
         return True
 
     def joinActivity(self, activity: Activity) -> bool:

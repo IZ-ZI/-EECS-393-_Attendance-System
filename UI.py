@@ -1,6 +1,6 @@
 from tkinter import *
-from Administrator import *
-from WaitList import *
+import Administrator
+import WaitList
 
 
 def main_screen():
@@ -60,6 +60,8 @@ def club_info():
     club_confirm_password_entry.delete(0, END)
 
     Label(screen1, text="Registration sent", fg="green", font=("new roman", 15)).pack()
+    global admin
+    admin = Administrator(club_id.get(), club_name.get(), club_email.get(), club_password.get(), wait_list)
 
 def member_info():
 
@@ -80,6 +82,7 @@ def member_info():
     member_apply_club_id_entry.delete(0,END)
 
     Label(screen1, text = "Registration sent", fg = "green", font=("new roman", 15)).pack()
+
 
 def club_register():
     global screen1
@@ -136,8 +139,6 @@ def club_register():
     Label(screen1, text="").pack()
     Button(screen1, text="Register", height="3", width="20", command=club_info).pack()
 
-    global admin
-    admin = Administrator(club_id.get(), club_name.get(), club_email.get(), club_password.get(), wait_list)
 
 
 def member_register():

@@ -71,11 +71,13 @@ def club_register():
     Label(screen1, text = "Club/Organization ID").pack()
     username_entry = Entry(screen1, textvariable = password)
     username_entry.pack()
+
     # 2
     Label(screen1, text = "").pack()
     Label(screen1, text = "Name of the Club/Organization").pack()
     password_entry = Entry(screen1, textvariable = password)
     password_entry.pack()
+
     # 3
     Label(screen1, text = "").pack()
     Label(screen1, text = "Club/Organization Email").pack()

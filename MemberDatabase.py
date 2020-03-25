@@ -27,12 +27,16 @@ class MemberDatabase:
                 return True
         return False
 
-    def retrieve(self, member_id): 
+    def retrieve(self, member_id):
+        if (len(self.database) == 0):
+            print("Nothing is in the database")
+            return None
         for i in self.database:
             if i.get_id() == member_id:
                 return i
 
         print("The member with the ID:", member_id, " is not in the database.")
+        return None
 
     def delete(self, member_id):
         for i in self.database:

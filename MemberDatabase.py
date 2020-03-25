@@ -1,3 +1,6 @@
+import Member
+
+
 class MemberDatabase:
     def __init__(self):
         self.database = []
@@ -38,3 +41,10 @@ class MemberDatabase:
                 return True
 
         return False
+
+    def login(self, member_id, password) -> Member:
+        member = self.retrieve(member_id)
+        if member.get_password() == password:
+            return member
+        else:
+            return None

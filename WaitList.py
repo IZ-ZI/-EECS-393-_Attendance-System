@@ -1,4 +1,4 @@
-class Waitlist:
+class WaitList:
 
     def __init__(self):
         self.wait_list = {}

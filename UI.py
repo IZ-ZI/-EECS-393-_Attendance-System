@@ -1,4 +1,7 @@
 from tkinter import *
+import Administrator
+import WaitList
+
 
 from Administrator import Administrator
 from Waitlist import Waitlist
@@ -10,6 +13,8 @@ wait_list = Waitlist()
 
 def main_screen():
     global screen
+    global wait_list
+    wait_list = WaitList()
     screen = Tk()
     screen.geometry("600x300")
     screen.title("Attendance System Login")
@@ -68,8 +73,14 @@ def member_info():
 
 
 def club_info():
-    waitlist = Waitlist()
-    admin = Administrator(club_id.get(), club_name.get(), club_email.get(), club_password.get(), waitlist)
+
+    file = open(club_id.get() + ".txt", "w")
+    file.write(club_id.get() + "\n")
+    file.write(club_name.get() + "\n")
+    file.write(club_email.get() + "\n")
+    file.write(club_password.get() + "\n")
+    file.write(club_confirm_password.get() + "\n")
+    file.close()
 
     club_id_entry.delete(0, END)
     club_name_entry.delete(0, END)
@@ -78,6 +89,27 @@ def club_info():
     club_confirm_password_entry.delete(0, END)
 
     Label(screen1, text="Registration sent", fg="green", font=("new roman", 15)).pack()
+    global admin
+    admin = Administrator(club_id.get(), club_name.get(), club_email.get(), club_password.get(), wait_list)
+
+def member_info():
+
+    file = open(member_id.get() + ".txt", "w")
+    file.write(member_id.get() + "\n")
+    file.write(member_name.get() + "\n")
+    file.write(member_email.get() + "\n")
+    file.write(member_password.get() + "\n")
+    file.write(member_confirm_password.get() + "\n")
+    file.write(member_apply_club_id.get() + "\n")
+    file.close()
+
+    member_id_entry.delete(0,END)
+    member_name_entry.delete(0,END)
+    member_email_entry.delete(0,END)
+    member_password_entry.delete(0,END)
+    member_confirm_password_entry.delete(0,END)
+    member_apply_club_id_entry.delete(0,END)
+
 
 
 
@@ -197,6 +229,70 @@ def club_register():
     # 6
     Label(screen1, text="").pack()
     Button(screen1, text="Register", height="3", width="20", command=club_info).pack()
+
+
+
+def member_register():
+    global screen1
+    screen1 = Toplevel(screen)
+    screen1.title("New Club Registration")
+    screen1.geometry("600x570")
+
+    global member_id
+    global member_name
+    global member_email
+    global member_password
+    global member_confirm_password
+    global member_apply_club_id
+
+    member_id = StringVar()
+    member_name = StringVar()
+    member_email = StringVar()
+    member_password = StringVar()
+    member_confirm_password = StringVar()
+    member_apply_club_id = StringVar()
+
+    global member_id_entry
+    global member_name_entry
+    global member_email_entry
+    global member_password_entry
+    global member_confirm_password_entry
+    global member_apply_club_id_entry
+
+    # 1
+    Label(screen1, text="").pack()
+    Label(screen1, text="User ID").pack()
+    member_id_entry = Entry(screen1, textvariable=member_id)
+    member_id_entry.pack()
+    # 2
+    Label(screen1, text="").pack()
+    Label(screen1, text="Name").pack()
+    member_name_entry = Entry(screen1, textvariable=member_name)
+    member_name_entry.pack()
+    # 3
+    Label(screen1, text="").pack()
+    Label(screen1, text="Email").pack()
+    member_email_entry = Entry(screen1, textvariable=member_email)
+    member_email_entry.pack()
+    # 4
+    Label(screen1, text="").pack()
+    Label(screen1, text="Password").pack()
+    member_password_entry = Entry(screen1, textvariable=member_password)
+    member_password_entry.pack()
+    # 5
+    Label(screen1, text="").pack()
+    Label(screen1, text="Confirm Password").pack()
+    member_confirm_password_entry = Entry(screen1, textvariable=member_confirm_password)
+    member_confirm_password_entry.pack()
+    # 6
+    Label(screen1, text="").pack()
+    Label(screen1, text="Club/Organization ID").pack()
+    member_apply_club_id_entry = Entry(screen1, textvariable=member_apply_club_id)
+    member_apply_club_id_entry.pack()
+    # 7
+    Label(screen1, text="").pack()
+    Button(screen1, text="Register", height="3", width="20", command=member_info).pack()
+
 
 
 

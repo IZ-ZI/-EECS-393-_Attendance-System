@@ -47,6 +47,9 @@ class MemberDatabase:
         return False
 
     def login(self, member_id, password) -> Member:
+        if not self.is_present(member_id):
+            return None
+        
         member = self.retrieve(member_id)
         if member.get_password() == password:
             return member

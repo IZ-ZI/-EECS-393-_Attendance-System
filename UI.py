@@ -1,7 +1,11 @@
 from tkinter import *
+from Administrator import Administrator
+from WaitList import WaitList
 
 def main_screen():
     global screen
+    global wait_list
+    wait_list = WaitList()
     screen = Tk()
     # screen.geometry("600x300")
     screen.title("Attendance System Login")
@@ -21,7 +25,7 @@ def main_screen():
 
     # highlightbackground = 'green'
 
-    Button(screen, text="Administrator", height="5", width="20", command=admin, fg='black', ).place(
+    Button(screen, text="Administrator", height="5", width="20", command=admin, fg='black').place(
         x=screen_width * 2 / 3, y=screen_height / 30)
     Button(screen, text="Member", height="5", width="20", command=member, fg='black', ).place(x=screen_width * 2 / 3,
                                                                                               y=screen_height / 4 + screen_height / 30)
@@ -35,15 +39,18 @@ def main_screen():
     Button(screen, text="New Club Register", height="5", width="20", command=club_register, fg='black').place(
         x=screen_width * 2 / 3 + screen_width / 30, y=screen_height * 2 / 3)
 
+
     # global button
     # button = Button(screen,text='Submit',command=changeText)
     # button.pack()
 
     screen.mainloop()
 
+
 # def changeLabel():
 #     if (label['text'] == 'Submit'):
 #         label['text'] = 'Submitted'
+
 #     else:
 #         label['text'] = 'Submit'
 
@@ -66,7 +73,6 @@ def member_register_check():
         member_info()
 
 def club_info():
-
     file = open(club_id.get() + ".txt", "w")
     file.write(club_id.get() + "\n")
     file.write(club_name.get() + "\n")
@@ -75,11 +81,33 @@ def club_info():
     file.write(club_confirm_password.get() + "\n")
     file.close()
 
-    club_id_entry.delete(0,END)
-    club_name_entry.delete(0,END)
-    club_email_entry.delete(0,END)
-    club_password_entry.delete(0,END)
-    club_confirm_password_entry.delete(0,END)
+    club_id_entry.delete(0, END)
+    club_name_entry.delete(0, END)
+    club_email_entry.delete(0, END)
+    club_password_entry.delete(0, END)
+    club_confirm_password_entry.delete(0, END)
+
+    Label(screen1, text="Registration sent", fg="green", font=("new roman", 15)).pack()
+    global admin
+    admin = Administrator(club_id.get(), club_name.get(), club_email.get(), club_password.get(), wait_list)
+
+def member_info():
+
+    file = open(member_id.get() + ".txt", "w")
+    file.write(member_id.get() + "\n")
+    file.write(member_name.get() + "\n")
+    file.write(member_email.get() + "\n")
+    file.write(member_password.get() + "\n")
+    file.write(member_confirm_password.get() + "\n")
+    file.write(member_apply_club_id.get() + "\n")
+    file.close()
+
+    member_id_entry.delete(0,END)
+    member_name_entry.delete(0,END)
+    member_email_entry.delete(0,END)
+    member_password_entry.delete(0,END)
+    member_confirm_password_entry.delete(0,END)
+    member_apply_club_id_entry.delete(0,END)
 
     club_register_feedback['text'] = 'Registration successful'
 
@@ -198,29 +226,30 @@ def club_register():
     global club_confirm_password_entry
 
     # 1
-    Label(screen1, text = "").pack()
-    Label(screen1, text = "Club/Organization ID").pack()
-    club_id_entry = Entry(screen1, textvariable = club_id)
+    Label(screen1, text="").pack()
+    Label(screen1, text="Club/Organization ID").pack()
+    club_id_entry = Entry(screen1, textvariable=club_id)
     club_id_entry.pack()
+
     # 2
-    Label(screen1, text = "").pack()
-    Label(screen1, text = "Name of the Club/Organization").pack()
-    club_name_entry = Entry(screen1, textvariable = club_name)
+    Label(screen1, text="").pack()
+    Label(screen1, text="Name of the Club/Organization").pack()
+    club_name_entry = Entry(screen1, textvariable=club_name)
     club_name_entry.pack()
     # 3
-    Label(screen1, text = "").pack()
-    Label(screen1, text = "Club/Organization Email").pack()
-    club_email_entry = Entry(screen1, textvariable = club_email)
+    Label(screen1, text="").pack()
+    Label(screen1, text="Club/Organization Email").pack()
+    club_email_entry = Entry(screen1, textvariable=club_email)
     club_email_entry.pack()
     # 4
-    Label(screen1, text = "").pack()
-    Label(screen1, text = "Password").pack()
-    club_password_entry = Entry(screen1, textvariable = club_password)
+    Label(screen1, text="").pack()
+    Label(screen1, text="Password").pack()
+    club_password_entry = Entry(screen1, textvariable=club_password)
     club_password_entry.pack()
     # 5
-    Label(screen1, text = "").pack()
-    Label(screen1, text = "Confirm Password").pack()
-    club_confirm_password_entry = Entry(screen1, textvariable = club_confirm_password)
+    Label(screen1, text="").pack()
+    Label(screen1, text="Confirm Password").pack()
+    club_confirm_password_entry = Entry(screen1, textvariable=club_confirm_password)
     club_confirm_password_entry.pack()
 
     # 6
@@ -231,7 +260,6 @@ def club_register():
     Label(screen1, text = "").pack()
     club_register_feedback = Label(screen1, text=" ", fg="green", font=("new roman", 15))
     club_register_feedback.pack()
-
 
 def admin():
     screen_width = screen.winfo_screenwidth() / 2
@@ -250,7 +278,6 @@ def member():
 
 # Button(screen, text="Member Login", height= "3", width = "20", command = member_login, fg='black').grid(row=6, column=2)
 
-
 def login():
     print("Login session started")
 
@@ -259,3 +286,4 @@ def forget():
 
 
 main_screen()
+

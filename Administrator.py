@@ -1,8 +1,12 @@
 from MemberDatabase import MemberDatabase
+
+
 class Administrator:
-    def __init__(self, organization_id, organization_name, wait_list):
+    def __init__(self, organization_id, organization_name, email_address, password, wait_list):
         self.organization_id = organization_id
         self.organization_name = organization_name
+        self.email_address = email_address
+        self.password = password
         self.memberDatabase = MemberDatabase()
         self.wait_list = wait_list
         self.wait_list.create_wait_list(self)
@@ -12,6 +16,13 @@ class Administrator:
 
     def get_organization_name(self) -> str:
         return self.organization_name
+
+    def get_email_adderss(self) -> str:
+        return self.email_address
+
+    def get_password(self) -> str:
+        return self.password
+
 
     def delete_member(self, member_id) -> bool:
         self.memberDatabase.delete(member_id)
@@ -27,14 +38,3 @@ class Administrator:
 
     def reject(self, member):
         self.wait_list.reject(member, self)
-
-
-
-
-
-
-
-
-
-
-

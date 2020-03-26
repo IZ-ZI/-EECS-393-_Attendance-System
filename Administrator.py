@@ -2,7 +2,8 @@ from MemberDatabase import MemberDatabase
 import sendEmail as se
 
 class Administrator:
-    def __init__(self, organization_id: str, organization_name: str, email_address: str, password: str, wait_list: str) -> object:
+    def __init__(self, organization_id: str, organization_name: str, email_address: str, password: str,
+                 wait_list: WaitList):
         self.organization_id = organization_id
         self.organization_name = organization_name
         self.email_address = email_address

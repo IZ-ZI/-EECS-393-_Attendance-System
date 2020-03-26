@@ -1,5 +1,6 @@
-from MemberDatabase import MemberDatabase
-import sendEmail as se
+import MemberDatabase
+import sendEmail as sE
+
 
 class Administrator:
     def __init__(self, organization_id: str, organization_name: str, email_address: str, password: str,
@@ -43,5 +44,5 @@ class Administrator:
 
     def reject(self, member):
         self.wait_list.reject(member, self)
-        se.send_email(self.email_address, 'placeholder', member.get_email_adderss)
+        sE.send_email(self.email_address, 'placeholder', member.get_email_adderss)
         return True

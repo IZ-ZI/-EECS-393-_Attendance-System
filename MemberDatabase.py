@@ -6,7 +6,7 @@ class MemberDatabase:
         self.database = []
         self.wait_list = []
 
-    def is_present(self, member_id):
+    def is_present(self, member_id: str) -> bool:
         for i in self.database:
             if i.get_id() == member_id:
                 return True
@@ -62,7 +62,7 @@ class MemberDatabase:
     def permit_pending_member(self, member_id) -> Member:
         for i in self.wait_list:
             if i.get_id() == member_id:
-                self.database.append(i)
+                self.add(i)
                 self.wait_list.remove(i)
                 return i
 

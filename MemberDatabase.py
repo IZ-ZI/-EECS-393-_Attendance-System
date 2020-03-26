@@ -1,4 +1,4 @@
-import Member
+from Member import Member
 
 
 class MemberDatabase:
@@ -10,11 +10,13 @@ class MemberDatabase:
         for i in self.database:
             if i.get_id() == member_id:
                 return True
-            else:
-                return False
+            # else keep searching
+
+        # nothing found with same id if next line is reached
+        return False
 
     def add(self, member):
-        if not self.is_present(member.get_id):
+        if not self.is_present(member.get_id()):
             self.database.append(member)
             return True
         else:

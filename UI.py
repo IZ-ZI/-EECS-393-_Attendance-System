@@ -6,6 +6,8 @@ from WaitList import WaitList
 admin = None
 wait_list = None
 
+club_password = None #do this
+
 def main_screen():
     global admin
     global screen
@@ -73,6 +75,7 @@ def main_screen():
 
 
 def club_register_check():
+    global club_password #do this
 
     if(club_password.get() != club_confirm_password.get()):
         club_register_feedback['text'] = 'Password difference'

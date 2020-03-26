@@ -1,6 +1,6 @@
-import MemberDatabase
+from MemberDatabase import MemberDatabase
 import sendEmail as sE
-import WaitList
+from WaitList import WaitList
 
 class Administrator:
     def __init__(self, organization_id: str, organization_name: str, email_address: str, password: str,

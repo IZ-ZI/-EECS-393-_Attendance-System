@@ -2,7 +2,7 @@ from MemberDatabase import MemberDatabase
 import sendEmail as se
 
 class Administrator:
-    def __init__(self, organization_id: str, organization_name: str, email_address: str, password: str):
+    def __init__(self, organization_name: str, organization_id: str, email_address: str, password: str):
         self.organization_id = organization_id
         self.organization_name = organization_name
         self.email_address = email_address
@@ -24,8 +24,8 @@ class Administrator:
     def get_password(self) -> str:
         return self.password
 
-    def delete_member(self, member_id) -> bool:
-        self.memberDatabase.delete(member_id)
+    def delete_member(self, member) -> bool:
+        self.memberDatabase.delete(member.get_id())
 
     def add_member(self, member) -> bool:
         self.memberDatabase.add(member)

@@ -4,21 +4,18 @@ associated with a specific member of certain organization(s).
 """
 from Activity import Activity
 from AttendanceRecord import AttendanceRecord
-from Administrator import Administrator
+import Administrator
 import sendEmail as se
-from WaitList import WaitList
-
 
 
 class Member:
 
-    def __init__(self,  name, student_ID, email_address, password, wait_list: WaitList):
+    def __init__(self,  name, student_ID, email_address, password):
         # initializing class member
         self.name = name
         self.email_address = email_address
         self.password = password
         self.student_ID = student_ID
-        self.wait_list = wait_list
         self.score = 0
         self.attendance_record = []
         self.admin_list = []
@@ -54,7 +51,6 @@ class Member:
 
     def requestPermission(self, admin: Administrator) -> bool:
         se.send_email(self.email_address, 'placeholder', admin.get_email_adderss)
-        self.wait_list.request_permit(self, admin)
         return True
 
     def joinActivity(self, activity: Activity) -> bool:

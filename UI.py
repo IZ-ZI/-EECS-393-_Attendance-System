@@ -5,6 +5,7 @@ from WaitList import WaitList
 def main_screen():
     global screen
     global wait_list
+
     wait_list = WaitList()
     screen = Tk()
     # screen.geometry("600x300")
@@ -18,10 +19,25 @@ def main_screen():
 
     screen.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor, yCoor))
 
+    global login_account_entry
+    global login_password_entry
+    global login_account
+    global login_password
+
+    login_account = StringVar()
+    login_password = StringVar()
+
     Label(screen, text="Club/Organization ID", font=("new roman", 20)).place(x=screen_width / 30, y=screen_height / 30)
-    Entry(screen, width="20").place(x=screen_width / 30, y=screen_height * 3 / 30)
+
+    # member_email_entry = Entry(screen1, textvariable=member_email)
+
+    login_account_entry = Entry(screen, textvariable=login_account, width="20")
+    login_account_entry.place(x=screen_width / 30, y=screen_height * 3 / 30)
+
     Label(screen, text="Password", font=("new roman", 20)).place(x=screen_width / 30, y=screen_height * 10 / 30)
-    Entry(screen, width="20").place(x=screen_width / 30, y=screen_height * 13 / 30)
+
+    login_password_entry = Entry(screen, textvariable=login_password, width="20")
+    login_password_entry.place(x=screen_width / 30, y=screen_height * 13 / 30)
 
     # highlightbackground = 'green'
 
@@ -30,7 +46,7 @@ def main_screen():
     Button(screen, text="Member", height="5", width="20", command=member, fg='black', ).place(x=screen_width * 2 / 3,
                                                                                               y=screen_height / 4 + screen_height / 30)
 
-    Button(screen, text="Login", height="5", width="20", command=login, fg='black').place(x=screen_width / 30,
+    Button(screen, text="Login", height="5", width="20", command=admin_login, fg='black').place(x=screen_width / 30,
                                                                                           y=screen_height * 2 / 3)
     # Button(screen, text="Login", height= "3", width = "20", command = login, fg='black').grid(row=6, column=0)
     Button(screen, text="Forget/Reset Password", height="5", width="20", command=forget, fg='black').place(
@@ -46,13 +62,6 @@ def main_screen():
 
     screen.mainloop()
 
-
-# def changeLabel():
-#     if (label['text'] == 'Submit'):
-#         label['text'] = 'Submitted'
-
-#     else:
-#         label['text'] = 'Submit'
 
 def club_register_check():
 
@@ -110,27 +119,6 @@ def member_info():
     member_apply_club_id_entry.delete(0,END)
 
     club_register_feedback['text'] = 'Registration successful'
-
-
-def member_info():
-
-    file = open(member_id.get() + ".txt", "w")
-    file.write(member_id.get() + "\n")
-    file.write(member_name.get() + "\n")
-    file.write(member_email.get() + "\n")
-    file.write(member_password.get() + "\n")
-    file.write(member_confirm_password.get() + "\n")
-    file.write(member_apply_club_id.get() + "\n")
-    file.close()
-
-    member_id_entry.delete(0,END)
-    member_name_entry.delete(0,END)
-    member_email_entry.delete(0,END)
-    member_password_entry.delete(0,END)
-    member_confirm_password_entry.delete(0,END)
-    member_apply_club_id_entry.delete(0,END)
-
-    member_register_feedback['text'] = "Registration sent"
 
 def member_register():
     global screen1
@@ -268,13 +256,62 @@ def admin():
     Label(screen, text="Password",font=("new roman", 20)).place(x=screen_width / 30, y=screen_height*10/30)
     Button(screen, text="New Club Register", height="5", width="20", command=club_register, fg='black').place(
         x=screen_width * 2 / 3 + screen_width / 30, y=screen_height * 2 / 3)
+    Button(screen, text="Administrator Login", font = ("new roman", 15),height= "5", width = "20", command = admin_login, fg='black').place(x = screen_width/30, y = screen_height*2/3)
+
+
+def member_login():
+    print("member login session started")
+    #implement whatever needed to check for login
+    global screenMember
+    screenMember = Toplevel(screen)
+    screenMember.title("Member")
+    screen_width = screen.winfo_screenwidth() / 2
+    screen_height = screen.winfo_screenheight() / 2
+    xCoor = screen_width /2+20
+    yCoor = screen_height / 2+20
+
+    screenMember.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor,yCoor))
+
+
+def admin_login():
+    print("admin login session started")
+    #implement whatever needed to check for login
+
+    global screenAdmin
+    screenAdmin = Toplevel(screen)
+    screenAdmin.title("Administrator")
+    screen_width = screen.winfo_screenwidth() / 2
+    screen_height = screen.winfo_screenheight() / 2
+    xCoor = screen_width /2
+    yCoor = screen_height / 2
+
+    screenAdmin.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor,yCoor))
+    frame = LabelFrame(screenAdmin, text = "Members", font = ("new roman", 21), padx = 10, pady = 10, height = screen_height, width = screen_width/2)
+    frame.place(x=screen_width/2, y=0)
+
+    Label(frame, text= "Current Members", font = ("new roman", 21)).pack()
+
+    Button(frame, text = "Refresh Members", font = ("new roman", 15), command = refreshMember).pack()
+
+    Label(frame, text = "Pending Members", font = ("new roman", 21)).pack()
+    Button(frame, text = "Refresh List", font = ("new roman", 15), command = refreshList).pack()
+
+
+def refreshMember():
+    print("Refresh current member list")
+
+
+def refreshList():
+    print("Refresh pending member list")
 
 def member():
     screen_width = screen.winfo_screenwidth() / 2
     screen_height = screen.winfo_screenheight() / 2
-    Label(screen, text="User ID", font=("new roman", 20)).place(x=screen_width / 30, y=screen_height / 30)
+    Label(screen, text="User ID                              ", font=("new roman", 20)).place(x=screen_width / 30, y=screen_height / 30)
     Button(screen, text="New Member Register", height="5", width="20", command=club_register, fg='black').place(
         x=screen_width * 2 / 3 + screen_width / 30, y=screen_height * 2 / 3)
+    Button(screen, text="Member Login", font = ("new roman", 15),height="5", width="20", command=member_login, fg='black').place(
+        x=screen_width / 30, y=screen_height * 2 / 3)
 
 # Button(screen, text="Member Login", height= "3", width = "20", command = member_login, fg='black').grid(row=6, column=2)
 

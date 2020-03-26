@@ -3,6 +3,8 @@ from Administrator import Administrator
 from Member import Member
 from WaitList import WaitList
 
+admin = None
+wait_list = None
 
 def main_screen():
     global screen
@@ -54,7 +56,6 @@ def club_info():
     file.write(club_confirm_password.get() + "\n")
     file.close()
 
-    global admin
     admin = Administrator(club_id.get(), club_name.get(), club_email.get(), club_password.get(), wait_list)
     print(admin.get_password(), admin.get_organization_id())
 
@@ -66,7 +67,6 @@ def club_info():
 
     Label(screen1, text="Registration sent", fg="green", font=("new roman", 15)).pack()
 
-print(admin.get_password(), admin.get_organization_id())
 
 def member_info():
 

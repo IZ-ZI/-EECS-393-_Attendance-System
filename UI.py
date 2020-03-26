@@ -159,7 +159,8 @@ def admin():
 def member():
     screen_width = screen.winfo_screenwidth() / 2
     screen_height = screen.winfo_screenheight() / 2
-    Label(screen, text="User ID", font=("new roman", 20)).place(x=screen_width / 24, y=screen_height * 2/ 30)
+    Label(screen, text="User ID                            ", font=("new roman", 21)).place(x=screen_width / 24, y=screen_height * 2/ 30)
+    #Label(screen, text = "", height = 2, width = 30).place(x=screen_width* 2.1 /15, y = screen_height *2/30)
     Button(screen, text="New Member Register", font = ("new roman", 15),height="5", width="20", command=club_register, fg='black').place(
         x=screen_width * 2 / 3 + screen_width / 30, y=screen_height * 2 / 3)
     Button(screen, text="Member Login", font = ("new roman", 15),height="5", width="20", command=member_login, fg='black').place(
@@ -187,8 +188,6 @@ def admin_login():
     print("admin login session started")
     #implement whatever needed to check for login
 
-
-
     global screenAdmin
     screenAdmin = Toplevel(screen)
     screenAdmin.title("Administrator")
@@ -198,16 +197,48 @@ def admin_login():
     yCoor = screen_height / 2
 
     screenAdmin.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor,yCoor))
-    frame = LabelFrame(screenAdmin, text = "Members", font = ("new roman", 21), padx = 10, pady = 10, height = screen_height, width = screen_width/2)
-    frame.place(x=screen_width/2, y=0)
+    frame = Frame(screenAdmin, padx = 10, pady = 10)
+    frame.place(x=screen_width/2, y=2, width = screen_width/2, height = screen_height)
 
-    Label(frame, text= "Current Members", font = ("new roman", 21)).pack()
+    Label(frame, text= "Current Members", font = ("new roman", 21)).place(x = 50, y = 0)
 
-    Button(frame, text = "Refresh Members", font = ("new roman", 15), command = refreshMember).pack()
+    currentFrame = Frame(frame, padx = 1, pady = 3, width = screen_width/2, height = 50)
+    currentScroll = Scrollbar(currentFrame)
+    currentScroll.pack(side = RIGHT, fill = Y)
+    currentMemberBox = Listbox(currentFrame, yscrollcommand = currentScroll.set)
+
+    #loop for Current Member List
+    #while member in MemberList:
+
+    for i in range(1, 100):
+        currentMemberBox.insert(END, "LINE" + str(i))
+
+    currentMemberBox.pack(side = LEFT)
+    currentScroll.config(command = currentMemberBox.yview)
+    currentFrame.place(x = 30, y = 50, width = screen_width/2, height = 50)
+
+    Button(frame, text = "Refresh Members", font = ("new roman", 15), command = refreshMember).place(x = 50, y = 60)
+
+    Label(frame, text = "Pending Members", font = ("new roman", 21)).place(x = 50, y = 70)
+
+    pendingFrame = Frame(frame, padx = 1, pady = 1)
+    pendingScroll = Scrollbar(pendingFrame)
+    pendingScroll.pack(side = RIGHT, fill = Y)
+    pendingMemberBox = Listbox(pendingFrame, yscrollcommand = pendingScroll.set)
+
+    for i in range(1, 100):
+        pendingMemberBox.insert(END, "LINE" + str(i))
+
+    pendingMemberBox.pack(side = LEFT)
+    pendingScroll.config(command = pendingMemberBox.yview)
+    pendingFrame.place(x = 30, y = 100)
 
 
-    Label(frame, text = "Pending Members", font = ("new roman", 21)).pack()
-    Button(frame, text = "Refresh List", font = ("new roman", 15), command = refreshList).pack()
+
+
+
+
+    Button(frame, text = "Refresh List", font = ("new roman", 15), command = refreshList).place(x = 50, y = 300)
 
 
 

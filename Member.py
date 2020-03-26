@@ -1,4 +1,4 @@
-"""Member calss.
+"""Member class.
 This class represents a member object in the system. Its job is to store the personal information
 associated with a specific member of certain organization(s).
 """

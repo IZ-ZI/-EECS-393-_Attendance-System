@@ -1,4 +1,5 @@
 from tkinter import *
+<<<<<<< HEAD
 import Administrator
 import WaitList
 from Administrator import Administrator
@@ -7,6 +8,10 @@ from Member import Member
 global admin
 global wait_list
 wait_list = Waitlist()
+=======
+from Administrator import Administrator
+from WaitList import WaitList
+>>>>>>> Marcus
 
 def main_screen():
     global screen
@@ -31,7 +36,7 @@ def main_screen():
 
     # highlightbackground = 'green'
 
-    Button(screen, text="Administrator", height="5", width="20", command=admin, fg='black', ).place(
+    Button(screen, text="Administrator", height="5", width="20", command=admin, fg='black').place(
         x=screen_width * 2 / 3, y=screen_height / 30)
     Button(screen, text="Member", height="5", width="20", command=member, fg='black', ).place(x=screen_width * 2 / 3,
                                                                                               y=screen_height / 4 + screen_height / 30)
@@ -44,6 +49,10 @@ def main_screen():
 
     Button(screen, text="New Club Register", height="5", width="20", command=club_register, fg='black').place(
         x=screen_width * 2 / 3 + screen_width / 30, y=screen_height * 2 / 3)
+<<<<<<< HEAD
+=======
+
+>>>>>>> Marcus
 
     # global button
     # button = Button(screen,text='Submit',command=changeText)
@@ -55,6 +64,10 @@ def main_screen():
 # def changeLabel():
 #     if (label['text'] == 'Submit'):
 #         label['text'] = 'Submitted'
+<<<<<<< HEAD
+=======
+
+>>>>>>> Marcus
 #     else:
 #         label['text'] = 'Submit'
 
@@ -248,7 +261,6 @@ def club_register():
     club_register_feedback = Label(screen1, text=" ", fg="green", font=("new roman", 15))
     club_register_feedback.pack()
 
-
 def admin():
     screen_width = screen.winfo_screenwidth() / 2
     screen_height = screen.winfo_screenheight() / 2
@@ -265,14 +277,17 @@ def member():
         x=screen_width * 2 / 3 + screen_width / 30, y=screen_height * 2 / 3)
 
 # Button(screen, text="Member Login", height= "3", width = "20", command = member_login, fg='black').grid(row=6, column=2)
+<<<<<<< HEAD
 
+=======
+>>>>>>> Marcus
 
 def login():
     print("Login session started")
-
 
 def forget():
     print("U SUCK")
 
 
 main_screen()
+

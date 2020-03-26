@@ -205,7 +205,6 @@ def admin():
         x=screen_width * 2 / 3 + screen_width / 30, y=screen_height * 2 / 3)
     Button(screen, text="Administrator Login", font = ("new roman", 15),height= "5", width = "20", command = admin_login, fg='black').place(x = screen_width/30, y = screen_height*2/3)
 
-
 def member_login():
     print("member login session started")
     #implement whatever needed to check for login
@@ -218,7 +217,6 @@ def member_login():
     yCoor = screen_height / 2+20
 
     screenMember.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor,yCoor))
-
 
 def admin_login():
     print("admin login session started")

@@ -146,6 +146,13 @@ def member_register():
     global member_confirm_password
     global member_apply_club_id
 
+    global member_id_entry
+    global member_name_entry
+    global member_email_entry
+    global member_password_entry
+    global member_confirm_password_entry
+    global member_apply_club_id_entry
+
     member_id = StringVar()
     member_name = StringVar()
     member_email = StringVar()
@@ -153,12 +160,7 @@ def member_register():
     member_confirm_password = StringVar()
     member_apply_club_id = StringVar()
 
-    global member_id_entry
-    global member_name_entry
-    global member_email_entry
-    global member_password_entry
-    global member_confirm_password_entry
-    global member_apply_club_id_entry
+
 
     # 1
     Label(screen1, text="").pack()

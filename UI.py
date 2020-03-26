@@ -7,6 +7,7 @@ admin = None
 wait_list = None
 
 def main_screen():
+    global admin
     global screen
     global wait_list
     wait_list = WaitList()
@@ -57,7 +58,6 @@ def club_info():
     file.close()
 
     admin = Administrator(club_id.get(), club_name.get(), club_email.get(), club_password.get(), wait_list)
-    print(admin.get_password(), admin.get_organization_id())
 
     club_id_entry.delete(0, END)
     club_name_entry.delete(0, END)
@@ -78,8 +78,9 @@ def member_info():
     file.write(member_confirm_password.get() + "\n")
     file.write(member_apply_club_id.get() + "\n")
     file.close()
-    global new_mem
-    new_mem = Member()
+
+    new_member = Member(member_name.get(), member_id.get(), member_email.get(), member_password.get(), wait_list)
+
 
     member_id_entry.delete(0,END)
     member_name_entry.delete(0,END)

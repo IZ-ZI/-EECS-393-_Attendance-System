@@ -4,6 +4,7 @@ import Member
 class MemberDatabase:
     def __init__(self):
         self.database = []
+        self.wait_list = []
 
     def is_present(self, member_id):
         for i in self.database:
@@ -28,7 +29,7 @@ class MemberDatabase:
         return False
 
     def retrieve(self, member_id):
-        if (len(self.database) == 0):
+        if len(self.database) == 0:
             print("Nothing is in the database")
             return None
         for i in self.database:
@@ -49,9 +50,28 @@ class MemberDatabase:
     def login(self, member_id, password) -> Member:
         if not self.is_present(member_id):
             return None
-        
+
         member = self.retrieve(member_id)
         if member.get_password() == password:
             return member
         else:
             return None
+
+    def permit_pending_member(self, member_id) -> bool:
+        for i in self.wait_list:
+            if i.get_id() == member_id:
+                self.database.append(i)
+                self.wait_list.remove(i)
+                return True
+
+        # The member is not in wait list if lines below are reached
+        return False
+
+    def reject_pending_member(self, member_id) -> bool:
+        for i in self.wait_list:
+            if i.get_id() == member_id:
+                self.wait_list.remove(i)
+                return True
+
+        # The member is not in wait list if lines below are reached
+        return False

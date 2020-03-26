@@ -1,7 +1,6 @@
 from MemberDatabase import MemberDatabase
-import sendEmail as se
-import WaitList
-
+import sendEmail as sE
+from WaitList import WaitList
 
 class Administrator:
     def __init__(self, organization_id: str, organization_name: str, email_address: str, password: str,
@@ -12,18 +11,13 @@ class Administrator:
         self.password = password
         self.memberDatabase = MemberDatabase()
         self.wait_list = wait_list
-
-    def create_wait_list(self):
-        self.wait_list.put_admin_in(self)
+        self.wait_list.create_wait_list(self)
 
     def get_organization_id(self) -> str:
         return self.organization_id
 
     def get_organization_name(self) -> str:
         return self.organization_name
-
-    def get_wait_list(self) -> WaitList:
-        return self.wait_list
 
     def get_member_database(self) -> MemberDatabase:
         return self.memberDatabase
@@ -41,13 +35,14 @@ class Administrator:
         self.memberDatabase.update(member)
 
     def members_in_wait_list(self):
-        self.wait_list.pending_members(self)
+        self.wait_list.member_in(self)
 
     def permit(self, member):
         self.wait_list.permit(member, self)
-        self.memberDatabase.add(member)
         se.send_email(self.email_address, 'placeholder', member.get_email_adderss)
+        return True
 
     def reject(self, member):
         self.wait_list.reject(member, self)
-        se.send_email(self.email_address, 'placeholder', member.get_email_adderss)
+        sE.send_email(self.email_address, 'placeholder', member.get_email_adderss)
+        return True

@@ -71,7 +71,6 @@ def main_screen():
 
     screen.mainloop()
 
-
 def club_register_check():
 
     if(club_password.get() != club_confirm_password.get()):

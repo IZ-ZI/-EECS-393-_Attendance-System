@@ -8,6 +8,32 @@ wait_list = None
 
 club_password = None #do this
 
+admin = None
+screen = None
+wait_list = None
+
+login_account_entry = None
+login_password_entry = None
+login_account = None
+login_password = None
+
+member_id_entry = None
+member_name_entry = None
+member_email_entry = None
+member_password_entry = None
+member_confirm_password_entry = None
+member_apply_club_id_entry = None
+
+member_id = StringVar()
+member_name = StringVar()
+member_email = StringVar()
+member_password = StringVar()
+member_confirm_password = StringVar()
+member_apply_club_id = StringVar()
+
+screenAdmin  = None
+
+
 def main_screen():
     global admin
     global screen
@@ -161,8 +187,6 @@ def member_register():
     member_password = StringVar()
     member_confirm_password = StringVar()
     member_apply_club_id = StringVar()
-
-
 
     # 1
     Label(screen1, text="").pack()

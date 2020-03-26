@@ -9,9 +9,10 @@ import sendEmail as se
 from WaitList import WaitList
 
 
+
 class Member:
 
-    def __init__(self, name, student_ID, email_address, password, wait_list: WaitList):
+    def __init__(self,  student_ID, name, email_address, password, wait_list: WaitList):
         # initializing class member
         self.name = name
         self.email_address = email_address

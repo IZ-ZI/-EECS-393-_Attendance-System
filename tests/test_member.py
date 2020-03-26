@@ -4,6 +4,8 @@ from mock import Mock
 from Member import Member
 from WaitList import WaitList
 
+import sys
+sys.path.insert(0, 'D:\EECS393Project\-EECS-393-_Attendance-System')
 
 def constructorMock(name):
     """Create fake constructor that returns Mock object when invoked"""

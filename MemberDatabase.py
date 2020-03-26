@@ -57,21 +57,22 @@ class MemberDatabase:
         else:
             return None
 
-    def permit_pending_member(self, member_id) -> bool:
+    def permit_pending_member(self, member_id) -> Member:
         for i in self.wait_list:
             if i.get_id() == member_id:
                 self.database.append(i)
                 self.wait_list.remove(i)
-                return True
+                return i
 
         # The member is not in wait list if lines below are reached
-        return False
+        return None
 
-    def reject_pending_member(self, member_id) -> bool:
+    def reject_pending_member(self, member_id) -> Member:
         for i in self.wait_list:
             if i.get_id() == member_id:
+                removing_member = i
                 self.wait_list.remove(i)
-                return True
+                return removing_member
 
         # The member is not in wait list if lines below are reached
-        return False
+        return None

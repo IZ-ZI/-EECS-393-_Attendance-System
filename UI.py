@@ -1,5 +1,6 @@
 from tkinter import *
 from Administrator import Administrator
+from Member import Member
 from WaitList import WaitList
 
 
@@ -65,6 +66,8 @@ def club_info():
 
     Label(screen1, text="Registration sent", fg="green", font=("new roman", 15)).pack()
 
+print(admin.get_password(), admin.get_organization_id())
+
 def member_info():
 
     file = open(member_id.get() + ".txt", "w")
@@ -75,6 +78,8 @@ def member_info():
     file.write(member_confirm_password.get() + "\n")
     file.write(member_apply_club_id.get() + "\n")
     file.close()
+    global new_mem
+    new_mem = Member()
 
     member_id_entry.delete(0,END)
     member_name_entry.delete(0,END)

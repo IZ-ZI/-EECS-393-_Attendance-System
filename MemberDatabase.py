@@ -16,7 +16,7 @@ class MemberDatabase:
         return False
 
     def add(self, member):
-        if not self.is_present(member.get_id):
+        if not self.is_present(member.get_id()):
             self.database.append(member)
             return True
         else:

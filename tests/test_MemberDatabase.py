@@ -8,17 +8,25 @@ class TestMemberDatabase(TestCase):
     mem2 = Member("B", "B_id", "b@email.com", "b")
 
     def test_is_present(self):
+        # test 0
+       # self.assertFalse(self.tester.is_present("B_id"))
+
+        # test 1
         self.tester.add(self.mem1)
         self.assertTrue(self.tester.is_present("A_id"))
         self.assertFalse(self.tester.is_present("B_id"))
 
-    def test_add(self):
-        self.tester.add(self.mem1)
+        # test many
+        self.tester.add(self.mem2)
         self.assertTrue(self.tester.is_present("A_id"))
-        print(self.tester.add(self.mem1))
-        print(self.tester.add(self.mem1))
-        print(self.tester.add(self.mem1))
-        print(self.tester.database)
+        self.assertTrue(self.tester.is_present("B_id"))
+        self.assertFalse(self.tester.is_present("???"))
+
+
+    def test_add(self):
+        self.assertTrue(self.tester.add(self.mem1))
+        self.assertTrue(self.tester.add(self.mem2))
+        self.assertFalse(self.tester.add(self.mem1))
 
 '''
     def test_update(self):

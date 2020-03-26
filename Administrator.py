@@ -1,6 +1,6 @@
 from MemberDatabase import MemberDatabase
 from WaitList import WaitList
-import sendEmail as sE
+import sendEmail as sd_em
 
 
 class Administrator:
@@ -46,8 +46,8 @@ class Administrator:
     def permit(self, member):
         self.wait_list.permit(member, self)
         self.memberDatabase.add(member)
-        se.send_email(self.email_address, 'placeholder', member.get_email_adderss)
+        sd_em.send_email(self.email_address, 'placeholder', member.get_email_adderss)
 
     def reject(self, member):
         self.wait_list.reject(member, self)
-        se.send_email(self.email_address, 'placeholder', member.get_email_adderss)
+        sd_em.send_email(self.email_address, 'placeholder', member.get_email_adderss)

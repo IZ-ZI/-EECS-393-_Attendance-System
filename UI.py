@@ -76,7 +76,10 @@ def member_info():
     file.write(member_confirm_password.get() + "\n")
     file.write(member_apply_club_id.get() + "\n")
     file.close()
-    
+
+    new_member = Member(member_name.get(), member_id.get(), member_email.get(), member_password.get(), wait_list)
+
+
     member_id_entry.delete(0,END)
     member_name_entry.delete(0,END)
     member_email_entry.delete(0,END)

@@ -22,14 +22,12 @@ class MemberTestCase(unittest.TestCase):
     def setUp(self):
         global wl, mber
         wl = WaitList()
-        mber = Member('Test Subject', '12345', 'testsubject@email.com', 'foo', wl)
+        mber = Member('Test Subject', '12345', 'testsubject@email.com', 'foo')
         Member.WaitList = constructorMock("WaitList")
 
     def test_create_member(self):
         """create a member instance and check its properties"""
-        global wl, mber
-        wait_list = Member.WaitList.return_value
-        self.assertEqual(wait_list._name_of_parent_class, 'WaitList')
+        global mber
         self.assertEqual(isinstance(mber, Member), True)
 
     def test_get_name(self):

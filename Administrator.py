@@ -1,4 +1,5 @@
-import MemberDatabase
+from MemberDatabase import MemberDatabase
+from WaitList import WaitList
 import sendEmail as sE
 
 

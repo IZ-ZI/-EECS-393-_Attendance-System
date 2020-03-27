@@ -3,13 +3,13 @@ import pymsgbox as pgbox
 import tkinter as tk
 import re
 
-def construct_email(e1, e2, smtp_server, sender, receiver, password, port, master):
+def construct_email(e1, e2, smtp_server, sender, receiver, password, port, name, id, master):
     message = """\
                 From: %s
                 \nTo: %s
                 \nSubject: %s
                 \n%s
-                """ % (sender, receiver, e1.get(), e2.get('1.0', 'end'))
+                """ % (sender, receiver, ('[Received Request From: %s ]' %id) + e1.get(), ('Hello, this is %s. \n' %name) + e2.get('1.0', 'end'))
 
     with smtplib.SMTP(smtp_server, port) as server:
         server.starttls()
@@ -19,7 +19,7 @@ def construct_email(e1, e2, smtp_server, sender, receiver, password, port, maste
         server.close()
     tk.Label(master, text="Email sent successfully").grid(column=0, row=4, sticky=tk.W)
 
-def send_email(sender_email: str, sender_password: str, receiver_email: str):
+def send_email(sender_email: str, sender_password: str, receiver_email: str, sder_name: str, sder_id: str):
     port = 587  # For starttls
     smtp_server = "smtp.gmail.com"
     if(valid_email_addr(sender_email) and valid_email_addr(receiver_email)):
@@ -46,7 +46,7 @@ def send_email(sender_email: str, sender_password: str, receiver_email: str):
                                         sticky=tk.W,
                                         pady=4)
     tk.Button(master,
-              text='Confirm', command=lambda : construct_email(e1, e2, smtp_server, sender, receiver, password, port, master)).grid(row=3,
+              text='Confirm', command=lambda : construct_email(e1, e2, smtp_server, sender, receiver, password, port, sder_name, sder_id, master)).grid(row=3,
                                                            column=1,
                                                            sticky=tk.W,
                                                            pady=4)

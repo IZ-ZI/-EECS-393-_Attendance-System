@@ -1,4 +1,5 @@
 from MemberDatabase import MemberDatabase
+import Member
 import sendEmail as se
 
 
@@ -34,12 +35,12 @@ class Administrator:
     def pend_member(self, member):
         self.memberDatabase.add_to_wait_list(member)
 
-    def permit(self, member_id):
-        se.send_email(self.email_address, 'placeholder',
-                      self.memberDatabase.permit_pending_member(member_id).get_email_adderss)
+    def permit(self, member: Member):
+        se.send_email('attsystem393@gmail.com', 'eecs_393',
+                      self.memberDatabase.permit_pending_member(member.get_id()).get_email_adderss, self.get_organization_name(), self.get_organization_id(), False)
         return True
 
-    def reject(self, member_id):
-        se.send_email(self.email_address, 'placeholder',
-                      self.memberDatabase.reject_pending_member(member_id).get_email_address)
+    def reject(self, member: Member):
+        se.send_email('attsystem393@gmail.com', 'eecs_393',
+                      self.memberDatabase.reject_pending_member(member.get_id()).get_email_address, self.get_organization_name(), self.get_organization_id(), False)
         return True

@@ -1,7 +1,8 @@
-import Time as Time
+from datetime import datetime
+
 
 class Activity:
-    def __init__(self, name, start_time: Time, end_time: Time, location, priority):
+    def __init__(self, name, start_time: datetime, end_time: datetime, location, priority):
         self.name = name
         self.start_time = start_time
         self.end_time = end_time

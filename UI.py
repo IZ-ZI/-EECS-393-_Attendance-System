@@ -224,9 +224,9 @@ def member_info():
 
     administrator = id_to_admin(member_apply_club_id.get())
 
-    new_member.requestPermission(administrator)
-
     administrator.pend_member(new_member)
+
+    new_member.requestPermission(administrator)
 
     member_id_entry.delete(0, END)
     member_name_entry.delete(0, END)

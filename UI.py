@@ -186,7 +186,7 @@ def member_login():
     clubFrame = Frame(frame, padx= 1, pady = 3, height = int(screen_height / 5))
     clubScroll = Scrollbar(clubFrame)
     clubScroll.pack(side = RIGHT, fill = Y)
-    clubBox = Listbox(clubFrame, yscrollcommand = clubScroll.set, width = int(screen_width/8), height = 20, selectmode = SINGLE)
+    clubBox = Listbox(clubFrame, yscrollcommand = clubScroll.set, width = int(screen_width/8), height = 20, selectmode = MULTIPLE)
 
     for i in range(1, 15):
         clubBox.insert(END, "LINE " + str(i))
@@ -218,10 +218,11 @@ def admin_login():
 
     Label(frame, text= "Current Members", font = ("new roman", 21)).pack()
 
+    global currentMemberBox
     currentFrame = Frame(frame, padx = 1, pady = 3, height = int(screen_height/5))
     currentScroll = Scrollbar(currentFrame)
     currentScroll.pack(side = RIGHT, fill = Y)
-    currentMemberBox = Listbox(currentFrame, yscrollcommand = currentScroll.set, width = int(screen_width/8), height = 7, selectmode = SINGLE)
+    currentMemberBox = Listbox(currentFrame, yscrollcommand = currentScroll.set, width = int(screen_width/8), height = 7, selectmode = MULTIPLE)
 
     #loop for Current Member List
     #while member in MemberList:
@@ -233,10 +234,10 @@ def admin_login():
     currentScroll.config(command = currentMemberBox.yview)
     currentFrame.pack()
 
-    Button(frame, text = "Refresh Members", font = ("new roman", 18), height = 1, width = 20, command = refreshMember).pack()
-    #Button(frame, text = "Delete", font = ("new roman", 18), command = deleteMember).pack()
-
-
+    buttonFrame = Frame(frame, padx = 1, pady = 3)
+    Button(buttonFrame, text = "Refresh", font = ("new roman", 18), height = 1, width = 13, command = refreshMember).grid(row = 0, column = 0)
+    Button(buttonFrame, text = "Delete", font = ("new roman", 18), height = 1, width = 13, command = deleteMember).grid(row = 0, column = 1)
+    buttonFrame.pack()
 
     Label(frame, text = "", font=10).pack()
     Label(frame, text = "Pending Members", font = ("new roman", 21)).pack()
@@ -247,7 +248,7 @@ def admin_login():
     pendingMemberBox = Listbox(pendingFrame, yscrollcommand = pendingScroll.set, width = int(screen_width/8), height = 7)
 
     for i in range(1, 15):
-        pendingMemberBox.insert(END, "LINE" + str(i))
+        pendingMemberBox.insert(END, "LINE " + str(i))
 
     pendingMemberBox.pack(side = LEFT)
     pendingScroll.config(command = pendingMemberBox.yview)
@@ -255,6 +256,11 @@ def admin_login():
     Button(frame, text = "Refresh List", font = ("new roman", 18), height = 1, width = 20, command = refreshList).pack()
 
 
+
+def deleteMember():
+    clicked_items = currentMemberBox.curselection()
+    for item in clicked_items:
+        currentMemberBox.delete(item)
 
 
 

@@ -186,7 +186,7 @@ def member_login():
     clubFrame = Frame(frame, padx= 1, pady = 3, height = int(screen_height / 5))
     clubScroll = Scrollbar(clubFrame)
     clubScroll.pack(side = RIGHT, fill = Y)
-    clubBox = Listbox(clubFrame, yscrollcommand = clubScroll.set, width = int(screen_width/8), height = 20, selectmode = MULTIPLE)
+    clubBox = Listbox(clubFrame, yscrollcommand = clubScroll.set, width = int(screen_width/8), height = 20, selectmode = SINGLE)
 
     for i in range(1, 15):
         clubBox.insert(END, "LINE " + str(i))
@@ -222,7 +222,7 @@ def admin_login():
     currentFrame = Frame(frame, padx = 1, pady = 3, height = int(screen_height/5))
     currentScroll = Scrollbar(currentFrame)
     currentScroll.pack(side = RIGHT, fill = Y)
-    currentMemberBox = Listbox(currentFrame, yscrollcommand = currentScroll.set, width = int(screen_width/8), height = 7, selectmode = MULTIPLE)
+    currentMemberBox = Listbox(currentFrame, yscrollcommand = currentScroll.set, width = int(screen_width/8), height = 7, selectmode = SINGLE)
 
     #loop for Current Member List
     #while member in MemberList:
@@ -245,7 +245,7 @@ def admin_login():
     pendingFrame = Frame(frame, padx = 1, pady = 3)
     pendingScroll = Scrollbar(pendingFrame)
     pendingScroll.pack(side = RIGHT, fill = Y)
-    pendingMemberBox = Listbox(pendingFrame, yscrollcommand = pendingScroll.set, width = int(screen_width/8), height = 7)
+    pendingMemberBox = Listbox(pendingFrame, yscrollcommand = pendingScroll.set, width = int(screen_width/8), height = 7, selectmode = SINGLE)
 
     for i in range(1, 15):
         pendingMemberBox.insert(END, "LINE " + str(i))
@@ -259,8 +259,7 @@ def admin_login():
 
 def deleteMember():
     clicked_items = currentMemberBox.curselection()
-    for item in clicked_items:
-        currentMemberBox.delete(item)
+    currentMemberBox.delete(clicked_items)
 
 
 

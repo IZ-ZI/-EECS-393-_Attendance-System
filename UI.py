@@ -6,11 +6,7 @@ from WaitList import WaitList
 admin = None
 wait_list = None
 
-club_password = None #do this
-
-admin = None
 screen = None
-wait_list = None
 
 login_account_entry = None
 login_password_entry = None
@@ -24,14 +20,31 @@ member_password_entry = None
 member_confirm_password_entry = None
 member_apply_club_id_entry = None
 
-member_id = StringVar()
-member_name = StringVar()
-member_email = StringVar()
-member_password = StringVar()
-member_confirm_password = StringVar()
-member_apply_club_id = StringVar()
+member_id = None
+member_name = None
+member_email = None
+member_password = None
+member_confirm_password = None
+member_apply_club_id = None
 
 screenAdmin  = None
+
+screen1 = None
+club_register_feedback = None
+
+club_id = None
+club_name = None
+club_email = None
+club_password = None
+club_confirm_password = None
+
+
+club_id_entry = None
+club_name_entry = None
+club_email_entry = None
+club_password_entry = None
+club_confirm_password_entry = None
+
 
 
 def main_screen():
@@ -221,6 +234,68 @@ def member_register():
     # 7
     Label(screen1, text="").pack()
     Button(screen1, text="Register", height="3", width="20", command=member_info).pack()
+
+def club_register():
+    global screen1
+    global club_register_feedback
+
+    screen1 = Toplevel(screen)
+    screen1.title("New Club Registration")
+    screen1.geometry("600x570")
+
+    global club_id
+    global club_name
+    global club_email
+    global club_password
+    global club_confirm_password
+
+    club_id = StringVar()
+    club_name = StringVar()
+    club_email = StringVar()
+    club_password = StringVar()
+    club_confirm_password = StringVar()
+
+    global club_id_entry
+    global club_name_entry
+    global club_email_entry
+    global club_password_entry
+    global club_confirm_password_entry
+
+    # 1
+    Label(screen1, text="").pack()
+    Label(screen1, text="Club/Organization ID").pack()
+    club_id_entry = Entry(screen1, textvariable=club_id)
+    club_id_entry.pack()
+
+    # 2
+    Label(screen1, text="").pack()
+    Label(screen1, text="Name of the Club/Organization").pack()
+    club_name_entry = Entry(screen1, textvariable=club_name)
+    club_name_entry.pack()
+    # 3
+    Label(screen1, text="").pack()
+    Label(screen1, text="Club/Organization Email").pack()
+    club_email_entry = Entry(screen1, textvariable=club_email)
+    club_email_entry.pack()
+    # 4
+    Label(screen1, text="").pack()
+    Label(screen1, text="Password").pack()
+    club_password_entry = Entry(screen1, textvariable=club_password)
+    club_password_entry.pack()
+    # 5
+    Label(screen1, text="").pack()
+    Label(screen1, text="Confirm Password").pack()
+    club_confirm_password_entry = Entry(screen1, textvariable=club_confirm_password)
+    club_confirm_password_entry.pack()
+
+    # 6
+    Label(screen1, text = "").pack()
+    Button(screen1, text="Register", height= "3", width = "20", command = club_register_check).pack()
+
+    # 7
+    Label(screen1, text = "").pack()
+    club_register_feedback = Label(screen1, text=" ", fg="green", font=("new roman", 15))
+    club_register_feedback.pack()
 
 
 

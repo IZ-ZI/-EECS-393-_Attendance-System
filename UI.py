@@ -143,7 +143,6 @@ def club_info():
     global administrator_list
 
     administrator = Administrator(club_name.get(), club_id.get(), club_email.get(), club_password.get())
-    print(administrator.get_organization_id(), administrator.get_password())
     administrator_list.append(administrator)
 
     club_id_entry.delete(0, END)
@@ -153,9 +152,6 @@ def club_info():
     club_confirm_password_entry.delete(0, END)
 
     club_register_feedback['text'] = 'Registration sent'
-
-
-print(administrator_list[0].get_organization_id(), administrator_list[0].get_password())
 
 
 def id_to_admin(id):
@@ -381,7 +377,7 @@ def admin_login():
         screenMember.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor, yCoor))
     else:
         screenAdmin = Toplevel(screen)
-        screenAdmin.title("Administrator")
+        screenAdmin.title("Administrator: %s" % logged_admin.get_organization_name())
         screen_width = screen.winfo_screenwidth() / 2
         screen_height = screen.winfo_screenheight() / 2
         xCoor = screen_width / 2

@@ -44,6 +44,8 @@ club_confirm_password_entry = None
 
 administrator_list = []
 member_list = []
+current_member_list = []
+pending_member_list = []
 
 currentMemberBox = None
 currentScroll = None
@@ -456,6 +458,22 @@ def admin_login():
 
         showCurrentMember(frame, logged_admin)
 
+        currentMemberBox.pack(side=LEFT)
+        currentScroll.config(command=currentMemberBox.yview)
+        currentFrame.pack()
+
+        buttonFrameC = Frame(frame, padx=1, pady=3)
+        Button(buttonFrameC, text="Refresh", font=("new roman", 18), height=1, width=13,
+               command=lambda: refreshMember(frame, logged_admin)).grid(
+            row=0, column=0)
+
+        Button(buttonFrameC, text="Delete", font=("new roman", 18), height=1, width=13, command=deleteMember).grid(
+            row=0, column=1)
+        buttonFrameC.pack()
+
+        Label(frame, text="", font=10).pack()
+        Label(frame, text="Pending Members", font=("new roman", 21)).pack()
+
         global pendingFrame
         global pendingScroll
         global pendingFrame
@@ -465,29 +483,31 @@ def admin_login():
         global pendingMemberBox
         pendingMemberBox = Listbox(pendingFrame, yscrollcommand=pendingScroll.set, width=int(screen_width / 8),
                                    height=7, selectmode=SINGLE)
+        pendingMemberBox.pack(side=LEFT)
+        pendingScroll.config(command=pendingMemberBox.yview)
+        pendingFrame.pack()
+
+        buttonFrameP = Frame(frame, padx=1, pady=3)
+        Button(buttonFrameP, text="Refresh", font=("new roman", 18), height=1, width=9,
+               command=lambda: refreshList(frame, logged_admin)).grid(row=0,
+                                                                      column=0)
+        Button(buttonFrameP, text="Accept", font=("new roman", 18), height=1, width=9, command=acceptMember).grid(row=0,
+                                                                                                                  column=1)
+        Button(buttonFrameP, text="Reject", font=("new roman", 18), height=1, width=9, command=rejectMember).grid(row=0,
+                                                                                                                  column=2)
+        buttonFrameP.pack()
 
         showPendingMember(frame, logged_admin)
 
 
 def showPendingMember(frame, logged_admin):
     global pendingMemberBox
-    global pendingFrame
-    global buttonFrameP
+    global pending_member_list
     for i in logged_admin.get_member_database().wait_list:
-       pendingMemberBox.insert(END,  "ID: " + i.get_id() + "  " + "Name: " + i.get_name())
+        if(i not in pending_member_list):
+            pending_member_list.append(i)
+            pendingMemberBox.insert(END,  "ID: " + i.get_id() + "  " + "Name: " + i.get_name())
 
-    pendingMemberBox.pack(side=LEFT)
-    pendingScroll.config(command=pendingMemberBox.yview)
-    pendingFrame.pack()
-
-    buttonFrameP = Frame(frame, padx=1, pady=3)
-    Button(buttonFrameP, text="Refresh", font=("new roman", 18), height=1, width=9, command=refreshList).grid(row=0,
-                                                                                                              column=0)
-    Button(buttonFrameP, text="Accept", font=("new roman", 18), height=1, width=9, command=acceptMember).grid(row=0,
-                                                                                                              column=1)
-    Button(buttonFrameP, text="Reject", font=("new roman", 18), height=1, width=9, command=rejectMember).grid(row=0,
-                                                                                                              column=2)
-    buttonFrameP.pack()
 
 
 
@@ -495,24 +515,12 @@ def showCurrentMember(frame, logged_admin):
     # loop for Current Member List
     # while member in MemberList:
     global currentMemberBox
-    global currentFrame
-    global buttonFrameC
+    global current_member_list
     for i in logged_admin.get_member_database().database:
-        currentMemberBox.insert(END,  "ID: " + i.get_id() + "  " + "Name: " + i.get_name())
+        if(i not in current_member_list):
+            current_member_list.append(i)
+            currentMemberBox.insert(END,  "ID: " + i.get_id() + "  " + "Name: " + i.get_name())
 
-    currentMemberBox.pack(side=LEFT)
-    currentScroll.config(command=currentMemberBox.yview)
-    currentFrame.pack()
-
-    buttonFrameC = Frame(frame, padx=1, pady=3)
-    Button(buttonFrameC, text="Refresh", font=("new roman", 18), height=1, width=13, command=refreshMember).grid(
-        row=0, column=0)
-    Button(buttonFrameC, text="Delete", font=("new roman", 18), height=1, width=13, command=deleteMember).grid(
-        row=0, column=1)
-    buttonFrameC.pack()
-
-    Label(frame, text="", font=10).pack()
-    Label(frame, text="Pending Members", font=("new roman", 21)).pack()
 
 
 def rejectMember(admin:Administrator):
@@ -537,13 +545,12 @@ def deleteMember():
     currentMemberBox.delete(clicked_items)
 
 
-def refreshMember():
-    showCurrentMember(frame, logged_admin)
+def refreshMember(frame, logged_admin):
+    showCurrentMember(frame,logged_admin)
 
 
-
-def refreshList():
-    print("Refresh pending member list")
+def refreshList(frame, logged_admin):
+    showPendingMember(frame, logged_admin)
 
 
 def member():

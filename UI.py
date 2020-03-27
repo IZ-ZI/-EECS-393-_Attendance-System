@@ -1,10 +1,9 @@
 from tkinter import *
 from Administrator import Administrator
 from Member import Member
-from WaitList import WaitList
 
 admin = None
-wait_list = None
+
 screen = None
 
 login_account_entry = None
@@ -51,9 +50,7 @@ administrator = None
 def main_screen():
     global administrator
     global screen
-    global wait_list
 
-    wait_list = WaitList()
     screen = Tk()
     screen.geometry("600x300")
     screen.title("Attendance System Login")

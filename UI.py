@@ -234,10 +234,10 @@ def admin_login():
     currentScroll.config(command = currentMemberBox.yview)
     currentFrame.pack()
 
-    buttonFrame = Frame(frame, padx = 1, pady = 3)
-    Button(buttonFrame, text = "Refresh", font = ("new roman", 18), height = 1, width = 13, command = refreshMember).grid(row = 0, column = 0)
-    Button(buttonFrame, text = "Delete", font = ("new roman", 18), height = 1, width = 13, command = deleteMember).grid(row = 0, column = 1)
-    buttonFrame.pack()
+    buttonFrameC = Frame(frame, padx = 1, pady = 3)
+    Button(buttonFrameC, text = "Refresh", font = ("new roman", 18), height = 1, width = 13, command = refreshMember).grid(row = 0, column = 0)
+    Button(buttonFrameC, text = "Delete", font = ("new roman", 18), height = 1, width = 13, command = deleteMember).grid(row = 0, column = 1)
+    buttonFrameC.pack()
 
     Label(frame, text = "", font=10).pack()
     Label(frame, text = "Pending Members", font = ("new roman", 21)).pack()
@@ -245,6 +245,7 @@ def admin_login():
     pendingFrame = Frame(frame, padx = 1, pady = 3)
     pendingScroll = Scrollbar(pendingFrame)
     pendingScroll.pack(side = RIGHT, fill = Y)
+    global pendingMemberBox
     pendingMemberBox = Listbox(pendingFrame, yscrollcommand = pendingScroll.set, width = int(screen_width/8), height = 7, selectmode = SINGLE)
 
     for i in range(1, 15):
@@ -253,9 +254,25 @@ def admin_login():
     pendingMemberBox.pack(side = LEFT)
     pendingScroll.config(command = pendingMemberBox.yview)
     pendingFrame.pack()
-    Button(frame, text = "Refresh List", font = ("new roman", 18), height = 1, width = 20, command = refreshList).pack()
+
+    buttonFrameP = Frame(frame, padx = 1, pady=3)
+    Button(buttonFrameP, text = "Refresh", font = ("new roman", 18), height = 1, width = 9, command = refreshList).grid(row = 0, column = 0)
+    Button(buttonFrameP, text = "Accept", font = ("new roman", 18), height = 1, width = 9, command = acceptMember).grid(row = 0, column = 1)
+    Button(buttonFrameP, text = "Reject", font = ("new roman", 18), height = 1, width = 9, command = rejectMember).grid(row = 0, column = 2)
+    buttonFrameP.pack()
 
 
+def rejectMember():
+    clicked_items = pendingMemberBox.curselection()
+    pendingMemberBox.delete(clicked_items)
+
+
+def acceptMember():
+    clicked_items = pendingMemberBox.curselection()
+    #print(pendingMemberBox.get(clicked_items))
+    currentMemberBox.insert(END, currentMemberBox.get(clicked_items))
+
+    print("pending member is added to the current member list")
 
 def deleteMember():
     clicked_items = currentMemberBox.curselection()

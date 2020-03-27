@@ -488,7 +488,8 @@ def admin_login():
                command=lambda: refreshMember(logged_admin)).grid(
             row=0, column=0)
 
-        Button(buttonFrameC, text = "View", font = ("new roman", 18), height = 1, width = 9, command = viewMember).grid(row = 0, column = 1)
+        Button(buttonFrameC, text="View", font=("new roman", 18), height=1, width=9,
+               command=lambda: viewMember(logged_admin)).grid(row=0, column=1)
 
         Button(buttonFrameC, text="Delete", font=("new roman", 18), height=1, width=9, command=deleteMember).grid(
             row=0, column=2)
@@ -550,6 +551,7 @@ def rejectMember(logged_admin):
     if pendingMemberBox.curselection() != ():
         clicked_item_index = pendingMemberBox.curselection()[0]
         rej_id = logged_admin.get_member_database().wait_list[clicked_item_index].get_id()
+        logged_admin.permit(logged_admin.get_member_database().wait_list[clicked_item_index])
         logged_admin.get_member_database().reject_pending_member(rej_id)
         pendingMemberBox.delete(clicked_item_index)
         refreshList(logged_admin)
@@ -560,6 +562,7 @@ def acceptMember(logged_admin):
         clicked_item_index = pendingMemberBox.curselection()[0]
         acc_id = logged_admin.get_member_database().wait_list[clicked_item_index].get_id()
         logged_admin.get_member_database().wait_list[clicked_item_index].admin_list.append(logged_admin)
+        logged_admin.permit(logged_admin.get_member_database().wait_list[clicked_item_index])
         logged_admin.get_member_database().permit_pending_member(acc_id)
         pendingMemberBox.delete(clicked_item_index)
         refreshList(logged_admin)
@@ -574,15 +577,18 @@ def deleteMember():
 def refreshMember(logged_admin):
     showCurrentMember(logged_admin)
 
+
 def refreshList(logged_admin):
     showPendingMember(logged_admin)
 
-def viewMember():
-    clicked_items = currentMemberBox.curselection()
-    memberInfo = Toplevel(screenAdmin)
-    name = None  #fill in member name
-    memberInfo.title("Member " + name + " Information")
-    memberInfo.geometry("100x100")
+
+def viewMember(logged_admin):
+    if currentMemberBox.curselection() != ():
+        clicked_item_index = currentMemberBox.curselection()[0]
+        memberInfo = Toplevel(screenAdmin)
+        name = logged_admin.get_member_database().database[clicked_item_index].get_id()
+        memberInfo.title("Member " + name + " Information")
+        memberInfo.geometry("800x600")
 
 
 def member():

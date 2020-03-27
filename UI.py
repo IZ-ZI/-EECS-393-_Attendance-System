@@ -418,7 +418,7 @@ def admin_login():
     else:
         global screenAdmin
         screenAdmin = Toplevel(screen)
-        screenAdmin.title("Administrator %s" % logged_admin.get_name())
+        screenAdmin.title("Administrator %s" % logged_admin.get_organization_name())
         screen_width = screen.winfo_screenwidth() / 2
         screen_height = screen.winfo_screenheight() / 2
         xCoor = screen_width / 2

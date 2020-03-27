@@ -384,7 +384,7 @@ def admin_login():
 
         screenMember.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor, yCoor))
     else:
-        screenAdmin = Toplevel(screen)
+        screenAdmin = Toplevel(screen) 
         screenAdmin.title("Administrator: %s" % logged_admin.get_organization_name())
         screen_width = screen.winfo_screenwidth() / 2
         screen_height = screen.winfo_screenheight() / 2

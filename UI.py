@@ -45,6 +45,16 @@ club_confirm_password_entry = None
 administrator_list = []
 member_list = []
 
+currentMemberBox = None
+currentScroll = None
+currentFrame = None
+buttonFrameC = None
+
+pendingMemberBox = None
+pendingFrame = None
+pendingScroll = None
+buttonFrameP = None
+
 show_password = None
 
 
@@ -436,32 +446,19 @@ def admin_login():
         Label(frame, text="Current Members", font=("new roman", 21)).pack()
 
         global currentMemberBox
+        global currentScroll
+        global currentFrame
         currentFrame = Frame(frame, padx=1, pady=3, height=int(screen_height / 5))
         currentScroll = Scrollbar(currentFrame)
         currentScroll.pack(side=RIGHT, fill=Y)
         currentMemberBox = Listbox(currentFrame, yscrollcommand=currentScroll.set, width=int(screen_width / 8),
                                    height=7, selectmode=SINGLE)
 
-        # loop for Current Member List
-        # while member in MemberList:
+        showCurrentMember(frame, logged_admin)
 
-        for i in range(1, 15):
-            currentMemberBox.insert(END, "LINE " + str(i))
-
-        currentMemberBox.pack(side=LEFT)
-        currentScroll.config(command=currentMemberBox.yview)
-        currentFrame.pack()
-
-        buttonFrameC = Frame(frame, padx=1, pady=3)
-        Button(buttonFrameC, text="Refresh", font=("new roman", 18), height=1, width=13, command=refreshMember).grid(
-            row=0, column=0)
-        Button(buttonFrameC, text="Delete", font=("new roman", 18), height=1, width=13, command=deleteMember).grid(
-            row=0, column=1)
-        buttonFrameC.pack()
-
-        Label(frame, text="", font=10).pack()
-        Label(frame, text="Pending Members", font=("new roman", 21)).pack()
-
+        global pendingFrame
+        global pendingScroll
+        global pendingFrame
         pendingFrame = Frame(frame, padx=1, pady=3)
         pendingScroll = Scrollbar(pendingFrame)
         pendingScroll.pack(side=RIGHT, fill=Y)
@@ -469,34 +466,69 @@ def admin_login():
         pendingMemberBox = Listbox(pendingFrame, yscrollcommand=pendingScroll.set, width=int(screen_width / 8),
                                    height=7, selectmode=SINGLE)
 
-
-        for i in logged_admin:
-            pendingMemberBox.insert(END, "LINE " + str(i))
-
-        pendingMemberBox.pack(side=LEFT)
-        pendingScroll.config(command=pendingMemberBox.yview)
-        pendingFrame.pack()
-
-        buttonFrameP = Frame(frame, padx=1, pady=3)
-        Button(buttonFrameP, text="Refresh", font=("new roman", 18), height=1, width=9, command=refreshList).grid(row=0,
-                                                                                                                  column=0)
-        Button(buttonFrameP, text="Accept", font=("new roman", 18), height=1, width=9, command=acceptMember).grid(row=0,
-                                                                                                                  column=1)
-        Button(buttonFrameP, text="Reject", font=("new roman", 18), height=1, width=9, command=rejectMember).grid(row=0,
-                                                                                                                  column=2)
-        buttonFrameP.pack()
+        showPendingMember(frame, logged_admin)
 
 
-def rejectMember():
-    clicked_items = pendingMemberBox.curselection()
-    pendingMemberBox.delete(clicked_items)
+def showPendingMember(frame, logged_admin):
+    global pendingMemberBox
+    global pendingFrame
+    global buttonFrameP
+    for i in logged_admin.get_member_database().wait_list:
+       pendingMemberBox.insert(END,  "ID: " + i.get_id() + "  " + "Name: " + i.get_name())
+
+    pendingMemberBox.pack(side=LEFT)
+    pendingScroll.config(command=pendingMemberBox.yview)
+    pendingFrame.pack()
+
+    buttonFrameP = Frame(frame, padx=1, pady=3)
+    Button(buttonFrameP, text="Refresh", font=("new roman", 18), height=1, width=9, command=refreshList).grid(row=0,
+                                                                                                              column=0)
+    Button(buttonFrameP, text="Accept", font=("new roman", 18), height=1, width=9, command=acceptMember).grid(row=0,
+                                                                                                              column=1)
+    Button(buttonFrameP, text="Reject", font=("new roman", 18), height=1, width=9, command=rejectMember).grid(row=0,
+                                                                                                              column=2)
+    buttonFrameP.pack()
 
 
-def acceptMember():
-    clicked_items = pendingMemberBox.curselection()
-    # print(pendingMemberBox.get(clicked_items))
-    currentMemberBox.insert(END, currentMemberBox.get(clicked_items))
 
+def showCurrentMember(frame, logged_admin):
+    # loop for Current Member List
+    # while member in MemberList:
+    global currentMemberBox
+    global currentFrame
+    global buttonFrameC
+    for i in logged_admin.get_member_database().database:
+        currentMemberBox.insert(END,  "ID: " + i.get_id() + "  " + "Name: " + i.get_name())
+
+    currentMemberBox.pack(side=LEFT)
+    currentScroll.config(command=currentMemberBox.yview)
+    currentFrame.pack()
+
+    buttonFrameC = Frame(frame, padx=1, pady=3)
+    Button(buttonFrameC, text="Refresh", font=("new roman", 18), height=1, width=13, command=refreshMember).grid(
+        row=0, column=0)
+    Button(buttonFrameC, text="Delete", font=("new roman", 18), height=1, width=13, command=deleteMember).grid(
+        row=0, column=1)
+    buttonFrameC.pack()
+
+    Label(frame, text="", font=10).pack()
+    Label(frame, text="Pending Members", font=("new roman", 21)).pack()
+
+
+def rejectMember(admin:Administrator):
+    clicked_item_index = pendingMemberBox.curselection()
+    rej_id = admin.get_member_database().wait_list[clicked_item_index].get_id()
+    admin.get_member_database().reject_pending_member(rej_id)
+    pendingMemberBox.delete(clicked_item_index)
+    show_pending_member_info(admin)
+
+
+def acceptMember(admin:Administrator):
+    clicked_item_index = pendingMemberBox.curselection()
+    acc_id = admin.get_member_database().wait_list[clicked_item_index].get_id()
+    admin.get_member_database().permit_pending_member(acc_id)
+    pendingMemberBox.delete(clicked_item_index)
+    show_pending_member_info(admin)
     print("pending member is added to the current member list")
 
 
@@ -506,7 +538,8 @@ def deleteMember():
 
 
 def refreshMember():
-    print("Refresh current member list")
+    showCurrentMember(frame, logged_admin)
+
 
 
 def refreshList():

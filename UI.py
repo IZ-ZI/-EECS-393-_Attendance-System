@@ -45,7 +45,10 @@ club_confirm_password_entry = None
 administrator_list = []
 member_list = []
 
+
 pendingMemberBox = None
+show_password = None
+
 
 
 def main_screen():
@@ -72,6 +75,7 @@ def main_screen():
     global login_password_entry
     global login_account
     global login_password
+    global show_password
 
     login_account = StringVar()
     login_password = StringVar()
@@ -84,8 +88,9 @@ def main_screen():
     login_account_entry.place(x=screen_width / 30, y=screen_height * 3 / 30)
 
     Label(screen, text="Password", font=("new roman", 20)).place(x=screen_width / 30, y=screen_height * 10 / 30)
-
-    login_password_entry = Entry(screen, textvariable=login_password, width="20")
+    show_password = BooleanVar()
+    Checkbutton(screen, text="show password", variable=show_password, command=display_password).place(x=screen_width / 35, y=screen_height * 15 / 30)
+    login_password_entry = Entry(screen, show='*', textvariable=login_password, width="20")
     login_password_entry.place(x=screen_width / 30, y=screen_height * 13 / 30)
 
     # highlightbackground = 'green'
@@ -182,6 +187,14 @@ def id_to_member(id) -> Member:
     return None
 
 
+def id_to_member(id):
+    global member_list
+    for i in member_list:
+        if i.get_id() == id:
+            return i
+    return None
+
+
 def member_info():
     # file = open(member_id.get() + ".txt", "w")
     # file.write(member_id.get() + "\n")
@@ -257,12 +270,12 @@ def member_register():
     # 4
     Label(screen1, text="").pack()
     Label(screen1, text="Password").pack()
-    member_password_entry = Entry(screen1, textvariable=member_password)
+    member_password_entry = Entry(screen1, show='*', textvariable=member_password)
     member_password_entry.pack()
     # 5
     Label(screen1, text="").pack()
     Label(screen1, text="Confirm Password").pack()
-    member_confirm_password_entry = Entry(screen1, textvariable=member_confirm_password)
+    member_confirm_password_entry = Entry(screen1, show='*', textvariable=member_confirm_password)
     member_confirm_password_entry.pack()
     # 6
     Label(screen1, text="").pack()
@@ -324,12 +337,12 @@ def club_register():
     # 4
     Label(screen1, text="").pack()
     Label(screen1, text="Password").pack()
-    club_password_entry = Entry(screen1, textvariable=club_password)
+    club_password_entry = Entry(screen1, show='*', textvariable=club_password)
     club_password_entry.pack()
     # 5
     Label(screen1, text="").pack()
     Label(screen1, text="Confirm Password").pack()
-    club_confirm_password_entry = Entry(screen1, textvariable=club_confirm_password)
+    club_confirm_password_entry = Entry(screen1, show='*', textvariable=club_confirm_password)
     club_confirm_password_entry.pack()
 
     # 6
@@ -517,6 +530,11 @@ def member():
            fg='black').place(
         x=screen_width / 30, y=screen_height * 2 / 3)
 
+def display_password():
+    if(show_password.get()):
+        login_password_entry.config(show="")
+    else:
+        login_password_entry.config(show="*")
 
 def login():
     print("Login session started")

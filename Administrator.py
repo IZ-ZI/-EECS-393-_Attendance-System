@@ -31,6 +31,9 @@ class Administrator:
     def add_member(self, member) -> bool:
         self.memberDatabase.add(member)
 
+    def pend_member(self, member):
+        self.memberDatabase.add_to_wait_list(member)
+
     def permit(self, member_id):
         se.send_email(self.email_address, 'placeholder',
                       self.memberDatabase.permit_pending_member(member_id).get_email_adderss)

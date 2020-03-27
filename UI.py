@@ -29,8 +29,7 @@ member_confirm_password = None
 member_apply_club_id = None
 member_register_feedback = None
 
-
-screenAdmin  = None
+screenAdmin = None
 
 screen1 = None
 screenMember = None
@@ -50,6 +49,7 @@ club_confirm_password_entry = None
 
 administrator_list = None
 member_list = None
+
 
 def main_screen():
     global screen
@@ -115,36 +115,40 @@ def main_screen():
 
     screen.mainloop()
 
-def club_register_check():
-    global club_password #do this
 
-    if(club_password.get() != club_confirm_password.get()):
+def club_register_check():
+    global club_password  # do this
+
+    if (club_password.get() != club_confirm_password.get()):
         club_register_feedback['text'] = 'Password difference'
         # club_register_feedback.set("Password Difference")
-    elif(club_id.get() =='' or club_name.get()=='' or club_email.get()==''  or club_password.get()=='' or club_confirm_password.get() ==''):
+    elif (
+            club_id.get() == '' or club_name.get() == '' or club_email.get() == '' or club_password.get() == '' or club_confirm_password.get() == ''):
         club_register_feedback['text'] = 'Please fill all the spaces'
     else:
         club_info()
 
+
 def member_register_check():
-    if(member_password.get() != member_confirm_password.get()):
+    if (member_password.get() != member_confirm_password.get()):
         member_register_feedback['text'] = 'Password difference'
-    elif(member_id.get() =='' or member_name.get()=='' or member_email.get()==''  or member_password.get()=='' or member_confirm_password.get() =='' or member_apply_club_id.get() ==''):
+    elif (
+            member_id.get() == '' or member_name.get() == '' or member_email.get() == '' or member_password.get() == '' or member_confirm_password.get() == '' or member_apply_club_id.get() == ''):
         member_register_feedback['text'] = 'Please fill all the spaces'
     else:
         member_info()
 
+
 def club_info():
-    #file = open(club_id.get() + ".txt", "w")
-    #file.write(club_id.get() + "\n")
-    #file.write(club_name.get() + "\n")
-    #file.write(club_email.get() + "\n")
-    #file.write(club_password.get() + "\n")
-    #file.write(club_confirm_password.get() + "\n")
-    #file.close()
+    # file = open(club_id.get() + ".txt", "w")
+    # file.write(club_id.get() + "\n")
+    # file.write(club_name.get() + "\n")
+    # file.write(club_email.get() + "\n")
+    # file.write(club_password.get() + "\n")
+    # file.write(club_confirm_password.get() + "\n")
+    # file.close()
     administrator = Administrator(club_name.get(), club_id.get(), club_email.get(), club_password.get())
     administrator_list.append(administrator)
-
 
     club_id_entry.delete(0, END)
     club_name_entry.delete(0, END)
@@ -162,36 +166,35 @@ def id_to_admin(id):
             return i
     return None
 
-def member_info():
 
-   # file = open(member_id.get() + ".txt", "w")
-   # file.write(member_id.get() + "\n")
-   # file.write(member_name.get() + "\n")
-   # file.write(member_email.get() + "\n")
-   # file.write(member_password.get() + "\n")
-   # file.write(member_confirm_password.get() + "\n")
-   # file.write(member_apply_club_id.get() + "\n")
-   # file.close()
+def member_info():
+    # file = open(member_id.get() + ".txt", "w")
+    # file.write(member_id.get() + "\n")
+    # file.write(member_name.get() + "\n")
+    # file.write(member_email.get() + "\n")
+    # file.write(member_password.get() + "\n")
+    # file.write(member_confirm_password.get() + "\n")
+    # file.write(member_apply_club_id.get() + "\n")
+    # file.close()
 
     new_member = Administrator(member_name.get(), member_id.get(), member_email.get(), member_password.get())
     member_list.append(new_member)
 
-    #this send email to club by using member_apply_club_id
+    # this send email to club by using member_apply_club_id
 
     administrator = id_to_admin(member_apply_club_id.get())
 
     administrator.pend_member(new_member)
 
-
-
-    member_id_entry.delete(0,END)
-    member_name_entry.delete(0,END)
-    member_email_entry.delete(0,END)
-    member_password_entry.delete(0,END)
-    member_confirm_password_entry.delete(0,END)
-    member_apply_club_id_entry.delete(0,END)
+    member_id_entry.delete(0, END)
+    member_name_entry.delete(0, END)
+    member_email_entry.delete(0, END)
+    member_password_entry.delete(0, END)
+    member_confirm_password_entry.delete(0, END)
+    member_apply_club_id_entry.delete(0, END)
 
     member_register_feedback['text'] = 'Registration sent'
+
 
 def member_register():
     global screen1
@@ -213,7 +216,6 @@ def member_register():
     global member_confirm_password_entry
     global member_apply_club_id_entry
     global member_register_feedback
-
 
     member_id = StringVar()
     member_name = StringVar()
@@ -257,7 +259,7 @@ def member_register():
     Button(screen1, text="Register", height="3", width="20", command=member_register_check).pack()
 
     # 8
-    Label(screen1, text = "").pack()
+    Label(screen1, text="").pack()
     member_register_feedback = Label(screen1, text=" ", fg="green", font=("new roman", 15))
     member_register_feedback.pack()
 
@@ -316,11 +318,11 @@ def club_register():
     club_confirm_password_entry.pack()
 
     # 6
-    Label(screen1, text = "").pack()
-    Button(screen1, text="Register", height= "3", width = "20", command = club_register_check).pack()
+    Label(screen1, text="").pack()
+    Button(screen1, text="Register", height="3", width="20", command=club_register_check).pack()
 
     # 7
-    Label(screen1, text = "").pack()
+    Label(screen1, text="").pack()
     club_register_feedback = Label(screen1, text=" ", fg="green", font=("new roman", 15))
     club_register_feedback.pack()
 
@@ -329,27 +331,28 @@ def admin():
     screen_width = screen.winfo_screenwidth() / 2
     screen_height = screen.winfo_screenheight() / 2
     Label(screen, text="Club/Organization ID", font=("new roman", 20)).place(x=screen_width / 30, y=screen_height / 30)
-    Label(screen, text="Password",font=("new roman", 20)).place(x=screen_width / 30, y=screen_height*10/30)
+    Label(screen, text="Password", font=("new roman", 20)).place(x=screen_width / 30, y=screen_height * 10 / 30)
     Button(screen, text="New Club Register", height="5", width="20", command=club_register, fg='black').place(
         x=screen_width * 2 / 3 + screen_width / 30, y=screen_height * 2 / 3)
-    Button(screen, text="Administrator Login", font = ("new roman", 15),height= "5", width = "20", command = admin_login, fg='black').place(x = screen_width/30, y = screen_height*2/3)
+    Button(screen, text="Administrator Login", font=("new roman", 15), height="5", width="20", command=admin_login,
+           fg='black').place(x=screen_width / 30, y=screen_height * 2 / 3)
 
 
 def member_login():
     global screenMember
     print("member login session started")
-    print('%s' %login_account_entry)
+    print('%s' % login_account_entry)
     # implement whatever needed to check for login
     if member_id != '' and member_password:
         if login_account_entry == member_id and login_password_entry == member_password:
-               screenMember = Toplevel(screen)
-               screenMember.title("Member")
-               screen_width = screen.winfo_screenwidth() / 2
-               screen_height = screen.winfo_screenheight() / 2
-               xCoor = screen_width / 2 + 20
-               yCoor = screen_height / 2 + 20
+            screenMember = Toplevel(screen)
+            screenMember.title("Member")
+            screen_width = screen.winfo_screenwidth() / 2
+            screen_height = screen.winfo_screenheight() / 2
+            xCoor = screen_width / 2 + 20
+            yCoor = screen_height / 2 + 20
 
-               screenMember.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor, yCoor))
+            screenMember.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor, yCoor))
 
     else:
         print('error')
@@ -362,28 +365,40 @@ def member_login():
 
         screenMember.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor, yCoor))
 
+
 def admin_login():
     print("admin login session started")
-    #implement whatever needed to check for login
+    # implement whatever needed to check for login
+    logged_admin = id_to_admin(login_account.get())
+    if logged_admin is None:
+        print('error')
+        screenMember = Toplevel(screen)
+        screenMember.title("Error")
+        screen_width = screen.winfo_screenwidth() / 8
+        screen_height = screen.winfo_screenheight() / 8
+        xCoor = screen_width / 2 + 20
+        yCoor = screen_height / 2 + 20
 
-    global screenAdmin
-    screenAdmin = Toplevel(screen)
-    screenAdmin.title("Administrator")
-    screen_width = screen.winfo_screenwidth() / 2
-    screen_height = screen.winfo_screenheight() / 2
-    xCoor = screen_width /2
-    yCoor = screen_height / 2
+        screenMember.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor, yCoor))
+    else:
+        screenAdmin = Toplevel(screen)
+        screenAdmin.title("Administrator")
+        screen_width = screen.winfo_screenwidth() / 2
+        screen_height = screen.winfo_screenheight() / 2
+        xCoor = screen_width / 2
+        yCoor = screen_height / 2
 
-    screenAdmin.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor,yCoor))
-    frame = LabelFrame(screenAdmin, text = "Members", font = ("new roman", 21), padx = 10, pady = 10, height = screen_height, width = screen_width/2)
-    frame.place(x=screen_width/2, y=0)
+        screenAdmin.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor, yCoor))
+        frame = LabelFrame(screenAdmin, text="Members", font=("new roman", 21), padx=10, pady=10, height=screen_height,
+                       width=screen_width / 2)
+        frame.place(x=screen_width / 2, y=0)
 
-    Label(frame, text= "Current Members", font = ("new roman", 21)).pack()
+        Label(frame, text="Current Members", font=("new roman", 21)).pack()
 
-    Button(frame, text = "Refresh Members", font = ("new roman", 15), command = refreshMember).pack()
+        Button(frame, text="Refresh Members", font=("new roman", 15), command=refreshMember).pack()
 
-    Label(frame, text = "Pending Members", font = ("new roman", 21)).pack()
-    Button(frame, text = "Refresh List", font = ("new roman", 15), command = refreshList).pack()
+        Label(frame, text="Pending Members", font=("new roman", 21)).pack()
+        Button(frame, text="Refresh List", font=("new roman", 15), command=refreshList).pack()
 
 
 def refreshMember():
@@ -393,13 +408,16 @@ def refreshMember():
 def refreshList():
     print("Refresh pending member list")
 
+
 def member():
     screen_width = screen.winfo_screenwidth() / 2
     screen_height = screen.winfo_screenheight() / 2
-    Label(screen, text="User ID                              ", font=("new roman", 20)).place(x=screen_width / 30, y=screen_height / 30)
+    Label(screen, text="User ID                              ", font=("new roman", 20)).place(x=screen_width / 30,
+                                                                                              y=screen_height / 30)
     Button(screen, text="New Member Register", height="5", width="20", command=member_register, fg='black').place(
         x=screen_width * 2 / 3 + screen_width / 30, y=screen_height * 2 / 3)
-    Button(screen, text="Member Login", font = ("new roman", 15),height="5", width="20", command=member_login, fg='black').place(
+    Button(screen, text="Member Login", font=("new roman", 15), height="5", width="20", command=member_login,
+           fg='black').place(
         x=screen_width / 30, y=screen_height * 2 / 3)
 
 

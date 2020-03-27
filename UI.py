@@ -46,6 +46,7 @@ administrator_list = []
 member_list = []
 current_member_list = []
 pending_member_list = []
+added_club_list=[]
 
 currentMemberBox = None
 currentScroll = None
@@ -56,6 +57,10 @@ pendingMemberBox = None
 pendingFrame = None
 pendingScroll = None
 buttonFrameP = None
+
+clubBox = None
+clubScroll = None
+clubFrame = None
 
 show_password = None
 
@@ -403,6 +408,9 @@ def member_login():
         frame = Frame(screenMember, padx=10, pady=10)
         frame.place(x=screen_width / 2, y=2, width=screen_width / 2, height=screen_height)
 
+        global clubBox
+        global clubScroll
+        global clubFrame
         Label(frame, text="Clubs", font=("new roman", 21)).pack()
         clubFrame = Frame(frame, padx=1, pady=3, height=int(screen_height / 5))
         clubScroll = Scrollbar(clubFrame)
@@ -410,12 +418,25 @@ def member_login():
         clubBox = Listbox(clubFrame, yscrollcommand=clubScroll.set, width=int(screen_width / 8), height=20,
                           selectmode=SINGLE)
 
-        for i in range(1, 15):
-            clubBox.insert(END, "LINE " + str(i))
+        show_club_list(logged_member)
 
         clubBox.pack(side=LEFT)
         clubScroll.config(command=clubBox.yview)
         clubFrame.pack()
+        Button(frame, text="Refresh", font=("new roman", 18), height=1, width=10,
+               command=lambda: refreshClub(logged_member)).pack()
+
+def show_club_list(logged_member):
+    global clubBox
+    global added_club_list
+    for i in logged_member.admin_list:
+        if (i not in added_club_list):
+            added_club_list.append(i)
+            clubBox.insert(END,  "ID: " + i.get_organization_id() + "  " + "Name: " + i.get_organization_name())
+
+
+def refreshClub(logged_member):
+    show_club_list(logged_member)
 
 
 def admin_login():
@@ -456,7 +477,7 @@ def admin_login():
         currentMemberBox = Listbox(currentFrame, yscrollcommand=currentScroll.set, width=int(screen_width / 8),
                                    height=7, selectmode=SINGLE)
 
-        showCurrentMember(frame, logged_admin)
+        showCurrentMember(logged_admin)
 
         currentMemberBox.pack(side=LEFT)
         currentScroll.config(command=currentMemberBox.yview)
@@ -464,7 +485,7 @@ def admin_login():
 
         buttonFrameC = Frame(frame, padx=1, pady=3)
         Button(buttonFrameC, text="Refresh", font=("new roman", 18), height=1, width=9,
-               command=lambda: refreshMember(frame, logged_admin)).grid(
+               command=lambda: refreshMember(logged_admin)).grid(
             row=0, column=0)
 
         Button(buttonFrameC, text = "View", font = ("new roman", 18), height = 1, width = 9, command = viewMember).grid(row = 0, column = 1)
@@ -491,18 +512,18 @@ def admin_login():
 
         buttonFrameP = Frame(frame, padx=1, pady=3)
         Button(buttonFrameP, text="Refresh", font=("new roman", 18), height=1, width=9,
-               command=lambda: refreshList(frame, logged_admin)).grid(row=0,
+               command=lambda: refreshList(logged_admin)).grid(row=0,
                                                                       column=0)
-        Button(buttonFrameP, text="Accept", font=("new roman", 18), height=1, width=9, command=lambda:acceptMember(frame, logged_admin)).grid(row=0,
+        Button(buttonFrameP, text="Accept", font=("new roman", 18), height=1, width=9, command=lambda:acceptMember(logged_admin)).grid(row=0,
                                                                                                                   column=1)
-        Button(buttonFrameP, text="Reject", font=("new roman", 18), height=1, width=9, command=lambda:rejectMember(frame, logged_admin)).grid(row=0,
+        Button(buttonFrameP, text="Reject", font=("new roman", 18), height=1, width=9, command=lambda:rejectMember(logged_admin)).grid(row=0,
                                                                                                                   column=2)
         buttonFrameP.pack()
 
-        showPendingMember(frame, logged_admin)
+        showPendingMember(logged_admin)
 
 
-def showPendingMember(frame, logged_admin):
+def showPendingMember(logged_admin):
     global pendingMemberBox
     global pending_member_list
     for i in logged_admin.get_member_database().wait_list:
@@ -512,7 +533,7 @@ def showPendingMember(frame, logged_admin):
 
 
 
-def showCurrentMember(frame, logged_admin):
+def showCurrentMember(logged_admin):
     # loop for Current Member List
     # while member in MemberList:
     global currentMemberBox
@@ -524,25 +545,25 @@ def showCurrentMember(frame, logged_admin):
 
 
 
-def rejectMember(frame, logged_admin):
+def rejectMember(logged_admin):
     global pending_member_list
     if pendingMemberBox.curselection() != ():
         clicked_item_index = pendingMemberBox.curselection()[0]
         rej_id = logged_admin.get_member_database().wait_list[clicked_item_index].get_id()
         logged_admin.get_member_database().reject_pending_member(rej_id)
         pendingMemberBox.delete(clicked_item_index)
-        pending_member_list.remove(logged_admin.get_member_database().wait_list[clicked_item_index])
-        refreshList(frame, logged_admin)
+        refreshList(logged_admin)
 
 
-def acceptMember(frame, logged_admin):
+def acceptMember(logged_admin):
     if pendingMemberBox.curselection() != ():
         clicked_item_index = pendingMemberBox.curselection()[0]
         acc_id = logged_admin.get_member_database().wait_list[clicked_item_index].get_id()
+        logged_admin.get_member_database().wait_list[clicked_item_index].admin_list.append(logged_admin)
         logged_admin.get_member_database().permit_pending_member(acc_id)
         pendingMemberBox.delete(clicked_item_index)
-        refreshList(frame, logged_admin)
-        refreshMember(frame, logged_admin)
+        refreshList(logged_admin)
+        refreshMember(logged_admin)
 
 
 def deleteMember():
@@ -550,12 +571,11 @@ def deleteMember():
     currentMemberBox.delete(clicked_items)
 
 
-def refreshMember(frame, logged_admin):
-    showCurrentMember(frame,logged_admin)
+def refreshMember(logged_admin):
+    showCurrentMember(logged_admin)
 
-
-def refreshList(frame, logged_admin):
-    showPendingMember(frame, logged_admin)
+def refreshList(logged_admin):
+    showPendingMember(logged_admin)
 
 def viewMember():
     clicked_items = currentMemberBox.curselection()

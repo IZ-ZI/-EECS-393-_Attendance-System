@@ -375,7 +375,7 @@ def member_login():
         screenMember.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor, yCoor))
     else:
         screenMember = Toplevel(screen)
-        screenMember.title("Member")
+        screenMember.title("Member: %s" % logged_member.get_name())
         screen_width = screen.winfo_screenwidth() / 2
         screen_height = screen.winfo_screenheight() / 2
         xCoor = screen_width / 2 + 20
@@ -418,7 +418,7 @@ def admin_login():
     else:
         global screenAdmin
         screenAdmin = Toplevel(screen)
-        screenAdmin.title("Administrator")
+        screenAdmin.title("Administrator %s" % logged_admin.get_name())
         screen_width = screen.winfo_screenwidth() / 2
         screen_height = screen.winfo_screenheight() / 2
         xCoor = screen_width / 2

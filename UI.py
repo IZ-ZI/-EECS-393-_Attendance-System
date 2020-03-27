@@ -177,8 +177,23 @@ def member_login():
     screen_height = screen.winfo_screenheight() / 2
     xCoor = screen_width /2+20
     yCoor = screen_height / 2+20
-
     screenMember.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor,yCoor))
+
+    frame = Frame(screenMember, padx = 10, pady = 10)
+    frame.place(x=screen_width/2, y=2, width = screen_width/2, height = screen_height)
+
+    Label(frame, text = "Clubs", font = ("new roman", 21)).pack()
+    clubFrame = Frame(frame, padx= 1, pady = 3, height = int(screen_height / 5))
+    clubScroll = Scrollbar(clubFrame)
+    clubScroll.pack(side = RIGHT, fill = Y)
+    clubBox = Listbox(clubFrame, yscrollcommand = clubScroll.set, width = int(screen_width/8), height = 20, selectmode = SINGLE)
+
+    for i in range(1, 15):
+        clubBox.insert(END, "LINE " + str(i))
+
+    clubBox.pack(side = LEFT)
+    clubScroll.config(command = clubBox.yview)
+    clubFrame.pack()
 
 
 
@@ -195,8 +210,8 @@ def admin_login():
     screen_height = screen.winfo_screenheight() / 2
     xCoor = screen_width /2
     yCoor = screen_height / 2
-
     screenAdmin.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor,yCoor))
+
     frame = Frame(screenAdmin, padx = 10, pady = 10)
     frame.place(x=screen_width/2, y=2, width = screen_width/2, height = screen_height)
 
@@ -206,7 +221,7 @@ def admin_login():
     currentFrame = Frame(frame, padx = 1, pady = 3, height = int(screen_height/5))
     currentScroll = Scrollbar(currentFrame)
     currentScroll.pack(side = RIGHT, fill = Y)
-    currentMemberBox = Listbox(currentFrame, yscrollcommand = currentScroll.set, width = int(screen_width/8), height = 7)
+    currentMemberBox = Listbox(currentFrame, yscrollcommand = currentScroll.set, width = int(screen_width/8), height = 7, selectmode = SINGLE)
 
     #loop for Current Member List
     #while member in MemberList:
@@ -218,7 +233,8 @@ def admin_login():
     currentScroll.config(command = currentMemberBox.yview)
     currentFrame.pack()
 
-    Button(frame, text = "Refresh Members", font = ("new roman", 15), command = refreshMember).pack()
+    Button(frame, text = "Refresh Members", font = ("new roman", 18), height = 1, width = 20, command = refreshMember).pack()
+    #Button(frame, text = "Delete", font = ("new roman", 18), command = deleteMember).pack()
 
 
 
@@ -236,7 +252,7 @@ def admin_login():
     pendingMemberBox.pack(side = LEFT)
     pendingScroll.config(command = pendingMemberBox.yview)
     pendingFrame.pack()
-    Button(frame, text = "Refresh List", font = ("new roman", 15), command = refreshList).pack()
+    Button(frame, text = "Refresh List", font = ("new roman", 18), height = 1, width = 20, command = refreshList).pack()
 
 
 

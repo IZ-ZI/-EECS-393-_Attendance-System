@@ -429,7 +429,7 @@ def login():
 
 
 def forget():
-    print("U SUCK")
+    print("Feature coming...")
 
 
 main_screen()

@@ -9,7 +9,7 @@ def construct_email(e1, e2, smtp_server, sender, receiver, password, port, name,
                 \nTo: %s
                 \nSubject: %s
                 \n%s
-                """ % (sender, receiver, ('[Received Request From: %s ]' %id) + e1.get(), ('Hello, this is %s. \n' %name) + e2.get('1.0', 'end'))
+                """ % (sender, receiver, ('[Received Request From: %s] ' %id) + e1.get(), ('Hello, this is %s. \n' %name) + e2.get('1.0', 'end'))
 
     with smtplib.SMTP(smtp_server, port) as server:
         server.starttls()

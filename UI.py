@@ -47,11 +47,6 @@ member_list = []
 
 show_password = None
 
-def display_password():
-    if(show_password.get()):
-        login_password_entry.config(show="")
-    else:
-        login_password_entry.config(show="*")
 
 def main_screen():
     global screen
@@ -91,7 +86,7 @@ def main_screen():
 
     Label(screen, text="Password", font=("new roman", 20)).place(x=screen_width / 30, y=screen_height * 10 / 30)
     show_password = BooleanVar()
-    Checkbutton(screen, text="show password", variable=show_password, command=display_password).place(x=screen_width / 35, y=screen_height * 14 / 30)
+    Checkbutton(screen, text="show password", variable=show_password, command=display_password).place(x=screen_width / 35, y=screen_height * 15 / 30)
     login_password_entry = Entry(screen, show='*', textvariable=login_password, width="20")
     login_password_entry.place(x=screen_width / 30, y=screen_height * 13 / 30)
 
@@ -529,6 +524,11 @@ def member():
            fg='black').place(
         x=screen_width / 30, y=screen_height * 2 / 3)
 
+def display_password():
+    if(show_password.get()):
+        login_password_entry.config(show="")
+    else:
+        login_password_entry.config(show="*")
 
 def login():
     print("Login session started")

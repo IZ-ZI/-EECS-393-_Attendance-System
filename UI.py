@@ -200,45 +200,43 @@ def admin_login():
     frame = Frame(screenAdmin, padx = 10, pady = 10)
     frame.place(x=screen_width/2, y=2, width = screen_width/2, height = screen_height)
 
-    Label(frame, text= "Current Members", font = ("new roman", 21)).place(x = 50, y = 0)
 
-    currentFrame = Frame(frame, padx = 1, pady = 3, width = screen_width/2, height = 50)
+    Label(frame, text= "Current Members", font = ("new roman", 21)).pack()
+
+    currentFrame = Frame(frame, padx = 1, pady = 3, height = int(screen_height/5))
     currentScroll = Scrollbar(currentFrame)
     currentScroll.pack(side = RIGHT, fill = Y)
-    currentMemberBox = Listbox(currentFrame, yscrollcommand = currentScroll.set)
+    currentMemberBox = Listbox(currentFrame, yscrollcommand = currentScroll.set, width = int(screen_width/8), height = 7)
 
     #loop for Current Member List
     #while member in MemberList:
 
-    for i in range(1, 100):
-        currentMemberBox.insert(END, "LINE" + str(i))
+    for i in range(1, 15):
+        currentMemberBox.insert(END, "LINE " + str(i))
 
     currentMemberBox.pack(side = LEFT)
     currentScroll.config(command = currentMemberBox.yview)
-    currentFrame.place(x = 30, y = 50, width = screen_width/2, height = 50)
+    currentFrame.pack()
 
-    Button(frame, text = "Refresh Members", font = ("new roman", 15), command = refreshMember).place(x = 50, y = 60)
+    Button(frame, text = "Refresh Members", font = ("new roman", 15), command = refreshMember).pack()
 
-    Label(frame, text = "Pending Members", font = ("new roman", 21)).place(x = 50, y = 70)
 
-    pendingFrame = Frame(frame, padx = 1, pady = 1)
+
+    Label(frame, text = "", font=10).pack()
+    Label(frame, text = "Pending Members", font = ("new roman", 21)).pack()
+
+    pendingFrame = Frame(frame, padx = 1, pady = 3)
     pendingScroll = Scrollbar(pendingFrame)
     pendingScroll.pack(side = RIGHT, fill = Y)
-    pendingMemberBox = Listbox(pendingFrame, yscrollcommand = pendingScroll.set)
+    pendingMemberBox = Listbox(pendingFrame, yscrollcommand = pendingScroll.set, width = int(screen_width/8), height = 7)
 
-    for i in range(1, 100):
+    for i in range(1, 15):
         pendingMemberBox.insert(END, "LINE" + str(i))
 
     pendingMemberBox.pack(side = LEFT)
     pendingScroll.config(command = pendingMemberBox.yview)
-    pendingFrame.place(x = 30, y = 100)
-
-
-
-
-
-
-    Button(frame, text = "Refresh List", font = ("new roman", 15), command = refreshList).place(x = 50, y = 300)
+    pendingFrame.pack()
+    Button(frame, text = "Refresh List", font = ("new roman", 15), command = refreshList).pack()
 
 
 

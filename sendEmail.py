@@ -28,7 +28,7 @@ def construct_email(e1, e2, smtp_server, sender, receiver, password, port, name,
         server.login(sender, password)
         server.sendmail(sender, receiver, message)
         server.close()
-    tk.Label(master, text="Email sent successfully").grid(column=0, row=4, sticky=tk.W)
+    tk.Label(master, text="Notification sent successfully").grid(column=0, row=4, sticky=tk.W)
 
 
 def send_email(sender_email: str, sender_password: str, receiver_email: str, sder_name: str, sder_id: str, type: bool):
@@ -42,26 +42,26 @@ def send_email(sender_email: str, sender_password: str, receiver_email: str, sde
     master = tk.Tk()
     master.title("Send Email Notification")
     master.geometry("600x300")
-    tk.Label(master, text="Subject: ").grid(row=0)
-    tk.Label(master, text="Notification: ").grid(row=1)
+    tk.Label(master, text="Greeting: ").grid(row=0)
+    tk.Label(master, text="Enter Notification Here: ").grid(row=1)
 
     e1 = tk.Entry(master)
     e2 = tk.Text(master, width=60, height=10)
 
     e1.grid(row=0, column=1)
-    e2.grid(row=1, column=1)
+    e2.grid(row=2, column=1)
 
-    tk.Button(master,
-              text='Cancel',
-              command=master.quit).grid(row=3,
-                                        column=0,
-                                        sticky=tk.W,
-                                        pady=4)
+    # tk.Button(master,
+    #           text='Cancel',
+    #           command=master.quit).grid(row=3,
+    #                                     column=0,
+    #                                     sticky=tk.W,
+    #                                     pady=4)
     tk.Button(master,
               text='Confirm',
               command=lambda: construct_email(e1, e2, smtp_server, sender, receiver, password, port, sder_name, sder_id,
                                               type, master)).grid(row=3,
-                                                                  column=1,
+                                                                  column=0,
                                                                   sticky=tk.W,
                                                                   pady=4)
     master.mainloop()

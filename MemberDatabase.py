@@ -1,4 +1,3 @@
-from Member import Member
 
 
 class MemberDatabase:
@@ -6,7 +5,7 @@ class MemberDatabase:
         self.database = []
         self.wait_list = []
 
-    def is_present(self, member_id):
+    def is_present(self, member_id: str) -> bool:
         for i in self.database:
             if i.get_id() == member_id:
                 return True
@@ -49,7 +48,7 @@ class MemberDatabase:
 
         return False
 
-    def login(self, member_id, password) -> Member:
+    def login(self, member_id, password) :
         if not self.is_present(member_id):
             return None
 
@@ -59,17 +58,20 @@ class MemberDatabase:
         else:
             return None
 
-    def permit_pending_member(self, member_id) -> Member:
+    def add_to_wait_list(self, member):
+        self.wait_list.append(member)
+
+    def permit_pending_member(self, member_id) :
         for i in self.wait_list:
             if i.get_id() == member_id:
-                self.database.append(i)
+                self.add(i)
                 self.wait_list.remove(i)
                 return i
 
         # The member is not in wait list if lines below are reached
         return None
 
-    def reject_pending_member(self, member_id) -> Member:
+    def reject_pending_member(self, member_id):
         for i in self.wait_list:
             if i.get_id() == member_id:
                 removing_member = i

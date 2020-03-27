@@ -611,7 +611,7 @@ def login():
 
 
 def forget():
-    print("U SUCK")
+    print("to be developed")
 
 
 main_screen()

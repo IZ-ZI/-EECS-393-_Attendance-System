@@ -59,12 +59,36 @@ class TestMemberDatabase(TestCase):
         self.assertTrue(self.tester.login("B_id", "b") is self.mem2)
         self.assertFalse(self.tester.login("B_id", "any") is self.mem2)
 
+    # add_to_wait_list is tested under this, since it was only 1 line
     def test_permit_pending_member(self):
         self.assertTrue(self.tester.permit_pending_member("any") is None)
-        self.tester.wait_list.append(self.mem1)
+        self.tester.add_to_wait_list(self.mem1)
         self.assertTrue(self.tester.permit_pending_member("A_id") is self.mem1)
         self.assertTrue(len(self.tester.wait_list) == 0)
         self.assertTrue(self.tester.is_present("A_id"))
 
+        self.tester.add_to_wait_list(self.mem1)
+        self.tester.add_to_wait_list(self.mem2)
+
+        self.assertTrue(self.tester.permit_pending_member("A_id") is self.mem1)
+        self.assertTrue(self.tester.permit_pending_member("B_id") is self.mem2)
+        self.assertTrue(len(self.tester.wait_list) == 0)
+        self.assertTrue(self.tester.is_present("A_id"))
+        self.assertTrue(self.tester.is_present("B_id"))
+
     def test_reject_pending_member(self):
-        self.fail()
+        tester2 = MemberDatabase()
+        mem3 = Member("C", "C_id", "c@email.com", "c")
+        mem4 = Member("D", "D_id", "d@email.com", "d")
+        self.assertTrue(tester2.reject_pending_member("any") is None)
+        tester2.add_to_wait_list(mem3)
+        self.assertTrue(tester2.reject_pending_member("C_id") is mem3)
+        self.assertTrue(len(tester2.wait_list) == 0)
+        self.assertTrue(len(tester2.database) == 0)  # nothing added
+
+        tester2.add_to_wait_list(mem3)
+        tester2.add_to_wait_list(mem4)
+        self.assertTrue(tester2.reject_pending_member("C_id") is mem3)
+        self.assertTrue(tester2.reject_pending_member("D_id") is mem4)
+        self.assertTrue(len(tester2.wait_list) == 0)
+        self.assertTrue(len(tester2.database) == 0)  # nothing added

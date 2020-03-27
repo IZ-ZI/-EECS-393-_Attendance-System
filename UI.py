@@ -45,6 +45,13 @@ club_confirm_password_entry = None
 administrator_list = []
 member_list = []
 
+show_password = None
+
+def display_password():
+    if(show_password.get()):
+        login_password_entry.config(show="")
+    else:
+        login_password_entry.config(show="*")
 
 def main_screen():
     global screen
@@ -70,6 +77,7 @@ def main_screen():
     global login_password_entry
     global login_account
     global login_password
+    global show_password
 
     login_account = StringVar()
     login_password = StringVar()
@@ -82,8 +90,9 @@ def main_screen():
     login_account_entry.place(x=screen_width / 30, y=screen_height * 3 / 30)
 
     Label(screen, text="Password", font=("new roman", 20)).place(x=screen_width / 30, y=screen_height * 10 / 30)
-
-    login_password_entry = Entry(screen, textvariable=login_password, width="20")
+    show_password = BooleanVar()
+    Checkbutton(screen, text="show password", variable=show_password, command=display_password).place(x=screen_width / 35, y=screen_height * 14 / 30)
+    login_password_entry = Entry(screen, show='*', textvariable=login_password, width="20")
     login_password_entry.place(x=screen_width / 30, y=screen_height * 13 / 30)
 
     # highlightbackground = 'green'
@@ -93,8 +102,9 @@ def main_screen():
     Button(screen, text="Member", height="5", width="20", command=member, fg='black', ).place(x=screen_width * 2 / 3,
                                                                                               y=screen_height / 4 + screen_height / 30)
 
-    Button(screen, text="Administrator Login", height="5", width="20", command=admin_login, fg='black').place(x=screen_width / 30,
-                                                                                                y=screen_height * 2 / 3)
+    Button(screen, text="Administrator Login", height="5", width="20", command=admin_login, fg='black').place(
+        x=screen_width / 30,
+        y=screen_height * 2 / 3)
     # Button(screen, text="Login", height= "3", width = "20", command = login, fg='black').grid(row=6, column=0)
     Button(screen, text="Forget/Reset Password", height="5", width="20", command=forget, fg='black').place(
         x=screen_width / 3 + screen_width / 30, y=screen_height * 2 / 3)
@@ -116,10 +126,10 @@ def club_register_check():
         club_register_feedback['text'] = 'Password difference'
         # club_register_feedback.set("Password Difference")
     elif (
-        club_id.get() == '' or club_name.get() == '' or club_email.get() == '' or club_password.get() == '' or club_confirm_password.get() == ''):
+            club_id.get() == '' or club_name.get() == '' or club_email.get() == '' or club_password.get() == '' or club_confirm_password.get() == ''):
         club_register_feedback['text'] = 'Please fill all the spaces'
-    elif(
-        id_to_admin(club_id.get()) is not None):
+    elif (
+            id_to_admin(club_id.get()) is not None):
         club_register_feedback['text'] = 'This id has already been registered'
     else:
         club_info()
@@ -129,13 +139,13 @@ def member_register_check():
     if (member_password.get() != member_confirm_password.get()):
         member_register_feedback['text'] = 'Password difference'
     elif (
-        member_id.get() == '' or member_name.get() == '' or member_email.get() == '' or member_password.get() == '' or member_confirm_password.get() == '' or member_apply_club_id.get() == ''):
+            member_id.get() == '' or member_name.get() == '' or member_email.get() == '' or member_password.get() == '' or member_confirm_password.get() == '' or member_apply_club_id.get() == ''):
         member_register_feedback['text'] = 'Please fill all the spaces'
-    elif(
-        id_to_member(member_id.get()) is not None):
+    elif (
+            id_to_member(member_id.get()) is not None):
         member_register_feedback['text'] = 'User id has already been registered'
-    elif(
-        id_to_admin(member_apply_club_id.get()) is None):
+    elif (
+            id_to_admin(member_apply_club_id.get()) is None):
         member_register_feedback['text'] = 'Club id does not exist'
     else:
         member_info()
@@ -170,6 +180,7 @@ def id_to_admin(id):
             return i
     return None
 
+
 def id_to_member(id):
     global member_list
     for i in member_list:
@@ -201,7 +212,7 @@ def member_info():
 
     administrator = id_to_admin(member_apply_club_id.get())
 
-    #new_member.requestPermission(administrator)
+    # new_member.requestPermission(administrator)
 
     administrator.pend_member(new_member)
 
@@ -261,12 +272,12 @@ def member_register():
     # 4
     Label(screen1, text="").pack()
     Label(screen1, text="Password").pack()
-    member_password_entry = Entry(screen1, textvariable=member_password)
+    member_password_entry = Entry(screen1, show='*', textvariable=member_password)
     member_password_entry.pack()
     # 5
     Label(screen1, text="").pack()
     Label(screen1, text="Confirm Password").pack()
-    member_confirm_password_entry = Entry(screen1, textvariable=member_confirm_password)
+    member_confirm_password_entry = Entry(screen1, show='*', textvariable=member_confirm_password)
     member_confirm_password_entry.pack()
     # 6
     Label(screen1, text="").pack()
@@ -328,12 +339,12 @@ def club_register():
     # 4
     Label(screen1, text="").pack()
     Label(screen1, text="Password").pack()
-    club_password_entry = Entry(screen1, textvariable=club_password)
+    club_password_entry = Entry(screen1, show='*', textvariable=club_password)
     club_password_entry.pack()
     # 5
     Label(screen1, text="").pack()
     Label(screen1, text="Confirm Password").pack()
-    club_confirm_password_entry = Entry(screen1, textvariable=club_confirm_password)
+    club_confirm_password_entry = Entry(screen1, show='*', textvariable=club_confirm_password)
     club_confirm_password_entry.pack()
 
     # 6
@@ -398,7 +409,6 @@ def member_login():
         clubBox.pack(side=LEFT)
         clubScroll.config(command=clubBox.yview)
         clubFrame.pack()
-
 
 
 def admin_login():
@@ -481,7 +491,6 @@ def admin_login():
         buttonFrameP.pack()
 
 
-
 def rejectMember():
     clicked_items = pendingMemberBox.curselection()
     pendingMemberBox.delete(clicked_items)
@@ -489,10 +498,11 @@ def rejectMember():
 
 def acceptMember():
     clicked_items = pendingMemberBox.curselection()
-    #print(pendingMemberBox.get(clicked_items))
+    # print(pendingMemberBox.get(clicked_items))
     currentMemberBox.insert(END, currentMemberBox.get(clicked_items))
 
     print("pending member is added to the current member list")
+
 
 def deleteMember():
     clicked_items = currentMemberBox.curselection()

@@ -45,6 +45,8 @@ club_confirm_password_entry = None
 administrator_list = []
 member_list = []
 
+pendingMemberBox = None
+
 
 def main_screen():
     global screen
@@ -93,8 +95,9 @@ def main_screen():
     Button(screen, text="Member", height="5", width="20", command=member, fg='black', ).place(x=screen_width * 2 / 3,
                                                                                               y=screen_height / 4 + screen_height / 30)
 
-    Button(screen, text="Administrator Login", height="5", width="20", command=admin_login, fg='black').place(x=screen_width / 30,
-                                                                                                y=screen_height * 2 / 3)
+    Button(screen, text="Administrator Login", height="5", width="20", command=admin_login, fg='black').place(
+        x=screen_width / 30,
+        y=screen_height * 2 / 3)
     # Button(screen, text="Login", height= "3", width = "20", command = login, fg='black').grid(row=6, column=0)
     Button(screen, text="Forget/Reset Password", height="5", width="20", command=forget, fg='black').place(
         x=screen_width / 3 + screen_width / 30, y=screen_height * 2 / 3)
@@ -116,10 +119,10 @@ def club_register_check():
         club_register_feedback['text'] = 'Password difference'
         # club_register_feedback.set("Password Difference")
     elif (
-        club_id.get() == '' or club_name.get() == '' or club_email.get() == '' or club_password.get() == '' or club_confirm_password.get() == ''):
+            club_id.get() == '' or club_name.get() == '' or club_email.get() == '' or club_password.get() == '' or club_confirm_password.get() == ''):
         club_register_feedback['text'] = 'Please fill all the spaces'
-    elif(
-        id_to_admin(club_id.get()) is not None):
+    elif (
+            id_to_admin(club_id.get()) is not None):
         club_register_feedback['text'] = 'This id has already been registered'
     else:
         club_info()
@@ -129,13 +132,13 @@ def member_register_check():
     if (member_password.get() != member_confirm_password.get()):
         member_register_feedback['text'] = 'Password difference'
     elif (
-        member_id.get() == '' or member_name.get() == '' or member_email.get() == '' or member_password.get() == '' or member_confirm_password.get() == '' or member_apply_club_id.get() == ''):
+            member_id.get() == '' or member_name.get() == '' or member_email.get() == '' or member_password.get() == '' or member_confirm_password.get() == '' or member_apply_club_id.get() == ''):
         member_register_feedback['text'] = 'Please fill all the spaces'
-    elif(
-        id_to_member(member_id.get()) is not None):
+    elif (
+            id_to_member(member_id.get()) is not None):
         member_register_feedback['text'] = 'User id has already been registered'
-    elif(
-        id_to_admin(member_apply_club_id.get()) is None):
+    elif (
+            id_to_admin(member_apply_club_id.get()) is None):
         member_register_feedback['text'] = 'Club id does not exist'
     else:
         member_info()
@@ -163,7 +166,7 @@ def club_info():
     club_register_feedback['text'] = 'Registration Success'
 
 
-def id_to_admin(id):
+def id_to_admin(id) -> Administrator:
     global administrator_list
     for i in administrator_list:
         if i.get_organization_id() == id:
@@ -171,7 +174,7 @@ def id_to_admin(id):
     return None
 
 
-def id_to_member(id):
+def id_to_member(id) -> Member:
     global member_list
     for i in member_list:
         if i.get_id() == id:
@@ -194,7 +197,7 @@ def member_info():
 
     administrator = id_to_admin(member_apply_club_id.get())
 
-    #new_member.requestPermission(administrator)
+    # new_member.requestPermission(administrator)
 
     administrator.pend_member(new_member)
 
@@ -393,7 +396,6 @@ def member_login():
         clubFrame.pack()
 
 
-
 def admin_login():
     print("admin login session started")
     # implement whatever needed to check for login
@@ -450,6 +452,7 @@ def admin_login():
         Label(frame, text="", font=10).pack()
         Label(frame, text="Pending Members", font=("new roman", 21)).pack()
 
+        # pending frame
         pendingFrame = Frame(frame, padx=1, pady=3)
         pendingScroll = Scrollbar(pendingFrame)
         pendingScroll.pack(side=RIGHT, fill=Y)
@@ -457,16 +460,11 @@ def admin_login():
         pendingMemberBox = Listbox(pendingFrame, yscrollcommand=pendingScroll.set, width=int(screen_width / 8),
                                    height=7, selectmode=SINGLE)
 
-
-        for i in logged_admin:
-            pendingMemberBox.insert(END, "LINE " + str(i))
-
-        pendingMemberBox.pack(side=LEFT)
         pendingScroll.config(command=pendingMemberBox.yview)
         pendingFrame.pack()
 
         buttonFrameP = Frame(frame, padx=1, pady=3)
-        Button(buttonFrameP, text="Refresh", font=("new roman", 18), height=1, width=9, command=refreshList).grid(row=0,
+        Button(buttonFrameP, text="Refresh", font=("new roman", 18), height=1, width=9, command=refreshList(logged_admin)).grid(row=0,
                                                                                                                   column=0)
         Button(buttonFrameP, text="Accept", font=("new roman", 18), height=1, width=9, command=acceptMember).grid(row=0,
                                                                                                                   column=1)
@@ -474,6 +472,11 @@ def admin_login():
                                                                                                                   column=2)
         buttonFrameP.pack()
 
+
+def show_pending_member_info(admin:Administrator):
+    for i in admin.get_member_database().wait_list:
+        pendingMemberBox.insert(END, i.get_name())
+        pendingMemberBox.pack(side=LEFT)
 
 
 def rejectMember():
@@ -483,10 +486,11 @@ def rejectMember():
 
 def acceptMember():
     clicked_items = pendingMemberBox.curselection()
-    #print(pendingMemberBox.get(clicked_items))
+    # print(pendingMemberBox.get(clicked_items))
     currentMemberBox.insert(END, currentMemberBox.get(clicked_items))
 
     print("pending member is added to the current member list")
+
 
 def deleteMember():
     clicked_items = currentMemberBox.curselection()
@@ -497,8 +501,9 @@ def refreshMember():
     print("Refresh current member list")
 
 
-def refreshList():
+def refreshList(ad: Administrator):
     print("Refresh pending member list")
+    show_pending_member_info(ad)
 
 
 def member():

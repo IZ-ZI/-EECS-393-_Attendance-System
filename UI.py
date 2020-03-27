@@ -550,23 +550,23 @@ def rejectMember(logged_admin):
     global pending_member_list
     if pendingMemberBox.curselection() != ():
         clicked_item_index = pendingMemberBox.curselection()[0]
-        rej_id = logged_admin.get_member_database().wait_list[clicked_item_index].get_id()
-        logged_admin.permit(logged_admin.get_member_database().wait_list[clicked_item_index])
-        logged_admin.get_member_database().reject_pending_member(rej_id)
+        rej_member = logged_admin.get_member_database().wait_list[clicked_item_index]
+        logged_admin.get_member_database().reject_pending_member(rej_member.get_id())
         pendingMemberBox.delete(clicked_item_index)
         refreshList(logged_admin)
+        logged_admin.permit(rej_member)
 
 
 def acceptMember(logged_admin):
     if pendingMemberBox.curselection() != ():
         clicked_item_index = pendingMemberBox.curselection()[0]
-        acc_id = logged_admin.get_member_database().wait_list[clicked_item_index].get_id()
-        logged_admin.get_member_database().wait_list[clicked_item_index].admin_list.append(logged_admin)
-        logged_admin.permit(logged_admin.get_member_database().wait_list[clicked_item_index])
-        logged_admin.get_member_database().permit_pending_member(acc_id)
+        acc_member = logged_admin.get_member_database().wait_list[clicked_item_index]
+        acc_member.admin_list.append(logged_admin)
+        logged_admin.get_member_database().permit_pending_member(acc_member.get_id())
         pendingMemberBox.delete(clicked_item_index)
         refreshList(logged_admin)
         refreshMember(logged_admin)
+        logged_admin.permit(acc_member)
 
 
 def deleteMember():

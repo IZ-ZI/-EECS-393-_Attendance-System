@@ -2,7 +2,6 @@ from tkinter import *
 from Administrator import Administrator
 from Member import Member
 
-
 screen = None
 
 login_account_entry = None
@@ -24,7 +23,6 @@ member_password = None
 member_confirm_password = None
 member_apply_club_id = None
 member_register_feedback = None
-
 
 screenAdmin = None
 
@@ -135,17 +133,17 @@ def member_register_check():
 
 
 def club_info():
-
-    #file = open(club_id.get() + ".txt", "w")
-    #file.write(club_id.get() + "\n")
-    #file.write(club_name.get() + "\n")
-    #file.write(club_email.get() + "\n")
-    #file.write(club_password.get() + "\n")
-    #file.write(club_confirm_password.get() + "\n")
-    #file.close()
+    # file = open(club_id.get() + ".txt", "w")
+    # file.write(club_id.get() + "\n")
+    # file.write(club_name.get() + "\n")
+    # file.write(club_email.get() + "\n")
+    # file.write(club_password.get() + "\n")
+    # file.write(club_confirm_password.get() + "\n")
+    # file.close()
     global administrator_list
 
     administrator = Administrator(club_name.get(), club_id.get(), club_email.get(), club_password.get())
+    print(administrator.get_organization_id(), administrator.get_password())
     administrator_list.append(administrator)
 
     club_id_entry.delete(0, END)
@@ -157,6 +155,9 @@ def club_info():
     club_register_feedback['text'] = 'Registration sent'
 
 
+print(administrator_list[0].get_organization_id(), administrator_list[0].get_password())
+
+
 def id_to_admin(id):
     global administrator_list
     for i in administrator_list:
@@ -165,24 +166,22 @@ def id_to_admin(id):
     return None
 
 
-
 def member_info():
-
-   # file = open(member_id.get() + ".txt", "w")
-   # file.write(member_id.get() + "\n")
-   # file.write(member_name.get() + "\n")
-   # file.write(member_email.get() + "\n")
-   # file.write(member_password.get() + "\n")
-   # file.write(member_confirm_password.get() + "\n")
-   # file.write(member_apply_club_id.get() + "\n")
-   # file.close()
+    # file = open(member_id.get() + ".txt", "w")
+    # file.write(member_id.get() + "\n")
+    # file.write(member_name.get() + "\n")
+    # file.write(member_email.get() + "\n")
+    # file.write(member_password.get() + "\n")
+    # file.write(member_confirm_password.get() + "\n")
+    # file.write(member_apply_club_id.get() + "\n")
+    # file.close()
     global member_list
     new_member = Member(member_name.get(), member_id.get(), member_email.get(), member_password.get())
     member_list.append(new_member)
 
     administrator = id_to_admin(member_apply_club_id.get())
 
-#   new_member.requestPermission(administrator)
+    #   new_member.requestPermission(administrator)
 
     administrator.pend_member(new_member)
 
@@ -390,7 +389,7 @@ def admin_login():
 
         screenAdmin.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor, yCoor))
         frame = LabelFrame(screenAdmin, text="Members", font=("new roman", 21), padx=10, pady=10, height=screen_height,
-                       width=screen_width / 2)
+                           width=screen_width / 2)
         frame.place(x=screen_width / 2, y=0)
 
         Label(frame, text="Current Members", font=("new roman", 21)).pack()

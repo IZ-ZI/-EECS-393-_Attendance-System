@@ -5,7 +5,6 @@ from WaitList import WaitList
 
 admin = None
 wait_list = None
-
 screen = None
 
 login_account_entry = None
@@ -45,7 +44,6 @@ club_name_entry = None
 club_email_entry = None
 club_password_entry = None
 club_confirm_password_entry = None
-club_register_feedback = None
 
 administrator = None
 
@@ -138,7 +136,7 @@ def club_info():
     file.write(club_confirm_password.get() + "\n")
     file.close()
 
-    administrator = Administrator(club_id.get(), club_name.get(), club_email.get(), club_password.get(), wait_list)
+    # administrator = Administrator(club_id.get(), club_name.get(), club_email.get(), club_password.get(), wait_list)
 
     club_id_entry.delete(0, END)
     club_name_entry.delete(0, END)
@@ -146,8 +144,7 @@ def club_info():
     club_password_entry.delete(0, END)
     club_confirm_password_entry.delete(0, END)
 
-    Label(screen1, text="Registration sent", fg="green", font=("new roman", 15)).pack()
-
+    club_register_feedback['text'] = 'Registration sent'
 
 def member_info():
 
@@ -160,8 +157,7 @@ def member_info():
     file.write(member_apply_club_id.get() + "\n")
     file.close()
 
-    new_member = Member(member_name.get(), member_id.get(), member_email.get(), member_password.get(), wait_list)
-
+    # new_member = Member(member_name.get(), member_id.get(), member_email.get(), member_password.get(), wait_list)
 
     member_id_entry.delete(0,END)
     member_name_entry.delete(0,END)
@@ -170,12 +166,12 @@ def member_info():
     member_confirm_password_entry.delete(0,END)
     member_apply_club_id_entry.delete(0,END)
 
-    Label(screen1, text = "Registration sent", fg = "green", font=("new roman", 15)).pack()
+    member_register_feedback['text'] = 'Registration sent'
 
 def member_register():
     global screen1
     screen1 = Toplevel(screen)
-    screen1.title("New Club Registration")
+    screen1.title("New Member Registration")
     screen1.geometry("600x570")
 
     global member_id
@@ -233,7 +229,7 @@ def member_register():
     member_apply_club_id_entry.pack()
     # 7
     Label(screen1, text="").pack()
-    Button(screen1, text="Register", height="3", width="20", command=member_info).pack()
+    Button(screen1, text="Register", height="3", width="20", command=member_register_check).pack()
 
     # 8
     Label(screen1, text = "").pack()
@@ -361,7 +357,7 @@ def member():
     screen_width = screen.winfo_screenwidth() / 2
     screen_height = screen.winfo_screenheight() / 2
     Label(screen, text="User ID                              ", font=("new roman", 20)).place(x=screen_width / 30, y=screen_height / 30)
-    Button(screen, text="New Member Register", height="5", width="20", command=club_register, fg='black').place(
+    Button(screen, text="New Member Register", height="5", width="20", command=member_register, fg='black').place(
         x=screen_width * 2 / 3 + screen_width / 30, y=screen_height * 2 / 3)
     Button(screen, text="Member Login", font = ("new roman", 15),height="5", width="20", command=member_login, fg='black').place(
         x=screen_width / 30, y=screen_height * 2 / 3)

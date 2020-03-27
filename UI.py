@@ -225,7 +225,7 @@ def member_info():
     administrator = id_to_admin(member_apply_club_id.get())
 
     administrator.pend_member(new_member)
-
+    member_register_feedback['text'] = 'Registration Success'
     new_member.requestPermission(administrator)
 
     member_id_entry.delete(0, END)
@@ -234,8 +234,6 @@ def member_info():
     member_password_entry.delete(0, END)
     member_confirm_password_entry.delete(0, END)
     member_apply_club_id_entry.delete(0, END)
-
-    member_register_feedback['text'] = 'Registration Success'
 
 
 def member_register():

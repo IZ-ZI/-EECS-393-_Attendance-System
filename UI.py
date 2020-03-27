@@ -116,8 +116,11 @@ def club_register_check():
         club_register_feedback['text'] = 'Password difference'
         # club_register_feedback.set("Password Difference")
     elif (
-            club_id.get() == '' or club_name.get() == '' or club_email.get() == '' or club_password.get() == '' or club_confirm_password.get() == ''):
+        club_id.get() == '' or club_name.get() == '' or club_email.get() == '' or club_password.get() == '' or club_confirm_password.get() == ''):
         club_register_feedback['text'] = 'Please fill all the spaces'
+    elif(
+        id_to_admin(club_id.get()) is not None):
+        club_register_feedback['text'] = 'This id has already been registered'
     else:
         club_info()
 
@@ -126,8 +129,14 @@ def member_register_check():
     if (member_password.get() != member_confirm_password.get()):
         member_register_feedback['text'] = 'Password difference'
     elif (
-            member_id.get() == '' or member_name.get() == '' or member_email.get() == '' or member_password.get() == '' or member_confirm_password.get() == '' or member_apply_club_id.get() == ''):
+        member_id.get() == '' or member_name.get() == '' or member_email.get() == '' or member_password.get() == '' or member_confirm_password.get() == '' or member_apply_club_id.get() == ''):
         member_register_feedback['text'] = 'Please fill all the spaces'
+    elif(
+        id_to_member(member_id.get()) is not None):
+        member_register_feedback['text'] = 'User id has already been registered'
+    elif(
+        id_to_admin(member_apply_club_id.get()) is None):
+        member_register_feedback['text'] = 'Club id does not exist'
     else:
         member_info()
 
@@ -161,6 +170,13 @@ def id_to_admin(id):
             return i
     return None
 
+def id_to_member(id):
+    global member_list
+    for i in member_list:
+        if i.get_id() == id:
+            return i
+    return None
+
 
 def id_to_member(id):
     global member_list
@@ -185,7 +201,7 @@ def member_info():
 
     administrator = id_to_admin(member_apply_club_id.get())
 
-    #   new_member.requestPermission(administrator)
+    #new_member.requestPermission(administrator)
 
     administrator.pend_member(new_member)
 
@@ -429,7 +445,7 @@ def login():
 
 
 def forget():
-    print("Feature coming...")
+    print("U SUCK")
 
 
 main_screen()

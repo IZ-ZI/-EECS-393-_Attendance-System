@@ -42,15 +42,11 @@ club_email_entry = None
 club_password_entry = None
 club_confirm_password_entry = None
 
-administrator_list = None
-member_list = None
+administrator_list = []
+member_list = []
 
 def main_screen():
     global screen
-    global administrator_list
-    administrator_list = []
-    global member_list
-    member_list = []
     screen = Tk()
     screen.geometry("600x300")
     screen.title("Attendance System Login")
@@ -132,6 +128,7 @@ def club_info():
     #file.write(club_password.get() + "\n")
     #file.write(club_confirm_password.get() + "\n")
     #file.close()
+    global administrator_list
     administrator = Administrator(club_name.get(), club_id.get(), club_email.get(), club_password.get())
     administrator_list.append(administrator)
 
@@ -148,7 +145,7 @@ def club_info():
 def id_to_admin(id):
     global administrator_list
     for i in administrator_list:
-        if i.get_organization_id == id:
+        if i.get_organization_id() == id:
             return i
     return None
 
@@ -162,13 +159,13 @@ def member_info():
    # file.write(member_confirm_password.get() + "\n")
    # file.write(member_apply_club_id.get() + "\n")
    # file.close()
-
-    new_member = Administrator(member_name.get(), member_id.get(), member_email.get(), member_password.get())
+    global member_list
+    new_member = Member(member_name.get(), member_id.get(), member_email.get(), member_password.get())
     member_list.append(new_member)
 
-    #this send email to club by using member_apply_club_id
-
     administrator = id_to_admin(member_apply_club_id.get())
+
+#   new_member.requestPermission(administrator)
 
     administrator.pend_member(new_member)
 

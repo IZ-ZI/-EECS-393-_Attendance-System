@@ -523,12 +523,14 @@ def showCurrentMember(frame, logged_admin):
 
 
 def rejectMember(frame, logged_admin):
+    global pending_member_list
     if pendingMemberBox.curselection() != ():
         clicked_item_index = pendingMemberBox.curselection()[0]
         rej_id = logged_admin.get_member_database().wait_list[clicked_item_index].get_id()
         logged_admin.get_member_database().reject_pending_member(rej_id)
         pendingMemberBox.delete(clicked_item_index)
-        refreshList(frame, admin)
+        pending_member_list.remove(logged_admin.get_member_database().wait_list[clicked_item_index])
+        refreshList(frame, logged_admin)
 
 
 def acceptMember(frame, logged_admin):
@@ -537,9 +539,8 @@ def acceptMember(frame, logged_admin):
         acc_id = logged_admin.get_member_database().wait_list[clicked_item_index].get_id()
         logged_admin.get_member_database().permit_pending_member(acc_id)
         pendingMemberBox.delete(clicked_item_index)
-        refreshList(frame, admin)
-        refreshMember(frame, admin)
-        print("pending member is added to the current member list")
+        refreshList(frame, logged_admin)
+        refreshMember(frame, logged_admin)
 
 def deleteMember():
     clicked_items = currentMemberBox.curselection()

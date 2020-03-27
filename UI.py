@@ -162,6 +162,14 @@ def id_to_admin(id):
     return None
 
 
+def id_to_member(id):
+    global member_list
+    for i in member_list:
+        if i.get_id() == id:
+            return i
+    return None
+
+
 def member_info():
     # file = open(member_id.get() + ".txt", "w")
     # file.write(member_id.get() + "\n")
@@ -338,39 +346,39 @@ def member_login():
     print("member login session started")
     print('%s' % login_account_entry)
     # implement whatever needed to check for login
-    if member_id != '' and member_password:
-        if login_account_entry == member_id and login_password_entry == member_password:
-            screenMember = Toplevel(screen)
-            screenMember.title("Member")
-            screen_width = screen.winfo_screenwidth() / 2
-            screen_height = screen.winfo_screenheight() / 2
-            xCoor = screen_width / 2 + 20
-            yCoor = screen_height / 2 + 20
-
-            screenMember.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor, yCoor))
-
-    else:
+    logged_member = id_to_member(login_account.get())
+    if logged_member is None or logged_member.get_password() != login_password.get():
         print('error')
         screenMember = Toplevel(screen)
         screenMember.title("Error")
-        screen_width = screen.winfo_screenwidth() / 8
-        screen_height = screen.winfo_screenheight() / 8
+        screen_width = screen.winfo_screenwidth() / 4
+        screen_height = screen.winfo_screenheight() / 4
+        xCoor = screen_width / 2 + 20
+        yCoor = screen_height / 2 + 20
+
+        screenMember.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor, yCoor))
+    else:
+        screenMember = Toplevel(screen)
+        screenMember.title("Member: %s" % logged_member.get_name())
+        screen_width = screen.winfo_screenwidth() / 2
+        screen_height = screen.winfo_screenheight() / 2
         xCoor = screen_width / 2 + 20
         yCoor = screen_height / 2 + 20
 
         screenMember.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor, yCoor))
 
 
+
 def admin_login():
     print("admin login session started")
     # implement whatever needed to check for login
     logged_admin = id_to_admin(login_account.get())
-    if logged_admin is None:
+    if logged_admin is None or logged_admin.get_password() != login_password.get():
         print('error')
         screenMember = Toplevel(screen)
         screenMember.title("Error")
-        screen_width = screen.winfo_screenwidth() / 8
-        screen_height = screen.winfo_screenheight() / 8
+        screen_width = screen.winfo_screenwidth() / 4
+        screen_height = screen.winfo_screenheight() / 4
         xCoor = screen_width / 2 + 20
         yCoor = screen_height / 2 + 20
 

@@ -32,7 +32,7 @@ class ActivityBoard:
             if i.get_name() == name:
                 return i
 
-        print("The member with the ID:", name, " is not in the database.")
+        print("The activity with the name:", name, " is not found.")
 
     def delete(self, name):
         for i in self.activities:

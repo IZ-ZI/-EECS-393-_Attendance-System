@@ -185,7 +185,7 @@ def member_info():
 
     administrator = id_to_admin(member_apply_club_id.get())
 
-    #   new_member.requestPermission(administrator)
+    new_member.requestPermission(administrator)
 
     administrator.pend_member(new_member)
 

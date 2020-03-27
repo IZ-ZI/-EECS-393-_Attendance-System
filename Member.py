@@ -50,7 +50,7 @@ class Member:
     # self.__face_ID = face_data
 
     def requestPermission(self, admin: Administrator) -> bool:
-        se.send_email(self.email_address, 'placeholder', admin.get_email_adderss())
+        se.send_email(self.email_address, '393membertest1', admin.get_email_adderss())
         return True
 
     def joinActivity(self, activity: Activity) -> bool:

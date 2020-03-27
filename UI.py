@@ -170,13 +170,6 @@ def id_to_admin(id):
             return i
     return None
 
-def id_to_member(id):
-    global member_list
-    for i in member_list:
-        if i.get_id() == id:
-            return i
-    return None
-
 
 def id_to_member(id):
     global member_list
@@ -464,7 +457,8 @@ def admin_login():
         pendingMemberBox = Listbox(pendingFrame, yscrollcommand=pendingScroll.set, width=int(screen_width / 8),
                                    height=7, selectmode=SINGLE)
 
-        for i in range(1, 15):
+
+        for i in logged_admin:
             pendingMemberBox.insert(END, "LINE " + str(i))
 
         pendingMemberBox.pack(side=LEFT)

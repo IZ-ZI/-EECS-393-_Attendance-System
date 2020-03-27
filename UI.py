@@ -33,6 +33,7 @@ member_register_feedback = None
 screenAdmin  = None
 
 screen1 = None
+screenMember = None
 club_register_feedback = None
 
 club_id = None
@@ -335,17 +336,31 @@ def admin():
 
 
 def member_login():
-    print("member login session started")
-    #implement whatever needed to check for login
     global screenMember
-    screenMember = Toplevel(screen)
-    screenMember.title("Member")
-    screen_width = screen.winfo_screenwidth() / 2
-    screen_height = screen.winfo_screenheight() / 2
-    xCoor = screen_width /2+20
-    yCoor = screen_height / 2+20
+    print("member login session started")
+    print('%s' %login_account_entry)
+    # implement whatever needed to check for login
+    if member_id != '' and member_password:
+        if login_account_entry == member_id and login_password_entry == member_password:
+               screenMember = Toplevel(screen)
+               screenMember.title("Member")
+               screen_width = screen.winfo_screenwidth() / 2
+               screen_height = screen.winfo_screenheight() / 2
+               xCoor = screen_width / 2 + 20
+               yCoor = screen_height / 2 + 20
 
-    screenMember.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor,yCoor))
+               screenMember.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor, yCoor))
+
+    else:
+        print('error')
+        screenMember = Toplevel(screen)
+        screenMember.title("Error")
+        screen_width = screen.winfo_screenwidth() / 8
+        screen_height = screen.winfo_screenheight() / 8
+        xCoor = screen_width / 2 + 20
+        yCoor = screen_height / 2 + 20
+
+        screenMember.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor, yCoor))
 
 def admin_login():
     print("admin login session started")

@@ -491,9 +491,9 @@ def admin_login():
         Button(buttonFrameP, text="Refresh", font=("new roman", 18), height=1, width=9,
                command=lambda: refreshList(frame, logged_admin)).grid(row=0,
                                                                       column=0)
-        Button(buttonFrameP, text="Accept", font=("new roman", 18), height=1, width=9, command=acceptMember).grid(row=0,
+        Button(buttonFrameP, text="Accept", font=("new roman", 18), height=1, width=9, command=lambda:acceptMember(frame, logged_admin)).grid(row=0,
                                                                                                                   column=1)
-        Button(buttonFrameP, text="Reject", font=("new roman", 18), height=1, width=9, command=rejectMember).grid(row=0,
+        Button(buttonFrameP, text="Reject", font=("new roman", 18), height=1, width=9, command=lambda:rejectMember(frame, logged_admin)).grid(row=0,
                                                                                                                   column=2)
         buttonFrameP.pack()
 
@@ -510,7 +510,6 @@ def showPendingMember(frame, logged_admin):
 
 
 
-
 def showCurrentMember(frame, logged_admin):
     # loop for Current Member List
     # while member in MemberList:
@@ -523,22 +522,24 @@ def showCurrentMember(frame, logged_admin):
 
 
 
-def rejectMember(admin:Administrator):
-    clicked_item_index = pendingMemberBox.curselection()
-    rej_id = admin.get_member_database().wait_list[clicked_item_index].get_id()
-    admin.get_member_database().reject_pending_member(rej_id)
-    pendingMemberBox.delete(clicked_item_index)
-    show_pending_member_info(admin)
+def rejectMember(frame, logged_admin):
+    if pendingMemberBox.curselection() != ():
+        clicked_item_index = pendingMemberBox.curselection()[0]
+        rej_id = logged_admin.get_member_database().wait_list[clicked_item_index].get_id()
+        logged_admin.get_member_database().reject_pending_member(rej_id)
+        pendingMemberBox.delete(clicked_item_index)
+        refreshList(frame, admin)
 
 
-def acceptMember(admin:Administrator):
-    clicked_item_index = pendingMemberBox.curselection()
-    acc_id = admin.get_member_database().wait_list[clicked_item_index].get_id()
-    admin.get_member_database().permit_pending_member(acc_id)
-    pendingMemberBox.delete(clicked_item_index)
-    show_pending_member_info(admin)
-    print("pending member is added to the current member list")
-
+def acceptMember(frame, logged_admin):
+    if pendingMemberBox.curselection() != ():
+        clicked_item_index = pendingMemberBox.curselection()[0]
+        acc_id = logged_admin.get_member_database().wait_list[clicked_item_index].get_id()
+        logged_admin.get_member_database().permit_pending_member(acc_id)
+        pendingMemberBox.delete(clicked_item_index)
+        refreshList(frame, admin)
+        refreshMember(frame, admin)
+        print("pending member is added to the current member list")
 
 def deleteMember():
     clicked_items = currentMemberBox.curselection()

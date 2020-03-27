@@ -1,6 +1,7 @@
 from MemberDatabase import MemberDatabase
 import sendEmail as se
 
+
 class Administrator:
     def __init__(self, organization_name: str, organization_id: str, email_address: str, password: str):
         self.organization_id = organization_id

@@ -2,8 +2,11 @@ from tkinter import *
 from Administrator import Administrator
 from Member import Member
 
+<<<<<<< HEAD
 admin = None
 
+=======
+>>>>>>> Isaac_init_0321
 screen = None
 
 login_account_entry = None
@@ -44,13 +47,19 @@ club_email_entry = None
 club_password_entry = None
 club_confirm_password_entry = None
 
-administrator = None
-
+administrator_list = None
+member_list = None
 
 def main_screen():
-    global administrator
     global screen
+<<<<<<< HEAD
 
+=======
+    global administrator_list
+    administrator_list = []
+    global member_list
+    member_list = []
+>>>>>>> Isaac_init_0321
     screen = Tk()
     screen.geometry("600x300")
     screen.title("Attendance System Login")
@@ -125,15 +134,16 @@ def member_register_check():
         member_info()
 
 def club_info():
-    file = open(club_id.get() + ".txt", "w")
-    file.write(club_id.get() + "\n")
-    file.write(club_name.get() + "\n")
-    file.write(club_email.get() + "\n")
-    file.write(club_password.get() + "\n")
-    file.write(club_confirm_password.get() + "\n")
-    file.close()
+    #file = open(club_id.get() + ".txt", "w")
+    #file.write(club_id.get() + "\n")
+    #file.write(club_name.get() + "\n")
+    #file.write(club_email.get() + "\n")
+    #file.write(club_password.get() + "\n")
+    #file.write(club_confirm_password.get() + "\n")
+    #file.close()
+    administrator = Administrator(club_name.get(), club_id.get(), club_email.get(), club_password.get())
+    administrator_list.append(administrator)
 
-    # administrator = Administrator(club_id.get(), club_name.get(), club_email.get(), club_password.get(), wait_list)
 
     club_id_entry.delete(0, END)
     club_name_entry.delete(0, END)
@@ -143,18 +153,35 @@ def club_info():
 
     club_register_feedback['text'] = 'Registration sent'
 
+
+def id_to_admin(id):
+    global administrator_list
+    for i in administrator_list:
+        if i.get_organization_id == id:
+            return i
+    return None
+
 def member_info():
 
-    file = open(member_id.get() + ".txt", "w")
-    file.write(member_id.get() + "\n")
-    file.write(member_name.get() + "\n")
-    file.write(member_email.get() + "\n")
-    file.write(member_password.get() + "\n")
-    file.write(member_confirm_password.get() + "\n")
-    file.write(member_apply_club_id.get() + "\n")
-    file.close()
+   # file = open(member_id.get() + ".txt", "w")
+   # file.write(member_id.get() + "\n")
+   # file.write(member_name.get() + "\n")
+   # file.write(member_email.get() + "\n")
+   # file.write(member_password.get() + "\n")
+   # file.write(member_confirm_password.get() + "\n")
+   # file.write(member_apply_club_id.get() + "\n")
+   # file.close()
 
-    # new_member = Member(member_name.get(), member_id.get(), member_email.get(), member_password.get(), wait_list)
+    new_member = Administrator(member_name.get(), member_id.get(), member_email.get(), member_password.get())
+    member_list.append(new_member)
+
+    #this send email to club by using member_apply_club_id
+
+    administrator = id_to_admin(member_apply_club_id.get())
+
+    administrator.pend_member(new_member)
+
+
 
     member_id_entry.delete(0,END)
     member_name_entry.delete(0,END)
@@ -305,6 +332,7 @@ def admin():
     Button(screen, text="New Club Register", height="5", width="20", command=club_register, fg='black').place(
         x=screen_width * 2 / 3 + screen_width / 30, y=screen_height * 2 / 3)
     Button(screen, text="Administrator Login", font = ("new roman", 15),height= "5", width = "20", command = admin_login, fg='black').place(x = screen_width/30, y = screen_height*2/3)
+
 
 def member_login():
     print("member login session started")

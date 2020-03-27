@@ -29,6 +29,7 @@ member_confirm_password = None
 member_apply_club_id = None
 member_register_feedback = None
 
+
 screenAdmin = None
 
 screen1 = None

@@ -463,12 +463,14 @@ def admin_login():
         currentFrame.pack()
 
         buttonFrameC = Frame(frame, padx=1, pady=3)
-        Button(buttonFrameC, text="Refresh", font=("new roman", 18), height=1, width=13,
+        Button(buttonFrameC, text="Refresh", font=("new roman", 18), height=1, width=9,
                command=lambda: refreshMember(frame, logged_admin)).grid(
             row=0, column=0)
 
-        Button(buttonFrameC, text="Delete", font=("new roman", 18), height=1, width=13, command=deleteMember).grid(
-            row=0, column=1)
+        Button(buttonFrameC, text = "View", font = ("new roman", 18), height = 1, width = 9, command = viewMember).grid(row = 0, column = 1)
+
+        Button(buttonFrameC, text="Delete", font=("new roman", 18), height=1, width=9, command=deleteMember).grid(
+            row=0, column=2)
         buttonFrameC.pack()
 
         Label(frame, text="", font=10).pack()
@@ -542,6 +544,7 @@ def acceptMember(frame, logged_admin):
         refreshList(frame, logged_admin)
         refreshMember(frame, logged_admin)
 
+
 def deleteMember():
     clicked_items = currentMemberBox.curselection()
     currentMemberBox.delete(clicked_items)
@@ -553,6 +556,13 @@ def refreshMember(frame, logged_admin):
 
 def refreshList(frame, logged_admin):
     showPendingMember(frame, logged_admin)
+
+def viewMember():
+    clicked_items = currentMemberBox.curselection()
+    memberInfo = Toplevel(screenAdmin)
+    name = None  #fill in member name
+    memberInfo.title("Member " + name + " Information")
+    memberInfo.geometry("100x100")
 
 
 def member():

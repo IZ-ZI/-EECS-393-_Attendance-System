@@ -4,7 +4,7 @@ associated with a specific member of certain organization(s).
 """
 from Activity import Activity
 from AttendanceRecord import AttendanceRecord
-from Administrator import Administrator
+import Administrator
 import sendEmail as se
 
 
@@ -50,7 +50,7 @@ class Member:
     # self.__face_ID = face_data
 
     def requestPermission(self, admin: Administrator) -> bool:
-        se.send_email('attsystem393@gmail.com', 'eecs_393', admin.get_email_adderss(), self.get_name(), self.get_id())
+        se.send_email('attsystem393@gmail.com', 'eecs_393', admin.get_email_adderss(), self.get_name(), self.get_id(), True)
         return True
 
     def joinActivity(self, activity: Activity) -> bool:

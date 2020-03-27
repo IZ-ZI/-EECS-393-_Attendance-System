@@ -201,87 +201,7 @@ def member_login():
 
 def admin_login():
     print("admin login session started")
-<<<<<<< Updated upstream
     #implement whatever needed to check for login
-=======
-    # implement whatever needed to check for login
-    logged_admin = id_to_admin(login_account.get())
-    if logged_admin is None or logged_admin.get_password() != login_password.get():
-        print('error')
-        screenMember = Toplevel(screen)
-        screenMember.title("Error")
-        screen_width = screen.winfo_screenwidth() / 4
-        screen_height = screen.winfo_screenheight() / 4
-        xCoor = screen_width / 2 + 20
-        yCoor = screen_height / 2 + 20
-
-        screenMember.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor, yCoor))
-    else:
-        global screenAdmin
-        screenAdmin = Toplevel(screen)
-        screenAdmin.title("Administrator")
-        screen_width = screen.winfo_screenwidth() / 2
-        screen_height = screen.winfo_screenheight() / 2
-        xCoor = screen_width / 2
-        yCoor = screen_height / 2
-        screenAdmin.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor, yCoor))
-
-        frame = Frame(screenAdmin, padx=10, pady=10)
-        frame.place(x=screen_width / 2, y=2, width=screen_width / 2, height=screen_height)
-
-        Label(frame, text="Current Members", font=("new roman", 21)).pack()
-
-        global currentMemberBox
-        currentFrame = Frame(frame, padx=1, pady=3, height=int(screen_height / 5))
-        currentScroll = Scrollbar(currentFrame)
-        currentScroll.pack(side=RIGHT, fill=Y)
-        currentMemberBox = Listbox(currentFrame, yscrollcommand=currentScroll.set, width=int(screen_width / 8),
-                                   height=7, selectmode=SINGLE)
-
-        # loop for Current Member List
-        # while member in MemberList:
-
-        for i in range(1, 15):
-            currentMemberBox.insert(END, "LINE " + str(i))
-
-        currentMemberBox.pack(side=LEFT)
-        currentScroll.config(command=currentMemberBox.yview)
-        currentFrame.pack()
-
-        buttonFrameC = Frame(frame, padx=1, pady=3)
-        Button(buttonFrameC, text="Refresh", font=("new roman", 18), height=1, width=9, command=refreshMember).grid(
-            row=0, column=0)
-        Button(buttonFrameC, text = "View", font = ("new roman", 18), height = 1, width = 9, command = viewMember).grid(row = 0, column = 1)
-        Button(buttonFrameC, text="Delete", font=("new roman", 18), height=1, width=9, command=deleteMember).grid(
-            row=0, column=2)
-        buttonFrameC.pack()
-
-        Label(frame, text="", font=10).pack()
-        Label(frame, text="Pending Members", font=("new roman", 21)).pack()
-
-        pendingFrame = Frame(frame, padx=1, pady=3)
-        pendingScroll = Scrollbar(pendingFrame)
-        pendingScroll.pack(side=RIGHT, fill=Y)
-        global pendingMemberBox
-        pendingMemberBox = Listbox(pendingFrame, yscrollcommand=pendingScroll.set, width=int(screen_width / 8),
-                                   height=7, selectmode=SINGLE)
-
-        for i in range(1, 15):
-            pendingMemberBox.insert(END, "LINE " + str(i))
-
-        pendingMemberBox.pack(side=LEFT)
-        pendingScroll.config(command=pendingMemberBox.yview)
-        pendingFrame.pack()
-
-        buttonFrameP = Frame(frame, padx=1, pady=3)
-        Button(buttonFrameP, text="Refresh", font=("new roman", 18), height=1, width=9, command=refreshList).grid(row=0,
-                                                                                                                  column=0)
-        Button(buttonFrameP, text="Accept", font=("new roman", 18), height=1, width=9, command=acceptMember).grid(row=0,
-                                                                                                                  column=1)
-        Button(buttonFrameP, text="Reject", font=("new roman", 18), height=1, width=9, command=rejectMember).grid(row=0,
-                                                                                                                  column=2)
-        buttonFrameP.pack()
->>>>>>> Stashed changes
 
     global screenAdmin
     screenAdmin = Toplevel(screen)
@@ -315,8 +235,10 @@ def admin_login():
     currentFrame.pack()
 
     buttonFrameC = Frame(frame, padx = 1, pady = 3)
-    Button(buttonFrameC, text = "Refresh", font = ("new roman", 18), height = 1, width = 13, command = refreshMember).grid(row = 0, column = 0)
-    Button(buttonFrameC, text = "Delete", font = ("new roman", 18), height = 1, width = 13, command = deleteMember).grid(row = 0, column = 1)
+    Button(buttonFrameC, text = "Refresh", font = ("new roman", 18), height = 1, width = 9, command = refreshMember).grid(row = 0, column = 0)
+    Button(buttonFrameC, text="View", font=("new roman", 18), height=1, width=9, command=viewMember).grid(row=0,
+                                                                                                              column=1)
+    Button(buttonFrameC, text = "Delete", font = ("new roman", 18), height = 1, width = 9, command = deleteMember).grid(row = 0, column = 2)
     buttonFrameC.pack()
 
     Label(frame, text = "", font=10).pack()
@@ -341,15 +263,22 @@ def admin_login():
     Button(buttonFrameP, text = "Reject", font = ("new roman", 18), height = 1, width = 9, command = rejectMember).grid(row = 0, column = 2)
     buttonFrameP.pack()
 
+
 def viewMember():
     clicked_items = currentMemberBox.curselection()
+
+    print("Member information...")
     memberInfo = Toplevel(screenAdmin)
-    name = None  #fill in member name
-    memberInfo.title("Member " + name + " Information")
-    memberInfo.geometry("100x100")
-
-
-
+    #name = None  # get name method
+    memberInfo.title("Member " + " Information")
+    screen_width = 250
+    screen_height = 250
+    xCoor = screen.winfo_screenwidth() / 2 + 30
+    yCoor = screen.winfo_screenheight() / 4 +30
+    memberInfo.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor, yCoor))
+    Label(memberInfo, text="Name: ", font=("new roman", 15), pady = 5, padx = 2).grid(row=0, column=0, sticky=W)
+    Label(memberInfo, text = "ID: ", font = ("new roman", 15), pady = 5, padx = 2).grid(row = 1, column = 0, sticky = W)
+    Label(memberInfo, text = "Email: ", font = ("new roman", 15), pady = 5, padx = 2).grid(row = 2, column = 0, sticky = W)
 
 
 
@@ -372,9 +301,6 @@ def deleteMember():
 
 
 def refreshMember():
-
-def refreshMember(frame):
-
     print("Refresh current member list")
 
 

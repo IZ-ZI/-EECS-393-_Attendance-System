@@ -271,7 +271,7 @@ def acceptMember():
     clicked_items = pendingMemberBox.curselection()
     #print(pendingMemberBox.get(clicked_items))
     currentMemberBox.insert(END, currentMemberBox.get(clicked_items))
-
+    pendingMemberBox.delete(clicked_items)
     print("pending member is added to the current member list")
 
 def deleteMember():

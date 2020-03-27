@@ -59,6 +59,9 @@ class MemberDatabase:
         else:
             return None
 
+    def add_to_wait_list(self, member: Member):
+        self.wait_list.append(member)
+
     def permit_pending_member(self, member_id) -> Member:
         for i in self.wait_list:
             if i.get_id() == member_id:

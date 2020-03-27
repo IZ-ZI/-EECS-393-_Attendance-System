@@ -428,7 +428,7 @@ def admin_login():
     else:
         global screenAdmin
         screenAdmin = Toplevel(screen)
-        screenAdmin.title("Administrator %s" % logged_admin.get_name())
+        screenAdmin.title("Administrator %s" % logged_admin.get_organization_name())
         screen_width = screen.winfo_screenwidth() / 2
         screen_height = screen.winfo_screenheight() / 2
         xCoor = screen_width / 2
@@ -474,7 +474,8 @@ def admin_login():
         pendingMemberBox = Listbox(pendingFrame, yscrollcommand=pendingScroll.set, width=int(screen_width / 8),
                                    height=7, selectmode=SINGLE)
 
-        for i in range(1, 15):
+
+        for i in logged_admin:
             pendingMemberBox.insert(END, "LINE " + str(i))
 
         pendingMemberBox.pack(side=LEFT)

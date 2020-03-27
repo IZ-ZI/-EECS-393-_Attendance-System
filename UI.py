@@ -26,6 +26,8 @@ member_email = None
 member_password = None
 member_confirm_password = None
 member_apply_club_id = None
+member_register_feedback = None
+
 
 screenAdmin  = None
 
@@ -38,17 +40,18 @@ club_email = None
 club_password = None
 club_confirm_password = None
 
-
 club_id_entry = None
 club_name_entry = None
 club_email_entry = None
 club_password_entry = None
 club_confirm_password_entry = None
+club_register_feedback = None
 
+administrator = None
 
 
 def main_screen():
-    global admin
+    global administrator
     global screen
     global wait_list
 
@@ -86,7 +89,6 @@ def main_screen():
     login_password_entry.place(x=screen_width / 30, y=screen_height * 13 / 30)
 
     # highlightbackground = 'green'
-    Button(screen, text="Login", height="3", width="20", command=login, fg='black').grid(row=6, column=0)
 
     Button(screen, text="Administrator", height="5", width="20", command=admin, fg='black').place(
         x=screen_width * 2 / 3, y=screen_height / 30)
@@ -94,17 +96,13 @@ def main_screen():
                                                                                               y=screen_height / 4 + screen_height / 30)
 
     Button(screen, text="Login", height="5", width="20", command=admin_login, fg='black').place(x=screen_width / 30,
-                                                                                          y=screen_height * 2 / 3)
+                                                                                                y=screen_height * 2 / 3)
     # Button(screen, text="Login", height= "3", width = "20", command = login, fg='black').grid(row=6, column=0)
     Button(screen, text="Forget/Reset Password", height="5", width="20", command=forget, fg='black').place(
         x=screen_width / 3 + screen_width / 30, y=screen_height * 2 / 3)
 
-    Button(screen, text="Login", height="3", width="20", command=login, fg='black').grid(row=6, column=0)
-    Button(screen, text="Forget/Reset Password", height="3", width="20", command=forget, fg='black').grid(row=6,
-                                                                                                          column=1)
-
-    Button(screen, text="New Club Register", height="3", width="20", command=club_register, fg='black').grid(row=6,
-                                                                                                             column=2)
+    Button(screen, text="New Club Register", height="5", width="20", command=club_register, fg='black').place(
+        x=screen_width * 2 / 3 + screen_width / 30, y=screen_height * 2 / 3)
 
     # global button
     # button = Button(screen,text='Submit',command=changeText)
@@ -140,7 +138,7 @@ def club_info():
     file.write(club_confirm_password.get() + "\n")
     file.close()
 
-    admin = Administrator(club_id.get(), club_name.get(), club_email.get(), club_password.get(), wait_list)
+    administrator = Administrator(club_id.get(), club_name.get(), club_email.get(), club_password.get(), wait_list)
 
     club_id_entry.delete(0, END)
     club_name_entry.delete(0, END)
@@ -193,6 +191,8 @@ def member_register():
     global member_password_entry
     global member_confirm_password_entry
     global member_apply_club_id_entry
+    global member_register_feedback
+
 
     member_id = StringVar()
     member_name = StringVar()
@@ -234,6 +234,12 @@ def member_register():
     # 7
     Label(screen1, text="").pack()
     Button(screen1, text="Register", height="3", width="20", command=member_info).pack()
+
+    # 8
+    Label(screen1, text = "").pack()
+    member_register_feedback = Label(screen1, text=" ", fg="green", font=("new roman", 15))
+    member_register_feedback.pack()
+
 
 def club_register():
     global screen1
@@ -296,7 +302,6 @@ def club_register():
     Label(screen1, text = "").pack()
     club_register_feedback = Label(screen1, text=" ", fg="green", font=("new roman", 15))
     club_register_feedback.pack()
-
 
 
 def admin():

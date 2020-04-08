@@ -113,3 +113,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+.idea/workspace.xml
+.idea/misc.xml
+.idea/-EECS-393-_Attendance-System.iml

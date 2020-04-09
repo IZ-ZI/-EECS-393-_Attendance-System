@@ -7,9 +7,9 @@ class FaceIdentification:
     def __init__(self):
         self.face_id = None
 
-    def set_face_id(self):
-        ec.delay_imcapture(0, "Hold still while taking the picture", "id", 3)
-        self.face_id = face_recognition.load_image_file("id.jpg")
+    def set_face_id(self, name):
+        ec.capture(1, False, name + ".jpg")
+        self.face_id = face_recognition.load_image_file(name + ".jpg")
 
     def compare_to(self, image):
         this_encoding = face_recognition.face_encodings(self.face_id)[0]

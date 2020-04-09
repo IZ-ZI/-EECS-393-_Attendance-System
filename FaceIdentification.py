@@ -9,7 +9,7 @@ class FaceIdentification:
         self.face_id = None
 
     #return true if face id is successfully set
-    def set_face_id(self, member_id):
+    def set_face_id(self, member_id) -> bool:
         ec.capture(1, False, member_id + ".jpg")
         self.face_id = face_recognition.load_image_file(member_id + ".jpg")
         return self.test_face_is_set()

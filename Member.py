@@ -4,8 +4,12 @@ associated with a specific member of certain organization(s).
 """
 from Activity import Activity
 from AttendanceRecord import AttendanceRecord
+<<<<<<< HEAD
 from Administrator import Administrator
 from FaceIdentification import FaceIdentification
+=======
+import Administrator
+>>>>>>> Isaac_init_0321
 import sendEmail as se
 
 
@@ -56,7 +60,7 @@ class Member:
         return successful_set
 
     def requestPermission(self, admin: Administrator) -> bool:
-        se.send_email(self.email_address, '393membertest1', admin.get_email_adderss())
+        se.send_email('attsystem393@gmail.com', 'eecs_393', admin.get_email_adderss(), self.get_name(), self.get_id(), True)
         return True
 
     def joinActivity(self, activity: Activity) -> bool:

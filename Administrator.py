@@ -1,5 +1,5 @@
 from MemberDatabase import MemberDatabase
-import Member
+from ActivityBoard import ActivityBoard
 import sendEmail as se
 
 
@@ -10,6 +10,7 @@ class Administrator:
         self.email_address = email_address
         self.password = password
         self.memberDatabase = MemberDatabase()
+        self.activity_board = ActivityBoard()
 
     def get_organization_id(self) -> str:
         return self.organization_id
@@ -19,6 +20,9 @@ class Administrator:
 
     def get_member_database(self) -> MemberDatabase:
         return self.memberDatabase
+
+    def get_activity_board(self) -> ActivityBoard:
+        return self.activity_board
 
     def get_email_adderss(self) -> str:
         return self.email_address
@@ -44,3 +48,12 @@ class Administrator:
         se.send_email('attsystem393@gmail.com', 'eecs_393',
                       member.get_email_address(), self.get_organization_name(), self.get_organization_id(), False)
         return True
+
+    def add_activity(self, activity):
+        self.activity_board.add(activity)
+
+    def delete_activity(self, activity_name):
+        self.activity_board.delete(activity_name)
+
+    def update_activity(self, activity):
+        self.activity_board.update(activity)

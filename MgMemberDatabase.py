@@ -26,7 +26,7 @@ class MgMemberDatabase:
 
     def update(self, member):
         if self.is_present(member.get_id()):
-            self.collection.update_one({"_id": member.id}, {'$set':
+            self.collection.update_one({"_id": member.get_id()}, {'$set':
                 {
                     "name": member.get_name(), "email_address": member.get_email_address(),
                     "password": member.get_password()
@@ -36,7 +36,7 @@ class MgMemberDatabase:
         else:
             return False
 
-    # return a dictonary in a form like "_id": member.get_id(), "name": member.get_name(), "email_address":
+    # return a dictionary in a form like "_id": member.get_id(), "name": member.get_name(), "email_address":
     # member.get_email_address(),"password": member.get_password(), "clubs": []
     def retrieve(self, member_id):
         return self.collection.find_one({"_id": member_id})
@@ -60,9 +60,19 @@ class MgMemberDatabase:
 
     def add_club_to_member(self, club_id, member_id):
         if self.is_present(member_id):
-            self.collection.update(
+            self.collection.update_one(
                 {"_id": member_id},
                 {'$push': {"clubs": club_id}}
+            )
+            return True
+        else:
+            return False
+
+    def remove_club_from_member(self, club_id, member_id):
+        if self.is_present(member_id):
+            self.collection.update_one(
+                {"_id": member_id},
+                {'$pull': {"clubs": club_id}}
             )
             return True
         else:
@@ -71,3 +81,4 @@ class MgMemberDatabase:
     def clubs_member_added(self, member_id):
         cursor = self.collection.find_one({"_id": member_id})
         return cursor["clubs"]
+

@@ -4,12 +4,8 @@ associated with a specific member of certain organization(s).
 """
 from Activity import Activity
 from AttendanceRecord import AttendanceRecord
-<<<<<<< HEAD
 from Administrator import Administrator
 from FaceIdentification import FaceIdentification
-=======
-import Administrator
->>>>>>> Isaac_init_0321
 import sendEmail as se
 
 
@@ -47,10 +43,10 @@ class Member:
         # returns the average attendance score of the member
         return self.score
 
-    def getFaceId(self):  # -> FaceIdentification
+    def get_face_id(self) -> FaceIdentification:
         return self.face_id
 
-    def setFaceId(self):
+    def set_face_id(self) -> bool:
         successful_set = self.face_id.set_face_id(self.get_id())
 
         trial = 0

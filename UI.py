@@ -800,7 +800,7 @@ def rejectMember(logged_admin):
         logged_admin.get_member_database().reject_pending_member(rej_member.get_id())
         pendingMemberBox.delete(clicked_item_index)
         refreshList(logged_admin)
-        logged_admin.permit(rej_member)
+        logged_admin.reject(rej_member)
 
 
 def acceptMember(logged_admin):

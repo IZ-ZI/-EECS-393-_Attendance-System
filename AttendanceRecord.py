@@ -1,3 +1,4 @@
+
 from Activity import Activity
 from datetime import datetime
 from Member import Member
@@ -7,12 +8,12 @@ from FaceIdentification import FaceIdentification
 
 class AttendanceRecord:
     def __init__(self, activity: Activity, member: Member):
+
         self.activity = activity
-        self.member = member
         self.status = status
 
-    def get_activity(self):
-        return self.activity
+    def get_arrival_time(self):
+        return self.time
 
     def get_attendance_status(self):
         return self.status
@@ -36,5 +37,6 @@ class AttendanceRecord:
 
         else:
             return Status.absent
+
 
 

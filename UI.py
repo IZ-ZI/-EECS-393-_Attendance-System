@@ -438,7 +438,7 @@ def refreshClub(logged_member):
 
 def memberManagement():
     frame = Frame(screenAdmin, padx=10, pady=10)
-    frame.place(x=screen_width / 2, y=2, width=screen_width / 2, height=screen_height)
+    frame.place(x=screen_width / 2, y=2, width=screen_width / 2, height=screen_height-27)
 
     Label(frame, text="Current Members", font=("new roman", 21)).pack()
 
@@ -501,7 +501,7 @@ def activityManagement():
     screen_width = screen.winfo_screenwidth() / 2
     screen_height = screen.winfo_screenheight() / 2
     frame = Frame(screenAdmin, padx=10, pady=10)
-    frame.place(x=screen_width / 2, y=2, width=screen_width / 2, height=screen_height)
+    frame.place(x=screen_width / 2, y=2, width=screen_width / 2, height=screen_height - 27)
     Label(frame, text = "Activities", font = ("new roman", 21)).pack()
 
     global activityBox
@@ -705,9 +705,12 @@ def admin_login():
         Button(leftFrame, text = "Member Management", font = ("new roman", 20), height = 2, width = 25, command = memberManagement).grid(row = 0, column = 0)
         Label(leftFrame, text = "", height = 1, width = 25).grid(row = 1, column = 0)
         Button(leftFrame, text = "Activity Management", font = ("new roman", 20), height = 2, width = 25, command = activityManagement).grid(row = 2, column = 0)
+
+        Button(screenAdmin, text = "Log out", font = ("new roman", 13)).place(x = screen_width - 70, y = screen_height - 25)
+        # command = lambda:raise_frame(login_frame)
         
         frame = Frame(screenAdmin, padx=10, pady=10)
-        frame.place(x=screen_width / 2, y=2, width=screen_width / 2, height=screen_height)
+        frame.place(x=screen_width / 2, y=2, width=screen_width / 2, height=screen_height - 27)
 
         Label(frame, text="Current Members", font=("new roman", 21)).pack()
 

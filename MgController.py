@@ -14,11 +14,11 @@ class MgController:
         self.admin_collection = self.db["Administrator"]
         self.member_collection = self.db["Member"]
 
-    def upload_data(self, administrator_list, member_list):
-        self.upload_admin(administrator_list)
-        self.upload_member(member_list)
+    def download_data(self, administrator_list, member_list):
+        self.download_admin(administrator_list)
+        self.download_member(member_list)
 
-    def upload_admin(self, administrator_list):
+    def download_admin(self, administrator_list):
         admins = self.admin_collection.find()
         if admins.count() != 0:
             for i in admins:
@@ -27,7 +27,7 @@ class MgController:
                 self.add_members(admin, i["added_members"])
                 administrator_list.append(admin)
 
-    def upload_member(self, member_list):
+    def download_member(self, member_list):
         members = self.member_collection.find()
         if members.count() != 0:
             for i in self.member_collection.find():
@@ -36,7 +36,7 @@ class MgController:
                 member_list.append(member)
 
     def add_clubs(self, member, clubs):
-        if len(clubs) != 0:
+        if clubs:
             for i in clubs:
                 club_from_db = self.admin_collection.find_one({"_id": i})
                 member.get_admin_list().append(

@@ -4,14 +4,13 @@ associated with a specific member of certain organization(s).
 """
 from Activity import Activity
 from AttendanceRecord import AttendanceRecord
-from Administrator import Administrator
-from FaceIdentification import FaceIdentification
+import Administrator
 import sendEmail as se
 
 
 class Member:
 
-    def __init__(self, name, student_ID, email_address, password):
+    def __init__(self,  name, student_ID, email_address, password):
         # initializing class member
         self.name = name
         self.email_address = email_address
@@ -20,7 +19,6 @@ class Member:
         self.score = 0
         self.attendance_record = []
         self.admin_list = []
-        self.face_id = FaceIdentification();
 
     def get_name(self) -> str:
         # returns name of member: first name + last name
@@ -39,21 +37,17 @@ class Member:
     def get_admin_list(self) -> list:
         return self.admin_list
 
+    # def getFaceID(self):  # -> FaceIdentification
+    # returns the face id object of the member
+    # return self.face_ID
+
     def averageScore(self):  # -> Score
         # returns the average attendance score of the member
         return self.score
 
-    def get_face_id(self) -> FaceIdentification:
-        return self.face_id
-
-    def set_face_id(self) -> bool:
-        successful_set = self.face_id.set_face_id(self.get_id())
-
-        trial = 0
-        while not successful_set and trial != 3:  # give up after 3 unsuccessful trials
-            self.face_id.set_face_id(self.get_id())
-            trial = trial + 1
-        return successful_set
+    # def setFaceID(self, face_data):
+    # sets the facial id data for the member
+    # self.__face_ID = face_data
 
     def requestPermission(self, admin: Administrator) -> bool:
         se.send_email('attsystem393@gmail.com', 'eecs_393', admin.get_email_adderss(), self.get_name(), self.get_id(), True)

@@ -4,11 +4,19 @@
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/venv" />
     </content>
+<<<<<<< Updated upstream
 <<<<<<< HEAD
     <orderEntry type="jdk" jdkName="Python 3.6 (-EECS-393-_Attendance-System)" jdkType="Python SDK" />
 =======
     <orderEntry type="inheritedJdk" />
 >>>>>>> Isaac_init_0321
+=======
+<<<<<<< Updated upstream
+    <orderEntry type="jdk" jdkName="Python 3.6 (-EECS-393-_Attendance-System)" jdkType="Python SDK" />
+=======
+    <orderEntry type="inheritedJdk" />
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

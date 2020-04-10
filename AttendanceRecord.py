@@ -1,6 +1,6 @@
 class AttendanceRecord:
-    def __init__(self, time, status):
-        self.time = time
+    def __init__(self, activity, status):
+        self.activity = activity
         self.status = status
 
     def get_arrival_time(self):

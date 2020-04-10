@@ -602,6 +602,18 @@ def takeAttendance():
     rightFrame = Frame(screenAttendance, padx = 10, pady = 10)
     rightFrame.place(x = screen_width / 2, y = 2, width = screen_width/2, height = int(screen_height*2/3))
     Label(rightFrame, text = "Camera", font = ("new roman", 15)).grid(row = 0, column = 0, sticky = W)
+    cameraFrame = LabelFrame(rightFrame, padx= 10, pady = 10, width = screen_width/3 + 20, height = screen_width/3+ 20)
+    cameraFrame.grid(row = 1, column = 0)
+
+    Button(screenAttendance, text = "Attend", font = ("new roman", 15), height = 2, width = 20, command = attend).place(x = 10, y = int (screen_height*2/3) + 30)
+    Button(screenAttendance, text = "Verify", font = ("new roman", 15), height = 2, width = 20, command = takePhoto).place(
+        x = screen_width/2+10, y = int(screen_height*2/3)+30)
+
+def takePhoto():
+    print("take photo")
+
+def attend():
+    print("successfully take attendance")
 
 def getMemberPhoto():
     print("get Member Photo")
@@ -785,7 +797,7 @@ def rejectMember(logged_admin):
         logged_admin.get_member_database().reject_pending_member(rej_member.get_id())
         pendingMemberBox.delete(clicked_item_index)
         refreshList(logged_admin)
-        logged_admin.permit(rej_member)
+        logged_admin.reject(rej_member)
 
 
 def acceptMember(logged_admin):

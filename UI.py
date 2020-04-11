@@ -592,7 +592,9 @@ def show_club_list(logged_member_id):
     global added_club_list
     for i in db_controller.clubs_member_added(logged_member_id):
         club_curse =  db_controller.retrieve_admin(i)
-        clubBox.insert(END, "ID: " + club_curse["_id"] + "  " + "Name: " + club_curse["name"])
+        if club_curse not in added_club_list:
+            clubBox.insert(END, "ID: " + club_curse["_id"] + "  " + "Name: " + club_curse["name"])
+            added_club_list.append(club_curse)
 
 
 def refreshClub(logged_member_id):
@@ -965,19 +967,22 @@ def admin_login():
 
 def showPendingMember(logged_admin_id):
     global pendingMemberBox
-    global added_club_list
+    global pending_member_list
     for i in db_controller.pending_members(logged_admin_id):
         member_curse = db_controller.retrieve_member(i)
-        pendingMemberBox.insert(END, "ID: " + member_curse["_id"] + "  " + "Name: " + member_curse["name"])
+        if member_curse not in pending_member_list:
+            pendingMemberBox.insert(END, "ID: " + member_curse["_id"] + "  " + "Name: " + member_curse["name"])
+            pending_member_list.append(member_curse)
 
 
 def showCurrentMember(logged_admin_id):
     global currentMemberBox
-    global added_club_list
+    global current_member_list
     for i in db_controller.added_members(logged_admin_id):
         member_curse = db_controller.retrieve_member(i)
-        currentMemberBox.insert(END, "ID: " + member_curse["_id"] + "  " + "Name: " + member_curse["name"])
-
+        if member_curse not in current_member_list:
+            currentMemberBox.insert(END, "ID: " + member_curse["_id"] + "  " + "Name: " + member_curse["name"])
+            current_member_list.append(member_curse)
 
 def rejectMember(logged_admin_id):
     if pendingMemberBox.curselection() != ():

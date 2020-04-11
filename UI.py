@@ -446,6 +446,8 @@ def member_login():
         Button(screenMember, text="Log out", font=("new roman", 13), command=lambda: raise_frame(login_page)).place(
             x=screen_width - 70, y=screen_height - 25)
 
+        Button(screenMember, text = "Set Face ID", font = ("new roman", 13), width = 10).place(x = screen_width/2+10, y = screen_height - 25)
+
         leftFrame = Frame(screenMember, padx=10, pady=10)
         leftFrame.place(x=0, y=2, width=screen_width / 2, height=screen_height / 3)
         Button(leftFrame, text="My Clubs", font=("new roman", 20), height=2, width=25, command=clubList).grid(row=0,
@@ -696,21 +698,22 @@ def activityManagement():
         activityBox.insert(END, "LINE " + str(i))
 
     activityBox.pack(side=LEFT)
-    activityScroll.config(command=currentMemberBox.yview)
+    activityScroll.config(command=activityBox.yview)
     activityFrame.pack()
 
-    buttonFrameA = Frame(frame, padx=1, pady=3)
-    Button(buttonFrameA, text="Refresh", font=("new roman", 18), height=1, width=9, command=refreshActivity).grid(row=0,
-                                                                                                                  column=0)
-    Button(buttonFrameA, text="View", font=("new roman", 18), height=1, width=9, command=viewActivity).grid(row=0,
-                                                                                                            column=1)
-    Button(buttonFrameA, text="Create", font=("new roman", 18), height=1, width=9, command=createActivity).grid(row=0,
-                                                                                                                column=2)
+    buttonFrameA = Frame(frame, padx = 0, pady=3)
+    Button(buttonFrameA, text = "Refresh", font = ("new roman", 18), height = 1, width = 7, command = refreshActivity).grid(row = 0, column = 0)
+    Button(buttonFrameA, text = "View", font = ("new roman", 18), height = 1, width = 6, command = viewActivity).grid(row = 0, column = 1)
+    Button(buttonFrameA, text = "Create", font = ("new roman", 18), height = 1, width = 7, command = createActivity).grid(row = 0, column = 2)
+    Button(buttonFrameA, text = "Delete", font = ("new roman", 18), height = 1, width = 7, command = deleteActivity).grid(row = 0, column = 3)
     buttonFrameA.pack()
 
     bottomFrame = Frame(screenAdmin, padx=10, pady=5)
     bottomFrame.place(x=5, y=screen_height / 3 + 2, width=screen_width / 2 - 5, height=int(screen_height * 2 / 3 - 10))
 
+
+def deleteActivity():
+    print("delete activity")
 
 def refreshActivity():
     print("refresh activity")
@@ -718,6 +721,38 @@ def refreshActivity():
 
 def updateTime():
     print("update time")
+    global updateTimeScreen
+    updateTimeScreen = Toplevel(screen)
+    updateTimeScreen.title("Update Activity Time")
+    updateTimeScreen.geometry("400x400+30+30")
+    Label(updateTimeScreen, text = "").pack()
+    Label(updateTimeScreen, text = "New Date", font = ("new roman", 15)).pack()
+    date_entry = Entry(updateTimeScreen)
+    date_entry.pack()
+    Label(updateTimeScreen, text="").pack()
+    Label(updateTimeScreen, text = "New Start Time", font = ("new roman", 15)).pack()
+    starttime_entry = Entry(updateTimeScreen)
+    starttime_entry.pack()
+    Label(updateTimeScreen, text="").pack()
+    Label(updateTimeScreen, text = "New End Time", font = ("new roman", 15)).pack()
+    endtime_entry = Entry(updateTimeScreen)
+    endtime_entry.pack()
+    Label(updateTimeScreen, text="").pack()
+
+    #global newMemberBox
+    #newMemberFrame = Frame(updateTimeScreen, padx = 1, pady = 3, height = 100, width = 200)
+    #newMemberScroll = Scrollbar(newMemberFrame)
+    #newMemberScroll.pack(side = RIGHT, fill = Y)
+    #newMemberBox = Listbox(newMemberFrame, yscrollcommand = newMemberScroll.set, width = 200, height = 4, selectmode = MULTIPLE)
+
+    #for i in range(1, 20):
+    #   newMemberBox.insert(END, "LINE " + str(i))
+
+    #newMemberBox.pack(side = LEFT)
+    #newMemberScroll.config(command = newMemberBox.yview)
+    #newMemberFrame.pack()
+
+    Button(updateTimeScreen, text = "Update Time Information", font = ("new roman", 15), height = 2, width = 20, command = updateTimeInfo).pack()
 
 
 def refreshActivityInfo():
@@ -818,6 +853,21 @@ def getMemberPhoto():
 
 def generateActivityReport():
     print("generating report")
+    global screenReport
+    screenReport = Toplevel(screen)
+    screenReport.title("Activity Report")
+    screenReport.geometry("300x300+50+50")
+    Label(screenReport, text = "").grid(row = 0, column = 0)
+    Label(screenReport, text = "Activity Name: ", font = ("new roman", 15)).grid(row = 1, column = 0, sticky = W)
+    Label(screenReport, text = "Class 5", font = ("new roman", 15)).grid(row = 1, column = 1, sticky = W)
+    Label(screenReport, text = "Number of Attendees:     ", font = ("new roman", 15)).grid(row = 2, column = 0, sticky = W)
+    Label(screenReport, text = "30", font = ("new roman", 15)).grid(row = 2, column = 1, sticky = W)
+    Label(screenReport, text = "Number of Attended: ", font = ("new roman", 15)).grid(row = 3, column = 0, sticky = W)
+    Label(screenReport, text = "15", font = ("new roman", 15)).grid(row = 3, column = 1, sticky = W)
+    Label(screenReport, text = "Number of Absenses: ", font = ("new roman", 15)).grid(row = 4, column = 0, sticky = W)
+    Label(screenReport, text = "15", font = ("new roman", 15)).grid(row = 4, column = 1, sticky = W)
+    Label(screenReport, text = "Attendance Rate", font = ("new roman", 15)).grid(row = 5, column = 0, sticky = W)
+    Label(screenReport, text="50", font=("new roman", 15)).grid(row=5, column=1, sticky=W)
 
 
 def createActivity():
@@ -1045,12 +1095,14 @@ def viewMember():
     Label(bottomFrame, text="Member Status", font=("new roman", 15)).pack()
 
     infoFrame = Frame(bottomFrame, padx=1, pady=3)
-    Label(infoFrame, text="Name: ", font=("new roman", 13)).grid(row=0, column=0)
-    Label(infoFrame, text="Han Pi", font=("new roman", 13)).grid(row=0, column=1)
-    Label(infoFrame, text="ID: ", font=("new roman", 13)).grid(row=1, column=0)
-    Label(infoFrame, text="hxp342", font=("new roman", 13)).grid(row=1, column=1)
-    Label(infoFrame, text="Email: ", font=("new roman", 13)).grid(row=2, column=0)
-    Label(infoFrame, text="hxp342@case.edu", font=("new roman", 13)).grid(row=2, column=1)
+    Label(infoFrame, text = "Name: ", font = ("new roman", 13)).grid(row = 0, column = 0, sticky = W)
+    Label(infoFrame, text = "Han Pi", font = ("new roman", 13)).grid(row = 0, column = 1, sticky = W)
+    Label(infoFrame, text = "ID: ", font = ("new roman", 13)).grid(row = 1, column = 0, sticky = W)
+    Label(infoFrame, text = "hxp342", font = ("new roman", 13)).grid(row = 1, column = 1, sticky = W)
+    Label(infoFrame, text = "Email: ", font = ("new roman", 13)).grid(row = 2, column = 0, sticky = W)
+    Label(infoFrame, text = "hxp342@case.edu", font = ("new roman", 13)).grid (row = 2, column = 1, sticky = W)
+    Label(infoFrame, text = "Attendance Rate:    ", font = ("new roman", 13)).grid(row = 3, column = 0, sticky = W)
+    Label(infoFrame, text = "50", font = ("new roman", 13)).grid(row = 3, column = 1, sticky = W)
     infoFrame.pack()
 
     global joinedActivityBox
@@ -1068,12 +1120,6 @@ def viewMember():
     joinedScroll.config(command=joinedActivityBox.yview)
     joinedFrame.pack()
 
-    Button(bottomFrame, text="Generate Attendance Report", font=("new roman", 13), width=20, height=2,
-           command=generateMemberReport).pack()
-
-
-def generateMemberReport():
-    print("generate member report")
 
 
 def member():

@@ -54,7 +54,7 @@ class DBController:
         if not self.member_is_present(member_id):
             return False
 
-        member = self.retrieve(member_id)
+        member = self.retrieve_member(member_id)
         if member["password"] == password:
             return True
         else:
@@ -152,7 +152,7 @@ class DBController:
         if not self.admin_is_present(admin_id):
             return False
 
-        admin = self.admin_retrieve(admin_id)
+        admin = self.retrieve_admin(admin_id)
         if admin["password"] == password:
             return True
         else:

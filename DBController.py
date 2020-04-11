@@ -3,7 +3,7 @@ import pymongo
 import sendEmail as se
 
 
-class MgController:
+class DBController:
 
     def __init__(self):
         self.cluster = MongoClient(
@@ -114,7 +114,7 @@ class MgController:
         admin = self.collection_admin.find_one({"_id": admin_id})
         return admin is not None
 
-    def admin_add(self, admin):
+    def add_admin(self, admin):
         if not self.admin_is_present(admin.get_organization_id()):
             post = {"_id": admin.get_organization_id(), "name": admin.get_organization_name(),
                     "email_address": admin.get_email_address(),
@@ -124,7 +124,7 @@ class MgController:
         else:
             return False
 
-    def admin_update(self, admin):
+    def update_admin(self, admin):
         if self.admin_is_present(admin.get_organization_id()):
             self.collection_admin.update_one({"_id": admin.get_organization_id()}, {'$set':
                 {
@@ -138,10 +138,10 @@ class MgController:
 
     # return a dictionary in a form like "_id": admin.get_organization_id(), "name": admin.get_organization_name(),
     # "email_address": admin.get_email_address(),"password": admin.get_password(), "clubs": []
-    def admin_retrieve(self, admin_id):
+    def retrieve_admin(self, admin_id):
         return self.collection_admin.find_one({"_id": admin_id})
 
-    def admin_delete(self, admin_id):
+    def delete_admin(self, admin_id):
         if self.admin_is_present(admin_id):
             self.collection_admin.delete_one({"_id": admin_id})
             return True

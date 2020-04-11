@@ -8,7 +8,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-.pyc
+*.pyc
 build/
 develop-eggs/
 dist/
@@ -114,3 +114,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+.idea/workspace.xml
+.idea/-EECS-393-_Attendance-System.iml
+.idea/misc.xml
+.idea/modules.xml

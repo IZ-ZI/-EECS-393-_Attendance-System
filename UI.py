@@ -1001,8 +1001,9 @@ def rejectMember(logged_admin_id):
         rej_member_email = db_controller.retrieve_member(rej_member_id)["email_address"]
         admin_name = db_controller.retrieve_admin(logged_admin_id)["name"]
         pendingMemberBox.delete(clicked_item_index)
+        db_controller.remove_member_from_pending_members(logged_admin_id, rej_member_id)
         refreshList(logged_admin_id)
-        db_controller.reject(rej_member_id, rej_member_email, logged_admin_id, admin_name)
+        db_controller.reject(rej_member_email, logged_admin_id, admin_name)
 
 
 def acceptMember(logged_admin_id):
@@ -1012,9 +1013,12 @@ def acceptMember(logged_admin_id):
         acc_member_email = db_controller.retrieve_member(acc_member_id)["email_address"]
         admin_name = db_controller.retrieve_admin(logged_admin_id)["name"]
         pendingMemberBox.delete(clicked_item_index)
+        db_controller.add_member_to_added_members(logged_admin_id, acc_member_id)
+        db_controller.remove_member_from_pending_members(logged_admin_id, acc_member_id)
+        db_controller.add_club_to_member(logged_admin_id, rej_member_id)
         refreshList(logged_admin_id)
         refreshMember(logged_admin_id)
-        db_controller.permit(acc_member_id, acc_member_email, logged_admin_id, admin_name)
+        db_controller.permit(acc_member_email, logged_admin_id, admin_name)
 
 
 def deleteMember():

@@ -3,7 +3,6 @@ This class represents a member object in the system. Its job is to store the per
 associated with a specific member of certain organization(s).
 """
 from Activity import Activity
-from AttendanceRecord import AttendanceRecord
 from Administrator import Administrator
 from FaceIdentification import FaceIdentification
 import sendEmail as se

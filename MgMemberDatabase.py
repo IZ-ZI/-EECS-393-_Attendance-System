@@ -79,6 +79,8 @@ class MgMemberDatabase:
             return False
 
     def clubs_member_added(self, member_id):
-        cursor = self.collection.find_one({"_id": member_id})
-        return cursor["clubs"]
-
+        if self.is_present(member_id):
+            cursor = self.collection.find_one({"_id": member_id})
+            return cursor["clubs"]
+        else:
+            return None

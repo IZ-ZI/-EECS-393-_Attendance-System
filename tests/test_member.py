@@ -2,7 +2,6 @@ import unittest
 from mock import Mock
 
 from Member import Member
-from WaitList import WaitList
 
 import sys
 sys.path.insert(0, 'D:\EECS393Project\-EECS-393-_Attendance-System')

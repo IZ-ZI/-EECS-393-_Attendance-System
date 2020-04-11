@@ -9,7 +9,6 @@ class AttendanceRecord:
     def __init__(self, activity: Activity, member: Member):
         self.activity = activity
         self.member = member
-        self.status = status
 
     def get_activity(self):
         return self.activity
@@ -18,7 +17,7 @@ class AttendanceRecord:
         return self.status
 
     def take_attendance(self):
-        current_status = figured_status(datetime.now())
+        current_status = self.figured_status(datetime.now())
         taken_face = FaceIdentification()
         taken_face.set_face_id()
 

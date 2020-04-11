@@ -17,7 +17,8 @@ class MgAdministratorDatabase:
 
     def add(self, admin):
         if not self.is_present(admin.get_organization_id()):
-            post = {"_id": admin.get_organization_id(), "name": admin.get_organization_name(), "email_address": admin.get_email_address(),
+            post = {"_id": admin.get_organization_id(), "name": admin.get_organization_name(),
+                    "email_address": admin.get_email_address(),
                     "password": admin.get_password(), "added_members": [], "pending_members": []}
             self.collection.insert_one(post)
             return True
@@ -105,6 +106,9 @@ class MgAdministratorDatabase:
         else:
             return None
 
-    def pending_memebers(self, admin_id):
-        cursor = self.collection.find_one({"_id": admin_id})
-        return cursor["pending_members"]
+    def pending_members(self, admin_id):
+        if self.is_present(admin_id):
+            cursor = self.collection.find_one({"_id": admin_id})
+            return cursor["pending_members"]
+        else:
+            return None

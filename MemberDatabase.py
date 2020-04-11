@@ -1,5 +1,4 @@
 
-
 class MemberDatabase:
     def __init__(self):
         self.database = []

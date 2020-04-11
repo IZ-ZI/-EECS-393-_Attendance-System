@@ -1,6 +1,10 @@
 from tkinter import *
 from Administrator import Administrator
 from Member import Member
+from MgController import MgController
+
+
+mg_controller = MgController()
 
 screen = None
 
@@ -44,9 +48,10 @@ club_confirm_password_entry = None
 
 administrator_list = []
 member_list = []
+
 current_member_list = []
 pending_member_list = []
-added_club_list=[]
+added_club_list = []
 
 currentMemberBox = None
 currentScroll = None
@@ -72,6 +77,10 @@ def main_screen():
     administrator_list = []
     global member_list
     member_list = []
+
+    mg_controller = MgController()
+
+    mg_controller.download_data(administrator_list, member_list)
 
     screen = Tk()
     screen.geometry("600x300")
@@ -773,12 +782,13 @@ def showCurrentMember(logged_admin):
     for i in logged_admin.get_member_database().database:
         if(i not in current_member_list):
             current_member_list.append(i)
+
+
             currentMemberBox.insert(END,  "ID: " + i.get_id() + "  " + "Name: " + i.get_name())
 
 
 
 def rejectMember(logged_admin):
-    global pending_member_list
     if pendingMemberBox.curselection() != ():
         clicked_item_index = pendingMemberBox.curselection()[0]
         rej_member = logged_admin.get_member_database().wait_list[clicked_item_index]

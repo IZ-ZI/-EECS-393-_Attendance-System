@@ -78,10 +78,6 @@ def main_screen():
     global member_list
     member_list = []
 
-    mg_controller = MgController()
-
-    mg_controller.download_data(administrator_list, member_list)
-
     screen = Tk()
     screen.geometry("600x300")
     screen.title("Attendance System Login")

@@ -527,6 +527,35 @@ def viewClub():
     clubActivityBox.pack(side = LEFT)
     clubActivityScroll.config(command = clubActivityBox.yview)
     clubActivityFrame.pack()
+    Button(bottomFrame, text = "View Activity Status", font = ("new roman", 12), command = viewActivityStatus).pack()
+
+def viewActivityStatus():
+    print("view this activity's status")
+    screen_width = screen.winfo_screenwidth() / 2
+    screen_height = screen.winfo_screenheight() / 2
+    bottomFrame = LabelFrame(screenMember, padx = 10, pady = 5)
+    bottomFrame.place(x = 5, y = screen_height/3+2, width = screen_width/2-5, height = int(screen_height*2/3 - 10))
+    Label(bottomFrame, text = "Activity Status", font = ("new roman", 15)).pack()
+
+    activityInfoFrame = Frame(bottomFrame, padx = 1, pady = 3)
+    Label(activityInfoFrame, text = "Club Name:", font = ("new roman", 13)).grid(row = 0, column = 0, sticky = W)
+    Label(activityInfoFrame, text = "EECS 391").grid(row = 0, column = 1, sticky = W)
+    Label(activityInfoFrame, text = "Activity Name:", font = ("new roman", 13)).grid(row = 1, column = 0, sticky = W)
+    Label(activityInfoFrame, text = "Class 5", font = ("new roman", 13)).grid(row = 1, column = 1, sticky = W)
+    Label(activityInfoFrame, text = "Date: ").grid(row = 2, column = 0, sticky = W)
+    Label(activityInfoFrame, text = "2020/04/20", font = ("new roman", 13)).grid (row = 2, column = 1, sticky = W)
+    Label(activityInfoFrame, text = "Start Time: ", font = ("new roman", 13)).grid(row = 3, column = 0, sticky = W)
+    Label(activityInfoFrame, text = "13:00", font = ("new roman", 13)).grid(row = 3, column = 1, sticky = W)
+    Label(activityInfoFrame, text = "End Time: ", font = ("new roman", 13)).grid(row = 4, column = 0, sticky = W)
+    Label(activityInfoFrame, text = "14:00", font = ("new roman", 13)).grid(row = 4, column = 1, sticky = W)
+    Label(activityInfoFrame, text = "Number of Attendees:          ", font = ("new roman", 13)).grid(row = 5, column = 0, sticky = W)
+    Label(activityInfoFrame, text = "30", font = ("new roman", 13)).grid(row = 5, column = 1, sticky = W)
+    Label(activityInfoFrame, text = "My Check In Time: ", font = ("new roman", 13)).grid(row = 6, column = 0, sticky = W)
+    Label(activityInfoFrame, text = "13:04", font = ("new roman", 13)).grid(row = 6, column = 1, sticky = W)
+    Label(activityInfoFrame, text = "Present?", font = ("new roman", 13)).grid(row = 7, column = 0, sticky = W)
+    Label(activityInfoFrame, text = "Yes", font = ("new roman", 13)).grid(row = 7, column = 1, sticky = W)
+
+    activityInfoFrame.pack()
 
 
 def deleteClub():
@@ -562,7 +591,7 @@ def activityList():
     buttonFrame = Frame(frame, padx=2, pady=3)
     Button(buttonFrame, text="Refresh", font=("new roman", 18), height=1, width=13, command=refreshMyActivity).grid(row=0, column=0)
     Label(buttonFrame, text = " ").grid(row = 0, column = 1)
-    Button(buttonFrame, text="View", font=("new roman", 18), height=1, width=13, command=viewMyActivity).grid(row=0, column=2)
+    Button(buttonFrame, text="View", font=("new roman", 18), height=1, width=13, command=viewMyActivityStatus).grid(row=0, column=2)
     buttonFrame.pack()
 
     bottomFrame = Frame(screenMember, padx = 10, pady = 5)

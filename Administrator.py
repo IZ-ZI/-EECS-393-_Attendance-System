@@ -24,7 +24,7 @@ class Administrator:
     def get_activity_board(self) -> ActivityBoard:
         return self.activity_board
 
-    def get_email_adderss(self) -> str:
+    def get_email_address(self) -> str:
         return self.email_address
 
     def get_password(self) -> str:

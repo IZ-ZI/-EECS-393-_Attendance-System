@@ -1,10 +1,6 @@
-from Member import Member
-from MemberDatabase import MemberDatabase
 
-sb = Member()
-sb.student_ID = "SB"
-sb.first_name = "脑瘫"
-sb.last_name = "不学习"
+from datetime import datetime
 
-sb.setFaceId()
+time = datetime(2020,2,2,2,2)
 
+print(int(time.year), int(time.month), int(time.day), int(time.hour))

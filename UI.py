@@ -424,7 +424,7 @@ def clubList():
     buttonFrameC.pack()
 
     bottomFrame = Frame(screenMember, padx = 10, pady = 5)
-    bottomFrame.place(x = 5, y = screen_height/3+2, width = screen_width/2-5, height = int(screen_height*2/3 - 10)
+    bottomFrame.place(x = 5, y = screen_height/3+2, width = screen_width/2-5, height = int(screen_height*2/3 - 10))
 
 
 def member_login():

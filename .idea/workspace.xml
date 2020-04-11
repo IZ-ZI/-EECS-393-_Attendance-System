@@ -20,7 +20,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="54e6ccd2-7e45-4bd1-b31c-aa8452343319" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/AttendanceRecord.py" beforeDir="false" afterPath="$PROJECT_DIR$/AttendanceRecord.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

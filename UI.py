@@ -1,7 +1,10 @@
 from tkinter import *
 from Administrator import Administrator
 from Member import Member
+from pymongo import MongoClient
+import pymongo
 from DBController import DBController
+
 
 screen = None
 
@@ -66,7 +69,14 @@ clubFrame = None
 
 show_password = None
 
-db_controller = DBController()
+cluster = MongoClient(
+    "mongodb+srv://wz:1999314Zwh%2F@attendancemanagementsystem-7immk.mongodb.net/test?retryWrites=true&w"
+    "=majority")
+db = cluster["AMS"]
+collection_member = db["Member"]
+collection_admin = db["Administrator"]
+
+db_controller = DBController(collection_member, collection_admin)
 
 
 def main_screen():
@@ -213,11 +223,12 @@ def member_info():
 
     new_member = Member(member_name.get(), member_id.get(), member_email.get(), member_password.get())
     db_controller.add_member(new_member)
-    db_controller.add_member_to_pending_members(member_apply_club_id.get(), new_member.get_id())
-    member_register_feedback['text'] = 'Registration Success'
+    print(db_controller.retrieve_admin(member_apply_club_id.get())["email_address"])
     admin_email = db_controller.retrieve_admin(member_apply_club_id.get())["email_address"]
+    member_register_feedback['text'] = 'Registration Success'
     db_controller.request_permission(member_apply_club_id.get(), new_member.get_id(), admin_email,
                                      new_member.get_name())
+
 
     member_id_entry.delete(0, END)
     member_name_entry.delete(0, END)
@@ -990,6 +1001,7 @@ def rejectMember(logged_admin_id):
         rej_member_email = db_controller.retrieve_member(rej_member_id)["email_address"]
         admin_name = db_controller.retrieve_admin(logged_admin_id)["name"]
         pendingMemberBox.delete(clicked_item_index)
+        refreshList(logged_admin_id)
         db_controller.reject(rej_member_id, rej_member_email, logged_admin_id, admin_name)
 
 

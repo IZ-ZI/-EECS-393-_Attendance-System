@@ -974,7 +974,6 @@ def showPendingMember(logged_admin_id):
             pendingMemberBox.insert(END, "ID: " + member_curse["_id"] + "  " + "Name: " + member_curse["name"])
             pending_member_list.append(member_curse)
 
-
 def showCurrentMember(logged_admin_id):
     global currentMemberBox
     global current_member_list
@@ -1066,7 +1065,7 @@ def member():
     screen_height = screen.winfo_screenheight() / 2
     Label(screen, text="User ID                            ", font=("new roman", 21)).place(x=screen_width / 24,
                                                                                             y=screen_height * 2 / 30)
-    Button(screen, text="New Member Register", font=("new roman", 15), height="5", width="20", command=club_register,
+    Button(screen, text="New Member Register", font=("new roman", 15), height="5", width="20", command=member_register,
            fg='black').place(
         x=screen_width * 2 / 3 + screen_width / 30, y=screen_height * 2 / 3)
     Button(screen, text="Member Login", font=("new roman", 15), height="5", width="20", command=member_login,

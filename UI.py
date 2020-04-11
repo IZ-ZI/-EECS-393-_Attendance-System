@@ -85,6 +85,10 @@ def main_screen():
 
     screen.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor, yCoor))
 
+    global login_page
+    login_page = Frame(screen, width = screen_width, height = screen_height)
+    login_page.grid(row = 0, column = 0)
+
     global login_account_entry
     global login_password_entry
     global login_account
@@ -94,41 +98,46 @@ def main_screen():
     login_account = StringVar()
     login_password = StringVar()
 
-    Label(screen, text="Club/Organization ID", font=("new roman", 20)).place(x=screen_width / 30, y=screen_height / 30)
+    Label(login_page, text="Club/Organization ID", font=("new roman", 21)).place(x=screen_width / 24, y=screen_height *2/ 30)
 
     # member_email_entry = Entry(screen1, textvariable=member_email)
 
-    login_account_entry = Entry(screen, textvariable=login_account, width="20")
-    login_account_entry.place(x=screen_width / 30, y=screen_height * 3 / 30)
+    login_account_entry = Entry(login_page, textvariable=login_account, width="30")
+    login_account_entry.place(x=screen_width / 24, y=screen_height * 5 / 30)
 
-    Label(screen, text="Password", font=("new roman", 20)).place(x=screen_width / 30, y=screen_height * 10 / 30)
+    Label(login_page, text="Password", font=("new roman", 21)).place(x=screen_width / 24, y=screen_height * 10 / 30)
     show_password = BooleanVar()
-    Checkbutton(screen, text="show password", variable=show_password, command=display_password).place(x=screen_width / 35, y=screen_height * 15 / 30)
-    login_password_entry = Entry(screen, show='*', textvariable=login_password, width="20")
-    login_password_entry.place(x=screen_width / 30, y=screen_height * 13 / 30)
+    Checkbutton(login_page, text="show password", variable=show_password, command=display_password).place(x=screen_width / 24, y=screen_height * 15 / 30)
+    login_password_entry = Entry(login_page, show='*', textvariable=login_password, width="30")
+    login_password_entry.place(x=screen_width / 24, y=screen_height * 13 / 30)
 
     # highlightbackground = 'green'
 
-    Button(screen, text="Administrator", height="5", width="20", command=admin, fg='black').place(
-        x=screen_width * 2 / 3, y=screen_height / 30)
-    Button(screen, text="Member", height="5", width="20", command=member, fg='black', ).place(x=screen_width * 2 / 3,
+    Button(login_page, text="Administrator", font = ("new roman", 15), height="5", width="20", command=admin, fg='black').place(
+        x=screen_width * 6.5 / 10, y=screen_height / 25)
+    Button(login_page, text="Member", font = ("new roman", 15), height="5", width="20", command=member, fg='black', ).place(x=screen_width * 6.5 / 10,
                                                                                               y=screen_height / 4 + screen_height / 30)
 
-    Button(screen, text="Administrator Login", height="5", width="20", command=admin_login, fg='black').place(
+    Button(login_page, text="Administrator Login", font = ("new roman", 15), height="5", width="20", command=admin_login, fg='black').place(
         x=screen_width / 30,
         y=screen_height * 2 / 3)
     # Button(screen, text="Login", height= "3", width = "20", command = login, fg='black').grid(row=6, column=0)
-    Button(screen, text="Forget/Reset Password", height="5", width="20", command=forget, fg='black').place(
+    Button(login_page, text="Forget/Reset Password", font = ("new roman", 15), height="5", width="20", command=forget, fg='black').place(
         x=screen_width / 3 + screen_width / 30, y=screen_height * 2 / 3)
 
-    Button(screen, text="New Club Register", height="5", width="20", command=club_register, fg='black').place(
+    Button(login_page, text="New Club Register", font = ("new roman", 15), height="5", width="20", command=club_register, fg='black').place(
         x=screen_width * 2 / 3 + screen_width / 30, y=screen_height * 2 / 3)
 
     # global button
     # button = Button(screen,text='Submit',command=changeText)
     # button.pack()
-
+    raise_frame(login_page)
     screen.mainloop()
+
+def raise_frame(frame):
+    frame.tkraise()
+    screen.title("Attendance System Login")
+
 
 
 def club_register_check():
@@ -376,6 +385,38 @@ def admin():
     Button(screen, text="Administrator Login", font = ("new roman", 15),height= "5", width = "20", command = admin_login, fg='black').place(
         x = screen_width/30, y = screen_height*2/3)
 
+def clubList():
+    print("show my clubs")
+    screen_width = screen.winfo_screenwidth() / 2
+    screen_height = screen.winfo_screenheight() / 2
+
+    frame = Frame(screenMember, padx = 10, pady = 10)
+    frame.place(x=screen_width/2, y=2, width = screen_width/2, height = screen_height - 27)
+
+    global clubBox
+    Label(frame, text = "Clubs", font = ("new roman", 21)).pack()
+    clubFrame = Frame(frame, padx= 1, pady = 3, height = int(screen_height / 5))
+    clubScroll = Scrollbar(clubFrame)
+    clubScroll.pack(side = RIGHT, fill = Y)
+    clubBox = Listbox(clubFrame, yscrollcommand = clubScroll.set, width = int(screen_width/8), height = 19, selectmode = SINGLE)
+
+    for i in range(1, 20):
+        clubBox.insert(END, "LINE " + str(i))
+
+    clubBox.pack(side = LEFT)
+    clubScroll.config(command = clubBox.yview)
+    clubFrame.pack()
+
+
+    buttonFrameC = Frame(frame, padx=1, pady=3)
+    Button(buttonFrameC, text="Refresh", font=("new roman", 18), height=1, width=9, command=refreshClubList).grid(row=0, column=0)
+    Button(buttonFrameC, text="View", font=("new roman", 18), height=1, width=9, command=viewClub).grid(row=0, column=1)
+    Button(buttonFrameC, text="Leave", font=("new roman", 18), height=1, width=9, command=deleteClub).grid(row=0, column=2)
+    buttonFrameC.pack()
+
+    bottomFrame = Frame(screenMember, padx = 10, pady = 5)
+    bottomFrame.place(x = 5, y = screen_height/3+2, width = screen_width/2-5, height = int(screen_height*2/3 - 10)
+
 
 def member_login():
     global screenMember
@@ -394,16 +435,26 @@ def member_login():
 
         screenMember.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor, yCoor))
     else:
-        screenMember = Toplevel(screen)
-        screenMember.title("Member: %s" % logged_member.get_name())
         screen_width = screen.winfo_screenwidth() / 2
         screen_height = screen.winfo_screenheight() / 2
         xCoor = screen_width / 2 + 20
         yCoor = screen_height / 2 + 20
-        screenMember.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor, yCoor))
+
+
+        screenMember = Frame(screen, width = screen_width, height = screen_height)
+        screenMember.grid(row = 0, column = 0)
+        screen.title("Member: %s" % logged_member.get_name())
+
+        Button(screenMember, text = "Log out", font = ("new roman", 13), command = lambda:raise_frame(login_page)).place(x = screen_width - 70, y = screen_height - 25)
+
+        leftFrame = Frame(screenMember, padx = 10, pady = 10)
+        leftFrame.place(x = 0, y = 2, width = screen_width/2, height = screen_height/3)
+        Button(leftFrame, text = "My Clubs", font = ("new roman", 20), height = 2, width = 25, command = clubList).grid(row = 0, column = 0)
+        Label(leftFrame, text = "", height = 1, width = 25).grid(row = 1, column = 0)
+        Button(leftFrame, text = "My Activities", font = ("new roman", 20), height = 2, width = 25, command = activityList).grid(row = 2, column = 0)
 
         frame = Frame(screenMember, padx=10, pady=10)
-        frame.place(x=screen_width / 2, y=2, width=screen_width / 2, height=screen_height)
+        frame.place(x=screen_width / 2, y=2, width=screen_width / 2, height=screen_height - 27)
 
         global clubBox
         global clubScroll
@@ -420,8 +471,96 @@ def member_login():
         clubBox.pack(side=LEFT)
         clubScroll.config(command=clubBox.yview)
         clubFrame.pack()
-        Button(frame, text="Refresh", font=("new roman", 18), height=1, width=10,
-               command=lambda: refreshClub(logged_member)).pack()
+
+        buttonFrameC = Frame(frame, padx=1, pady=3)
+        Button(buttonFrameC, text="Refresh", font=("new roman", 18), height=1, width=9, command=lambda: refreshClub(logged_member)).grid(row=0,
+                                                                                                            column=0)
+        Button(buttonFrameC, text="View", font=("new roman", 18), height=1, width=9, command=viewClub).grid(row=0,
+                                                                                                      column=1)
+        Button(buttonFrameC, text="Leave", font=("new roman", 18), height=1, width=9, command=deleteClub).grid(row=0,
+                                                                                                          column=2)
+        buttonFrameC.pack()
+    
+def refreshClubList():
+    print("refresh my clubs")
+
+def viewClub():
+    print("view club info and my status")
+    screen_width = screen.winfo_screenwidth() / 2
+    screen_height = screen.winfo_screenheight() / 2
+    bottomFrame = LabelFrame(screenMember, padx = 10, pady = 5)
+    bottomFrame.place(x = 5, y = screen_height/3+2, width = screen_width/2-5, height = int(screen_height*2/3 - 10))
+    Label(bottomFrame, text = "Club Status", font = ("new roman", 15)).pack()
+
+    clubInfoFrame = Frame(bottomFrame, padx = 1, pady = 3)
+    Label(clubInfoFrame, text = "Club Name:", font = ("new roman", 13)).grid(row = 0, column = 0, sticky = W)
+    Label(clubInfoFrame, text = "EECS 391").grid(row = 0, column = 1, sticky = W)
+    Label(clubInfoFrame, text = "Club ID: ", font = ("new roman", 13)).grid(row = 1, column = 0, sticky = W)
+    Label(clubInfoFrame, text = "123123", font = ("new roman", 13)).grid(row = 1, column = 1, sticky = W)
+    Label(clubInfoFrame, text = "Total Number of Events:     ").grid(row = 2, column = 0, sticky = W)
+    Label(clubInfoFrame, text = "15", font = ("new roman", 13)).grid (row = 2, column = 1, sticky = W)
+    Label(clubInfoFrame, text = "My Absenses", font = ("new roman", 13)).grid(row = 3, column = 0, sticky = W)
+    Label(clubInfoFrame, text = "3", font = ("new roman", 13)).grid(row = 3, column = 1, sticky = W)
+    Label(clubInfoFrame, text = "Attendance Rate", font = ("new roman", 13)).grid(row = 4, column = 0, sticky = W)
+    Label(clubInfoFrame, text = "80", font = ("new roman", 13)).grid(row = 4, column = 1, sticky = W)
+    clubInfoFrame.pack()
+
+    global clubActivityBox
+    clubActivityFrame = Frame(bottomFrame, padx = 3, pady = 3, height = int(screen_height/6))
+    Label(clubActivityFrame, text = "My Events", font = ("new roman", 13)).pack()
+    clubActivityScroll = Scrollbar(clubActivityFrame)
+    clubActivityScroll.pack(side = RIGHT, fill = Y)
+    clubActivityBox = Listbox(clubActivityFrame, yscrollcommand = clubActivityScroll.set, width = int(screen_width/2 - 7), height = 4, selectmode = SINGLE)
+
+    for i in range(1, 15):
+        clubActivityBox.insert(END, "LINE" + str(i))
+
+    clubActivityBox.pack(side = LEFT)
+    clubActivityScroll.config(command = clubActivityBox.yview)
+    clubActivityFrame.pack()
+
+
+def deleteClub():
+    clicked_items = clubBox.curselection()
+    clubBox.delete(clicked_items)
+    print("leave club")
+
+
+def activityList():
+    print("show my activities")
+
+    screen_width = screen.winfo_screenwidth() / 2
+    screen_height = screen.winfo_screenheight() / 2
+
+    frame = Frame(screenMember, padx = 10, pady = 10)
+    frame.place(x=screen_width/2, y=2, width = screen_width/2, height = screen_height - 27)
+
+    global myActivityBox
+    Label(frame, text = "Activities", font = ("new roman", 21)).pack()
+    myActivityFrame = Frame(frame, padx= 1, pady = 3, height = int(screen_height / 5))
+    myActivityScroll = Scrollbar(myActivityFrame)
+    myActivityScroll.pack(side = RIGHT, fill = Y)
+    myActivityBox = Listbox(myActivityFrame, yscrollcommand = myActivityScroll.set, width = int(screen_width/8), height = 19, selectmode = SINGLE)
+
+    for i in range(1, 20):
+        myActivityBox.insert(END, "LINE " + str(i))
+
+    myActivityBox.pack(side = LEFT)
+    myActivityScroll.config(command = myActivityBox.yview)
+    myActivityFrame.pack()
+
+
+    buttonFrame = Frame(frame, padx=2, pady=3)
+    Button(buttonFrame, text="Refresh", font=("new roman", 18), height=1, width=13, command=refreshMyActivity).grid(row=0, column=0)
+    Label(buttonFrame, text = " ").grid(row = 0, column = 1)
+    Button(buttonFrame, text="View", font=("new roman", 18), height=1, width=13, command=viewMyActivity).grid(row=0, column=2)
+    buttonFrame.pack()
+
+    bottomFrame = Frame(screenMember, padx = 10, pady = 5)
+    bottomFrame.place(x = 5, y = screen_height/3+2, width = screen_width/2-5, height = int(screen_height*2/3 - 10))
+
+
+
 
 def show_club_list(logged_member):
     global clubBox
@@ -437,6 +576,9 @@ def refreshClub(logged_member):
 
 
 def memberManagement():
+    screen_width = screen.winfo_screenwidth() / 2
+    screen_height = screen.winfo_screenheight() / 2
+    
     frame = Frame(screenAdmin, padx=10, pady=10)
     frame.place(x=screen_width / 2, y=2, width=screen_width / 2, height=screen_height-27)
 
@@ -691,13 +833,13 @@ def admin_login():
         screenMember.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor, yCoor))
     else:
         global screenAdmin
-        screenAdmin = Toplevel(screen)
-        screenAdmin.title("Administrator %s" % logged_admin.get_organization_name())
         screen_width = screen.winfo_screenwidth() / 2
         screen_height = screen.winfo_screenheight() / 2
         xCoor = screen_width / 2
         yCoor = screen_height / 2
-        screenAdmin.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor, yCoor))
+        screenAdmin = Frame(screen, width = screen_width, height = screen_height)
+        screenAdmin.grid(row = 0, column = 0)
+        screen.title("Administrator %s" % logged_admin.get_organization_name())
 
 
         leftFrame = Frame(screenAdmin, padx = 10, pady = 10)
@@ -706,7 +848,7 @@ def admin_login():
         Label(leftFrame, text = "", height = 1, width = 25).grid(row = 1, column = 0)
         Button(leftFrame, text = "Activity Management", font = ("new roman", 20), height = 2, width = 25, command = activityManagement).grid(row = 2, column = 0)
 
-        Button(screenAdmin, text = "Log out", font = ("new roman", 13)).place(x = screen_width - 70, y = screen_height - 25)
+        Button(screenAdmin, text = "Log out", font = ("new roman", 13), command = lambda:raise_frame(login_frame)).place(x = screen_width - 70, y = screen_height - 25)
         # command = lambda:raise_frame(login_frame)
         
         frame = Frame(screenAdmin, padx=10, pady=10)

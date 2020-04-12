@@ -17,7 +17,8 @@ class FaceIdentification:
             return None  # face id is not set, error reading faces from the camera
         return face_id
 
-    def compare_to(self, encoding1, encoding2):
+    @staticmethod
+    def compare_to(encoding1, encoding2):
         return face_recognition.compare_faces([encoding1], encoding2)
 
     @staticmethod

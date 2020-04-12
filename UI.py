@@ -1,6 +1,7 @@
 from tkinter import *
 
 import face_recognition
+import numpy
 
 from FaceIdentification import FaceIdentification
 from Administrator import Administrator
@@ -490,7 +491,8 @@ def takeFaceIDPhoto(logged_member_id):
     fr_photo = face_recognition.load_image_file("your photo.jpg")
     face_id = FaceIdentification.encoding_from_photo(fr_photo)
     db_controller.update_member_face_id(logged_member_id, face_id)
-    print(db_controller.retrieve_member_face_id(logged_member_id))
+    encoding = numpy.fromstring(db_controller.retrieve_member_face_id(logged_member_id))
+    print(FaceIdentification.compare_to(encoding, encoding))
 
 
 def setIDSuccess():

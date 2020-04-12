@@ -154,6 +154,7 @@ class DBController_for_test:
         else:
             return False
 
+
     def add_member_to_added_members(self, admin_id, member_id):
         if self.admin_is_present(admin_id) and member_id not in self.added_members(admin_id):
             self.collection_admin.update_one(
@@ -195,8 +196,9 @@ class DBController_for_test:
             return False
 
     def added_members(self, admin_id):
-        cursor = self.collection_admin.find_one({"_id": admin_id})
-        return cursor["added_members"]
+            cursor = self.collection_admin.find_one({"_id": admin_id})
+            return cursor["added_members"]
+
 
     def pending_members(self, admin_id):
         cursor = self.collection_admin.find_one({"_id": admin_id})

@@ -118,3 +118,5 @@ dmypy.json
 .idea/-EECS-393-_Attendance-System.iml
 .idea/misc.xml
 .idea/modules.xml
+.idea/vcs.xml
+.idea/inspectionProfiles/profiles_settings.xml

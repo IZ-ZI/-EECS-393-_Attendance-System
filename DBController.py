@@ -92,7 +92,20 @@ class DBController:
         else:
             return False
 
+    def update_member_face_id(self, member_id, face_id):
+        if self.member_is_present(member_id):
+            self.collection_member.update_one({"_id": member_id}, {'$set':
+                {
+                    "face id": face_id
+                }
+            })
+            return True
+        else:
+            return False
 
+    def retrieve_member_face_id(self, member_id):
+        if self.member_is_present(member_id):
+            return self.collection_member.find_one({"face_id": member_id})
 
 
 

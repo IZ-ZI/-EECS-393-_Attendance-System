@@ -19,3 +19,10 @@ class FaceIdentification:
 
     def compare_to(self, encoding1, encoding2):
         return face_recognition.compare_faces([encoding1], encoding2)
+
+    def encoding_from_photo(self, photo):
+        try:
+            encoding = face_recognition.face_encodings(photo)[0]
+        except: # no face found
+            return None
+        return encoding

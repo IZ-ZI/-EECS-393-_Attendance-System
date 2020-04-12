@@ -5,13 +5,9 @@ import sendEmail as se
 
 class DBController:
 
-    def __init__(self):
-        self.cluster = MongoClient(
-            "mongodb+srv://wz:1999314Zwh%2F@attendancemanagementsystem-7immk.mongodb.net/test?retryWrites=true&w"
-            "=majority")
-        self.db = self.cluster["AMS"]
-        self.collection_member = self.db["Member"]
-        self.collection_admin = self.db["Administrator"]
+    def __init__(self,collection_member, collection_admin):
+        self.collection_member = collection_member
+        self.collection_admin = collection_admin
 
     def member_is_present(self, member_id):
         member = self.collection_member.find_one({"_id": member_id})

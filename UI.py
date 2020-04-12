@@ -165,7 +165,7 @@ def club_register_check():
             club_id.get() == '' or club_name.get() == '' or club_email.get() == '' or club_password.get() == '' or club_confirm_password.get() == ''):
         club_register_feedback['text'] = 'Please fill all the spaces'
     elif (
-            db_controller.member_is_present(club_id.get())):
+            db_controller.admin_is_present(club_id.get())):
         club_register_feedback['text'] = 'This id has already been registered'
     else:
         club_info()

@@ -2,6 +2,7 @@ from tkinter import *
 
 import face_recognition
 
+from FaceIdentification import FaceIdentification
 from Administrator import Administrator
 from Member import Member
 from pymongo import MongoClient
@@ -453,7 +454,7 @@ def member_login():
         Button(screenMember, text="Log out", font=("new roman", 13), command=lambda: raise_frame(login_page)).place(
             x=screen_width - 70, y=screen_height - 25)
 
-        Button(screenMember, text = "Set Face ID", font = ("new roman", 13), width = 10, command = setFaceID).place(x = screen_width/2+10, y = screen_height - 25)
+        Button(screenMember, text = "Set Face ID", font = ("new roman", 13), width = 10, command = lambda: setFaceID(logged_member_curse["_id"])).place(x = screen_width/2+10, y = screen_height - 25)
 
         leftFrame = Frame(screenMember, padx=10, pady=10)
         leftFrame.place(x=0, y=2, width=screen_width / 2, height=screen_height / 3)
@@ -468,7 +469,7 @@ def member_login():
 
         clubList(logged_member_curse["_id"])
 
-def setFaceID():
+def setFaceID(logged_member_id):
     screen_width = screen.winfo_screenwidth() / 2
     screen_height = screen.winfo_screenheight() / 2
     global screenSetfaceID
@@ -479,12 +480,18 @@ def setFaceID():
     photoFrame = LabelFrame(screenSetfaceID, padx= 10, pady = 10, width = int (screen_height*2/3), height = int (screen_height*2/3))
     photoFrame.pack()
     Label(screenSetfaceID, text="").pack()
-    Button(screenSetfaceID, text = "Take Face ID Photo", height = 3, width = 20, command = takeFaceIDPhoto).pack()
+    Button(screenSetfaceID, text = "Take Face ID Photo", height = 3, width = 20, command = lambda: takeFaceIDPhoto(logged_member_id)).pack()
 
 
-def takeFaceIDPhoto():
+def takeFaceIDPhoto(logged_member_id):
     #conditional statement needed
     print("take face id photo")
+    photo = ec.capture(1, False, "your photo.jpg")
+    fr_photo = face_recognition.load_image_file("your photo.jpg")
+    face_id = FaceIdentification.encoding_from_photo(fr_photo)
+    db_controller.update_member_face_id(logged_member_id, face_id)
+    print(db_controller.retrieve_member_face_id(logged_member_id))
+
 
 def setIDSuccess():
     Label(screenSetfaceID, text = "Success", fg = 'green').pack()

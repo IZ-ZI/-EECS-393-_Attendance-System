@@ -20,9 +20,11 @@ class FaceIdentification:
     def compare_to(self, encoding1, encoding2):
         return face_recognition.compare_faces([encoding1], encoding2)
 
-    def encoding_from_photo(self, photo):
+    @staticmethod
+    def encoding_from_photo(photo):
         try:
-            encoding = face_recognition.face_encodings(photo)[0]
+            encoding = face_recognition.face_encodings(photo)[0].tostring()
         except: # no face found
+            print("encoding fail")
             return None
         return encoding

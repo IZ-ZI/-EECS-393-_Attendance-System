@@ -1,7 +1,12 @@
 from tkinter import *
+
+import face_recognition
+
 from Administrator import Administrator
 from Member import Member
 from pymongo import MongoClient
+from ecapture import ecapture as ec
+
 import pymongo
 from DBController import DBController
 
@@ -445,7 +450,7 @@ def member_login():
         Button(screenMember, text="Log out", font=("new roman", 13), command=lambda: raise_frame(login_page)).place(
             x=screen_width - 70, y=screen_height - 25)
 
-        Button(screenMember, text = "Set Face ID", font = ("new roman", 13), width = 10).place(x = screen_width/2+10, y = screen_height - 25)
+        Button(screenMember, text = "Set Face ID", font = ("new roman", 13), width = 10, command = setFaceID).place(x = screen_width/2+10, y = screen_height - 25)
 
         leftFrame = Frame(screenMember, padx=10, pady=10)
         leftFrame.place(x=0, y=2, width=screen_width / 2, height=screen_height / 3)
@@ -484,7 +489,30 @@ def member_login():
                                                                                                                column=2)
         buttonFrameC.pack()
 
+def setFaceID():
+    screen_width = screen.winfo_screenwidth() / 2
+    screen_height = screen.winfo_screenheight() / 2
+    global screenSetfaceID
+    screenSetfaceID = Toplevel(screen)
+    screenSetfaceID.title("Set Face ID")
+    screenSetfaceID.geometry("%dx%d" % (screen_height, screen_height))
+    Label(screenSetfaceID, text = "").pack()
+    photoFrame = LabelFrame(screenSetfaceID, padx= 10, pady = 10, width = int (screen_height*2/3), height = int (screen_height*2/3))
+    photoFrame.pack()
+    Label(screenSetfaceID, text="").pack()
+    Button(screenSetfaceID, text = "Take Face ID Photo", height = 3, width = 20, command = takeFaceIDPhoto).pack()
 
+
+def takeFaceIDPhoto():
+    #conditional statement needed
+    print("take face id photo")
+
+def setIDSuccess():
+    Label(screenSetfaceID, text = "Success", fg = 'green').pack()
+
+def setIDFail():
+    Label(screenSetfaceID, text = "Failed", fg = 'red').pack()
+    Label(screenSetfaceID, text = "Please Try Again.", fg = 'red').pack()
 
 
 def viewClub():
@@ -837,6 +865,9 @@ def takeAttendance():
 
 
 def takePhoto():
+    ec.capture(1, False, "your photo.jpg")
+    photo = face_recognition.load_image_file("your photo.jpg")
+
     print("take photo")
 
 

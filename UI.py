@@ -991,7 +991,7 @@ def admin_login():
         Button(buttonFrameC, text="View", font=("new roman", 18), height=1, width=9,
                command=lambda: viewMember()).grid(row=0, column=1)
 
-        Button(buttonFrameC, text="Delete", font=("new roman", 18), height=1, width=9, command=deleteMember).grid(
+        Button(buttonFrameC, text="Delete", font=("new roman", 18), height=1, width=9, command=lambda: deleteMember(login_account.get())).grid(
             row=0, column=2)
         buttonFrameC.pack()
 
@@ -1071,9 +1071,12 @@ def acceptMember(logged_admin_id):
         db_controller.permit(acc_member_email, logged_admin_id, admin_name)
 
 
-def deleteMember():
-    clicked_items = currentMemberBox.curselection()
-    currentMemberBox.delete(clicked_items)
+def deleteMember(logged_admin_id):
+    if currentMemberBox.curselection() != ():
+        clicked_item_index = currentMemberBox.curselection()[0]
+        del_member_id = db_controller.added_members(logged_admin_id)[clicked_item_index]
+        db_controller.remove_member_from_added_members(logged_admin_id, del_member_id)
+        currentMemberBox.delete(clicked_item_index)
 
 
 def refreshMember(logged_admin_id):

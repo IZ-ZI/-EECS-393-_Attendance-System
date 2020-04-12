@@ -16,6 +16,9 @@ class FaceIdentification:
         self.face_id = face_recognition.face_encodings(member_image)[0].tostring()
         return self.test_face_is_set()
 
+    def get_face_id(self):
+        return self.face_id
+    
     def compare_to(self, image):
         this_encoding = numpy.fromstring(self.face_id)
         other_encoding = face_recognition.face_encodings(image)[0]

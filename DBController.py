@@ -105,7 +105,8 @@ class DBController:
 
     def retrieve_member_face_id(self, member_id):
         if self.member_is_present(member_id):
-            return self.collection_member.find_one({"face_id": member_id})
+            curse = self.collection_member.find_one({"_id": member_id})
+            return curse['face id']
 
 
 

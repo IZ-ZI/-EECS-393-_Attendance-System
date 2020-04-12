@@ -176,6 +176,7 @@ class DBController:
 
     def add_member_to_pending_members(self, admin_id, member_id):
         if self.admin_is_present(admin_id) and member_id not in self.pending_members(admin_id):
+            print("hi")
             self.collection_admin.update_one(
                 {"_id": admin_id},
                 {'$push': {"pending_members": member_id}}
@@ -202,15 +203,12 @@ class DBController:
         cursor = self.collection_admin.find_one({"_id": admin_id})
         return cursor["pending_members"]
 
-    def permit(self, member_id, member_email, admin_id, admin_name):
-        self.remove_member_from_pending_members(admin_id, member_id)
-        self.add_member_to_added_members(admin_id, member_id)
+    def permit(self, member_email, admin_id, admin_name):
         se.send_email('attsystem393@gmail.com', 'eecs_393',
                       member_email, admin_name, admin_id, False)
         return True
 
-    def reject(self, member_id, member_email, admin_id, admin_name):
-        self.remove_member_from_pending_members(admin_id, member_id)
+    def reject(self, member_email, admin_id, admin_name):
         se.send_email('attsystem393@gmail.com', 'eecs_393',
                       member_email, admin_name, admin_id, False)
         return True

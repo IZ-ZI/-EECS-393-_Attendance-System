@@ -382,7 +382,7 @@ def admin():
         x=screen_width / 30, y=screen_height * 2 / 3)
 
 
-def clubList():
+def clubList(logged_member_id):
     print("show my clubs")
     screen_width = screen.winfo_screenwidth() / 2
     screen_height = screen.winfo_screenheight() / 2
@@ -398,15 +398,14 @@ def clubList():
     clubBox = Listbox(clubFrame, yscrollcommand=clubScroll.set, width=int(screen_width / 8), height=19,
                       selectmode=SINGLE)
 
-    for i in range(1, 20):
-        clubBox.insert(END, "LINE " + str(i))
+    show_club_list(logged_member_id)
 
     clubBox.pack(side=LEFT)
     clubScroll.config(command=clubBox.yview)
     clubFrame.pack()
 
     buttonFrameC = Frame(frame, padx=1, pady=3)
-    Button(buttonFrameC, text="Refresh", font=("new roman", 18), height=1, width=9, command=refreshClubList).grid(row=0,
+    Button(buttonFrameC, text="Refresh", font=("new roman", 18), height=1, width=9, command=lambda: refreshClub(logged_member_id)).grid(row=0,
                                                                                                                   column=0)
     Button(buttonFrameC, text="View", font=("new roman", 18), height=1, width=9, command=viewClub).grid(row=0, column=1)
     Button(buttonFrameC, text="Leave", font=("new roman", 18), height=1, width=9, command=deleteClub).grid(row=0,
@@ -450,7 +449,7 @@ def member_login():
 
         leftFrame = Frame(screenMember, padx=10, pady=10)
         leftFrame.place(x=0, y=2, width=screen_width / 2, height=screen_height / 3)
-        Button(leftFrame, text="My Clubs", font=("new roman", 20), height=2, width=25, command=clubList).grid(row=0,
+        Button(leftFrame, text="My Clubs", font=("new roman", 20), height=2, width=25, command=lambda: show_club_list(logged_member_curse["_id"])).grid(row=0,
                                                                                                               column=0)
         Label(leftFrame, text="", height=1, width=25).grid(row=1, column=0)
         Button(leftFrame, text="My Activities", font=("new roman", 20), height=2, width=25, command=activityList).grid(
@@ -486,8 +485,6 @@ def member_login():
         buttonFrameC.pack()
 
 
-def refreshClubList():
-    print("refresh my clubs")
 
 
 def viewClub():
@@ -604,7 +601,7 @@ def show_club_list(logged_member_id):
     global clubBox
     global added_club_list
     for i in db_controller.clubs_member_added(logged_member_id):
-        club_curse =  db_controller.retrieve_admin(i)
+        club_curse = db_controller.retrieve_admin(i)
         if club_curse not in added_club_list:
             clubBox.insert(END, "ID: " + club_curse["_id"] + "  " + "Name: " + club_curse["name"])
             added_club_list.append(club_curse)
@@ -1065,7 +1062,7 @@ def acceptMember(logged_admin_id):
         pendingMemberBox.delete(clicked_item_index)
         db_controller.add_member_to_added_members(logged_admin_id, acc_member_id)
         db_controller.remove_member_from_pending_members(logged_admin_id, acc_member_id)
-        db_controller.add_club_to_member(logged_admin_id, rej_member_id)
+        db_controller.add_club_to_member(logged_admin_id, acc_member_id)
         refreshList(logged_admin_id)
         refreshMember(logged_admin_id)
         db_controller.permit(acc_member_email, logged_admin_id, admin_name)

@@ -19,7 +19,7 @@ class Member:
         self.score = 0
         self.attendance_record = []
         self.admin_list = []
-        self.face_id = FaceIdentification();
+        self.face_id = ''
 
     def get_name(self) -> str:
         # returns name of member: first name + last name
@@ -46,13 +46,15 @@ class Member:
         return self.face_id
 
     def set_face_id(self) -> bool:
-        successful_set = self.face_id.set_face_id(self.get_id())
+        trial = FaceIdentification.set_face_id(self.get_id())
 
-        trial = 0
-        while not successful_set and trial != 3:  # give up after 3 unsuccessful trials
-            self.face_id.set_face_id(self.get_id())
-            trial = trial + 1
-        return successful_set
+        tries = 0
+        while trial is None and tries != 3:  # give up after 3 unsuccessful trials
+            trial = FaceIdentification.set_face_id(self.get_id())
+            tries = tries + 1
+
+        if trial is not None:
+            self.face_id = trial
 
     def requestPermission(self, admin: Administrator) -> bool:
         se.send_email('attsystem393@gmail.com', 'eecs_393', admin.get_email_adderss(), self.get_name(), self.get_id(), True)

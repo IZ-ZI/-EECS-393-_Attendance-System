@@ -1,7 +1,12 @@
 from tkinter import *
+
+import face_recognition
+
 from Administrator import Administrator
 from Member import Member
 from pymongo import MongoClient
+from ecapture import ecapture as ec
+
 import pymongo
 from DBController import DBController
 
@@ -75,8 +80,9 @@ cluster = MongoClient(
 db = cluster["AMS"]
 collection_member = db["Member"]
 collection_admin = db["Administrator"]
+collection_activity = db["Activity"]
 
-db_controller = DBController(collection_member, collection_admin)
+db_controller = DBController(collection_member, collection_admin, collection_activity)
 
 
 def main_screen():
@@ -165,7 +171,7 @@ def club_register_check():
             club_id.get() == '' or club_name.get() == '' or club_email.get() == '' or club_password.get() == '' or club_confirm_password.get() == ''):
         club_register_feedback['text'] = 'Please fill all the spaces'
     elif (
-            db_controller.member_is_present(club_id.get())):
+            db_controller.admin_is_present(club_id.get())):
         club_register_feedback['text'] = 'This id has already been registered'
     else:
         club_info()
@@ -382,8 +388,10 @@ def admin():
         x=screen_width / 30, y=screen_height * 2 / 3)
 
 
-def clubList():
-    print("show my clubs")
+
+def clubList(logged_member_id):
+    global added_club_list
+    added_club_list = []
     screen_width = screen.winfo_screenwidth() / 2
     screen_height = screen.winfo_screenheight() / 2
 
@@ -398,15 +406,14 @@ def clubList():
     clubBox = Listbox(clubFrame, yscrollcommand=clubScroll.set, width=int(screen_width / 8), height=19,
                       selectmode=SINGLE)
 
-    for i in range(1, 20):
-        clubBox.insert(END, "LINE " + str(i))
+    show_club_list(logged_member_id)
 
     clubBox.pack(side=LEFT)
     clubScroll.config(command=clubBox.yview)
     clubFrame.pack()
 
     buttonFrameC = Frame(frame, padx=1, pady=3)
-    Button(buttonFrameC, text="Refresh", font=("new roman", 18), height=1, width=9, command=refreshClubList).grid(row=0,
+    Button(buttonFrameC, text="Refresh", font=("new roman", 18), height=1, width=9, command=lambda: refreshClub(logged_member_id)).grid(row=0,
                                                                                                                   column=0)
     Button(buttonFrameC, text="View", font=("new roman", 18), height=1, width=9, command=viewClub).grid(row=0, column=1)
     Button(buttonFrameC, text="Leave", font=("new roman", 18), height=1, width=9, command=deleteClub).grid(row=0,
@@ -446,11 +453,11 @@ def member_login():
         Button(screenMember, text="Log out", font=("new roman", 13), command=lambda: raise_frame(login_page)).place(
             x=screen_width - 70, y=screen_height - 25)
 
-        Button(screenMember, text = "Set Face ID", font = ("new roman", 13), width = 10).place(x = screen_width/2+10, y = screen_height - 25)
+        Button(screenMember, text = "Set Face ID", font = ("new roman", 13), width = 10, command = setFaceID).place(x = screen_width/2+10, y = screen_height - 25)
 
         leftFrame = Frame(screenMember, padx=10, pady=10)
         leftFrame.place(x=0, y=2, width=screen_width / 2, height=screen_height / 3)
-        Button(leftFrame, text="My Clubs", font=("new roman", 20), height=2, width=25, command=clubList).grid(row=0,
+        Button(leftFrame, text="My Clubs", font=("new roman", 20), height=2, width=25, command=lambda: clubList(logged_member_curse["_id"])).grid(row=0,
                                                                                                               column=0)
         Label(leftFrame, text="", height=1, width=25).grid(row=1, column=0)
         Button(leftFrame, text="My Activities", font=("new roman", 20), height=2, width=25, command=activityList).grid(
@@ -459,35 +466,32 @@ def member_login():
         frame = Frame(screenMember, padx=10, pady=10)
         frame.place(x=screen_width / 2, y=2, width=screen_width / 2, height=screen_height - 27)
 
-        global clubBox
-        global clubScroll
-        global clubFrame
-        Label(frame, text="Clubs", font=("new roman", 21)).pack()
-        clubFrame = Frame(frame, padx=1, pady=3, height=int(screen_height / 5))
-        clubScroll = Scrollbar(clubFrame)
-        clubScroll.pack(side=RIGHT, fill=Y)
-        clubBox = Listbox(clubFrame, yscrollcommand=clubScroll.set, width=int(screen_width / 8), height=20,
-                          selectmode=SINGLE)
+        clubList(logged_member_curse["_id"])
 
-        show_club_list(login_account.get())
-
-        clubBox.pack(side=LEFT)
-        clubScroll.config(command=clubBox.yview)
-        clubFrame.pack()
-
-        buttonFrameC = Frame(frame, padx=1, pady=3)
-        Button(buttonFrameC, text="Refresh", font=("new roman", 18), height=1, width=9,
-               command=lambda: refreshClub(login_account.get())).grid(row=0,
-                                                                      column=0)
-        Button(buttonFrameC, text="View", font=("new roman", 18), height=1, width=9, command=viewClub).grid(row=0,
-                                                                                                            column=1)
-        Button(buttonFrameC, text="Leave", font=("new roman", 18), height=1, width=9, command=deleteClub).grid(row=0,
-                                                                                                               column=2)
-        buttonFrameC.pack()
+def setFaceID():
+    screen_width = screen.winfo_screenwidth() / 2
+    screen_height = screen.winfo_screenheight() / 2
+    global screenSetfaceID
+    screenSetfaceID = Toplevel(screen)
+    screenSetfaceID.title("Set Face ID")
+    screenSetfaceID.geometry("%dx%d" % (screen_height, screen_height))
+    Label(screenSetfaceID, text = "").pack()
+    photoFrame = LabelFrame(screenSetfaceID, padx= 10, pady = 10, width = int (screen_height*2/3), height = int (screen_height*2/3))
+    photoFrame.pack()
+    Label(screenSetfaceID, text="").pack()
+    Button(screenSetfaceID, text = "Take Face ID Photo", height = 3, width = 20, command = takeFaceIDPhoto).pack()
 
 
-def refreshClubList():
-    print("refresh my clubs")
+def takeFaceIDPhoto():
+    #conditional statement needed
+    print("take face id photo")
+
+def setIDSuccess():
+    Label(screenSetfaceID, text = "Success", fg = 'green').pack()
+
+def setIDFail():
+    Label(screenSetfaceID, text = "Failed", fg = 'red').pack()
+    Label(screenSetfaceID, text = "Please Try Again.", fg = 'red').pack()
 
 
 def viewClub():
@@ -604,7 +608,7 @@ def show_club_list(logged_member_id):
     global clubBox
     global added_club_list
     for i in db_controller.clubs_member_added(logged_member_id):
-        club_curse =  db_controller.retrieve_admin(i)
+        club_curse = db_controller.retrieve_admin(i)
         if club_curse not in added_club_list:
             clubBox.insert(END, "ID: " + club_curse["_id"] + "  " + "Name: " + club_curse["name"])
             added_club_list.append(club_curse)
@@ -614,7 +618,13 @@ def refreshClub(logged_member_id):
     show_club_list(logged_member_id)
 
 
-def memberManagement():
+def memberManagement(logged_admin_id):
+    global pending_member_list
+    global current_member_list
+    print('hey')
+    pending_member_list = []
+    current_member_list = []
+
     screen_width = screen.winfo_screenwidth() / 2
     screen_height = screen.winfo_screenheight() / 2
 
@@ -631,7 +641,7 @@ def memberManagement():
     currentScroll.pack(side=RIGHT, fill=Y)
     currentMemberBox = Listbox(currentFrame, yscrollcommand=currentScroll.set, width=int(screen_width / 8),
                                height=7, selectmode=SINGLE)
-    showCurrentMember(login_account.get())
+    showCurrentMember(logged_admin_id)
 
     currentMemberBox.pack(side=LEFT)
     currentScroll.config(command=currentMemberBox.yview)
@@ -639,13 +649,13 @@ def memberManagement():
 
     buttonFrameC = Frame(frame, padx=1, pady=3)
     Button(buttonFrameC, text="Refresh", font=("new roman", 18), height=1, width=9,
-           command=lambda: refreshMember()).grid(
+           command=lambda: refreshMember(logged_admin_id)).grid(
         row=0, column=0)
 
     Button(buttonFrameC, text="View", font=("new roman", 18), height=1, width=9,
-           command=lambda: viewMember()).grid(row=0, column=1)
+           command=lambda: viewMember(logged_admin_id)).grid(row=0, column=1)
 
-    Button(buttonFrameC, text="Delete", font=("new roman", 18), height=1, width=9, command=deleteMember).grid(
+    Button(buttonFrameC, text="Delete", font=("new roman", 18), height=1, width=9, command=lambda: deleteMember(logged_admin_id)).grid(
         row=0, column=2)
     buttonFrameC.pack()
 
@@ -667,20 +677,24 @@ def memberManagement():
 
     buttonFrameP = Frame(frame, padx=1, pady=3)
     Button(buttonFrameP, text="Refresh", font=("new roman", 18), height=1, width=9,
-           command=lambda: refreshList(login_account.get())).grid(row=0,
+           command=lambda: refreshList(logged_admin_id)).grid(row=0,
                                                                   column=0)
     Button(buttonFrameP, text="Accept", font=("new roman", 18), height=1, width=9,
-           command=lambda: acceptMember(login_account.get())).grid(row=0,
+           command=lambda: acceptMember(logged_admin_id)).grid(row=0,
                                                                    column=1)
     Button(buttonFrameP, text="Reject", font=("new roman", 18), height=1, width=9,
-           command=lambda: rejectMember(login_account.get())).grid(row=0,
+           command=lambda: rejectMember(logged_admin_id)).grid(row=0,
                                                                    column=2)
     buttonFrameP.pack()
 
-    showPendingMember(login_account.get())
+    bottomFrame = Frame(screenAdmin, padx=10, pady=5)
+    bottomFrame.place(x=5, y=screen_height / 3 + 2, width=screen_width / 2 - 5, height=int(screen_height * 2 / 3 - 10))
+
+    showPendingMember(logged_admin_id)
 
 
 def activityManagement():
+    print("hhh")
     screen_width = screen.winfo_screenwidth() / 2
     screen_height = screen.winfo_screenheight() / 2
     frame = Frame(screenAdmin, padx=10, pady=10)
@@ -840,6 +854,9 @@ def takeAttendance():
 
 
 def takePhoto():
+    ec.capture(1, False, "your photo.jpg")
+    photo = face_recognition.load_image_file("your photo.jpg")
+
     print("take photo")
 
 
@@ -954,86 +971,27 @@ def admin_login():
         leftFrame = Frame(screenAdmin, padx=10, pady=10)
         leftFrame.place(x=0, y=2, width=screen_width / 2, height=screen_height / 3)
         Button(leftFrame, text="Member Management", font=("new roman", 20), height=2, width=25,
-               command=memberManagement).grid(row=0, column=0)
+               command=lambda:memberManagement(login_account.get())).grid(row=0, column=0)
         Label(leftFrame, text="", height=1, width=25).grid(row=1, column=0)
         Button(leftFrame, text="Activity Management", font=("new roman", 20), height=2, width=25,
                command=activityManagement).grid(row=2, column=0)
 
-        Button(screenAdmin, text="Log out", font=("new roman", 13), command=lambda: raise_frame(login_frame)).place(
-            x=screen_width - 70, y=screen_height - 25)
+        #Button(screenAdmin, text="Log out", font=("new roman", 13), command=lambda: raise_frame(login_frame)).place(
+        #    x=screen_width - 70, y=screen_height - 25)
         # command = lambda:raise_frame(login_frame)
-
-        frame = Frame(screenAdmin, padx=10, pady=10)
-        frame.place(x=screen_width / 2, y=2, width=screen_width / 2, height=screen_height - 27)
-
-        Label(frame, text="Current Members", font=("new roman", 21)).pack()
-
-        global currentMemberBox
-        global currentScroll
-        global currentFrame
-        currentFrame = Frame(frame, padx=1, pady=3, height=int(screen_height / 5))
-        currentScroll = Scrollbar(currentFrame)
-        currentScroll.pack(side=RIGHT, fill=Y)
-        currentMemberBox = Listbox(currentFrame, yscrollcommand=currentScroll.set, width=int(screen_width / 8),
-                                   height=7, selectmode=SINGLE)
-
-        showCurrentMember(login_account.get())
-
-        currentMemberBox.pack(side=LEFT)
-        currentScroll.config(command=currentMemberBox.yview)
-        currentFrame.pack()
-
-        buttonFrameC = Frame(frame, padx=1, pady=3)
-        Button(buttonFrameC, text="Refresh", font=("new roman", 18), height=1, width=9,
-               command=lambda: refreshMember(login_account.get())).grid(
-            row=0, column=0)
-
-        Button(buttonFrameC, text="View", font=("new roman", 18), height=1, width=9,
-               command=lambda: viewMember()).grid(row=0, column=1)
-
-        Button(buttonFrameC, text="Delete", font=("new roman", 18), height=1, width=9, command=lambda: deleteMember(login_account.get())).grid(
-            row=0, column=2)
-        buttonFrameC.pack()
-
-        Label(frame, text="", font=10).pack()
-        Label(frame, text="Pending Members", font=("new roman", 21)).pack()
-
-        global pendingFrame
-        global pendingScroll
-        global pendingFrame
-        pendingFrame = Frame(frame, padx=1, pady=3)
-        pendingScroll = Scrollbar(pendingFrame)
-        pendingScroll.pack(side=RIGHT, fill=Y)
-        global pendingMemberBox
-        pendingMemberBox = Listbox(pendingFrame, yscrollcommand=pendingScroll.set, width=int(screen_width / 8),
-                                   height=7, selectmode=SINGLE)
-        pendingMemberBox.pack(side=LEFT)
-        pendingScroll.config(command=pendingMemberBox.yview)
-        pendingFrame.pack()
-
-        buttonFrameP = Frame(frame, padx=1, pady=3)
-        Button(buttonFrameP, text="Refresh", font=("new roman", 18), height=1, width=9,
-               command=lambda: refreshList(login_account.get())).grid(row=0,
-                                                                      column=0)
-        Button(buttonFrameP, text="Accept", font=("new roman", 18), height=1, width=9,
-               command=lambda: acceptMember(login_account.get())).grid(row=0,
-                                                                       column=1)
-        Button(buttonFrameP, text="Reject", font=("new roman", 18), height=1, width=9,
-               command=lambda: rejectMember(login_account.get())).grid(row=0,
-                                                                       column=2)
-        buttonFrameP.pack()
-
-        showPendingMember(login_account.get())
+        memberManagement(logged_admin_curse["_id"])
 
 
 def showPendingMember(logged_admin_id):
     global pendingMemberBox
     global pending_member_list
+    print("wtffff")
     for i in db_controller.pending_members(logged_admin_id):
         member_curse = db_controller.retrieve_member(i)
         if member_curse not in pending_member_list:
             pendingMemberBox.insert(END, "ID: " + member_curse["_id"] + "  " + "Name: " + member_curse["name"])
             pending_member_list.append(member_curse)
+
 
 def showCurrentMember(logged_admin_id):
     global currentMemberBox
@@ -1065,7 +1023,7 @@ def acceptMember(logged_admin_id):
         pendingMemberBox.delete(clicked_item_index)
         db_controller.add_member_to_added_members(logged_admin_id, acc_member_id)
         db_controller.remove_member_from_pending_members(logged_admin_id, acc_member_id)
-        db_controller.add_club_to_member(logged_admin_id, rej_member_id)
+        db_controller.add_club_to_member(logged_admin_id, acc_member_id)
         refreshList(logged_admin_id)
         refreshMember(logged_admin_id)
         db_controller.permit(acc_member_email, logged_admin_id, admin_name)
@@ -1087,41 +1045,47 @@ def refreshList(logged_admin_id):
     showPendingMember(logged_admin_id)
 
 
-def viewMember():
+def viewMember(logged_admin_id):
+
     if currentMemberBox.curselection() != ():
         clicked_item_index = currentMemberBox.curselection()[0]
 
-    screen_width = screen.winfo_screenwidth() / 2
-    screen_height = screen.winfo_screenheight() / 2
-    bottomFrame = LabelFrame(screenAdmin, padx=10, pady=5)
-    bottomFrame.place(x=5, y=screen_height / 3 + 2, width=screen_width / 2 - 5, height=int(screen_height * 2 / 3 - 10))
-    Label(bottomFrame, text="Member Status", font=("new roman", 15)).pack()
+        view_member_id = db_controller.added_members(logged_admin_id)[clicked_item_index]
 
-    infoFrame = Frame(bottomFrame, padx=1, pady=3)
-    Label(infoFrame, text = "Name: ", font = ("new roman", 13)).grid(row = 0, column = 0, sticky = W)
-    Label(infoFrame, text = "Han Pi", font = ("new roman", 13)).grid(row = 0, column = 1, sticky = W)
-    Label(infoFrame, text = "ID: ", font = ("new roman", 13)).grid(row = 1, column = 0, sticky = W)
-    Label(infoFrame, text = "hxp342", font = ("new roman", 13)).grid(row = 1, column = 1, sticky = W)
-    Label(infoFrame, text = "Email: ", font = ("new roman", 13)).grid(row = 2, column = 0, sticky = W)
-    Label(infoFrame, text = "hxp342@case.edu", font = ("new roman", 13)).grid (row = 2, column = 1, sticky = W)
-    Label(infoFrame, text = "Attendance Rate:    ", font = ("new roman", 13)).grid(row = 3, column = 0, sticky = W)
-    Label(infoFrame, text = "50", font = ("new roman", 13)).grid(row = 3, column = 1, sticky = W)
-    infoFrame.pack()
+        member_curse = db_controller.retrieve_member(view_member_id)
 
-    global joinedActivityBox
-    joinedFrame = Frame(bottomFrame, padx=3, pady=5, height=int(screen_height / 6))
-    Label(joinedFrame, text="Past Activities", font=("new roman", 13)).pack()
-    joinedScroll = Scrollbar(joinedFrame)
-    joinedScroll.pack(side=RIGHT, fill=Y)
-    joinedActivityBox = Listbox(joinedFrame, yscrollcommand=joinedScroll.set, width=int(screen_width / 2 - 7), height=4,
-                                selectmode=SINGLE)
 
-    for i in range(1, 15):
-        joinedActivityBox.insert(END, "LINE" + str(i))
+        screen_width = screen.winfo_screenwidth() / 2
+        screen_height = screen.winfo_screenheight() / 2
+        bottomFrame = LabelFrame(screenAdmin, padx=10, pady=5)
+        bottomFrame.place(x=5, y=screen_height / 3 + 2, width=screen_width / 2 - 5, height=int(screen_height * 2 / 3 - 10))
+        Label(bottomFrame, text="Member Status", font=("new roman", 15)).pack()
 
-    joinedActivityBox.pack(side=LEFT)
-    joinedScroll.config(command=joinedActivityBox.yview)
-    joinedFrame.pack()
+        infoFrame = Frame(bottomFrame, padx=1, pady=3)
+        Label(infoFrame, text = "Name: ", font = ("new roman", 13)).grid(row = 0, column = 0, sticky = W)
+        Label(infoFrame, text = member_curse["name"], font = ("new roman", 13)).grid(row = 0, column = 1, sticky = W)
+        Label(infoFrame, text = "ID: ", font = ("new roman", 13)).grid(row = 1, column = 0, sticky = W)
+        Label(infoFrame, text = member_curse["_id"], font = ("new roman", 13)).grid(row = 1, column = 1, sticky = W)
+        Label(infoFrame, text = "Email: ", font = ("new roman", 13)).grid(row = 2, column = 0, sticky = W)
+        Label(infoFrame, text = member_curse["email_address"], font = ("new roman", 13)).grid (row = 2, column = 1, sticky = W)
+        Label(infoFrame, text = "Attendance Rate:    ", font = ("new roman", 13)).grid(row = 3, column = 0, sticky = W)
+        Label(infoFrame, text = "50", font = ("new roman", 13)).grid(row = 3, column = 1, sticky = W)
+        infoFrame.pack()
+
+        global joinedActivityBox
+        joinedFrame = Frame(bottomFrame, padx=3, pady=5, height=int(screen_height / 6))
+        Label(joinedFrame, text="Past Activities", font=("new roman", 13)).pack()
+        joinedScroll = Scrollbar(joinedFrame)
+        joinedScroll.pack(side=RIGHT, fill=Y)
+        joinedActivityBox = Listbox(joinedFrame, yscrollcommand=joinedScroll.set, width=int(screen_width / 2 - 7), height=4,
+                                    selectmode=SINGLE)
+
+        for i in range(1, 15):
+            joinedActivityBox.insert(END, "LINE" + str(i))
+
+        joinedActivityBox.pack(side=LEFT)
+        joinedScroll.config(command=joinedActivityBox.yview)
+        joinedFrame.pack()
 
 
 

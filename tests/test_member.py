@@ -15,14 +15,11 @@ def constructorMock(name):
 
 
 class MemberTestCase(unittest.TestCase):
-    wl = None
     mber = None
 
     def setUp(self):
-        global wl, mber
-        wl = WaitList()
+        global mber
         mber = Member('Test Subject', '12345', 'testsubject@email.com', 'foo')
-        Member.WaitList = constructorMock("WaitList")
 
     def test_create_member(self):
         """create a member instance and check its properties"""

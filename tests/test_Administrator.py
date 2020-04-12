@@ -18,8 +18,8 @@ class TestAdministrator(TestCase):
         self.assertFalse(self.a1.get_organization_name() == "b")
 
     def test_get_email_address(self):
-        self.assertEqual(self.a1.get_email_adderss(), "www.1")
-        self.assertFalse(self.a1.get_email_adderss() == "www.2")
+        self.assertEqual(self.a1.get_email_address(), "www.1")
+        self.assertFalse(self.a1.get_email_address() == "www.2")
 
     def test_get_password(self):
         self.assertEqual(self.a1.get_password(), "123")

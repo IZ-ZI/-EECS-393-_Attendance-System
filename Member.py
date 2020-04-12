@@ -19,7 +19,7 @@ class Member:
         self.score = 0
         self.attendance_record = []
         self.admin_list = []
-        self.face_id = FaceIdentification();
+        self.face_id = None
 
     def get_name(self) -> str:
         # returns name of member: first name + last name
@@ -46,11 +46,11 @@ class Member:
         return self.face_id
 
     def set_face_id(self) -> bool:
-        successful_set = self.face_id.set_face_id(self.get_id())
+        successful_set = FaceIdentification.set_face_id(self.get_id())
 
         trial = 0
-        while not successful_set and trial != 3:  # give up after 3 unsuccessful trials
-            self.face_id.set_face_id(self.get_id())
+        while successful_set is None and trial != 3:  # give up after 3 unsuccessful trials
+            successful_set = FaceIdentification.set_face_id(self.get_id())
             trial = trial + 1
         return successful_set
 

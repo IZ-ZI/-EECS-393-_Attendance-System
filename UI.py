@@ -75,8 +75,9 @@ cluster = MongoClient(
 db = cluster["AMS"]
 collection_member = db["Member"]
 collection_admin = db["Administrator"]
+collection_activity = db["Activity"]
 
-db_controller = DBController(collection_member, collection_admin)
+db_controller = DBController(collection_member, collection_admin, collection_activity)
 
 
 def main_screen():

@@ -864,14 +864,14 @@ def switch_camera(event=0, nextCam = -1):
     else:
         camIndex = nextCam
     del(capture)
-    capture = cv2.VideoCapture(camIndex)
+    capture = cv2.VideoCapture(camIndex, cv2.CAP_DSHOW)
 
     #try to get a frame, if it returns nothing
     success, frame = capture.read()
     if not success:
         camIndex = 0
         del(capture)
-        cap = cv2.VideoCapture(camIndex)
+        cap = cv2.VideoCapture(camIndex, cv2.CAP_DSHOW)
 
     f = open(file, 'w')
     f.write(str(camIndex))
@@ -922,9 +922,7 @@ def takeAttendance():
     except:
         camIndex = 0
 
-    capture = cv2.VideoCapture(camIndex)
-    capWidth = capture.get(4)
-    capHeight = capture.get(4)
+    capture = cv2.VideoCapture(camIndex, cv2.CAP_DSHOW)
     success, frame = capture.read()
     if not success:
         if camIndex == 0:

@@ -24,14 +24,3 @@ class TestAdministrator(TestCase):
     def test_get_password(self):
         self.assertEqual(self.a1.get_password(), "123")
         self.assertFalse(self.a1.get_password() == "321")
-
-    def test_add_member(self):
-        self.a1.add_member(self.m1)
-        self.assertTrue(self.m1 in self.a1.get_member_database().database)
-
-
-    def test_delete_member(self):
-        self.a1.add_member(self.m1)
-        self.assertTrue(self.m1 in self.a1.get_member_database().database)
-        self.a1.delete_member(self.m1)
-        self.assertTrue(self.m1 not in self.a1.get_member_database().database)

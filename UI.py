@@ -541,9 +541,9 @@ def setIDSuccess():
 def setIDFail():
     screen_height = screen.winfo_screenheight() / 2
     frame = Frame(screenSetfaceID)
-    Label(frame, text="Failed", fg='red').pack()
-    Label(frame, text="Please Try Again.", fg='red').pack()
-    frame.place(x=0, y=screen_height - 50, width=screen_height)
+    Label(frame, text = "Failed", fg = 'red').pack()
+    Label(frame, text = "Please Try Again.", fg = 'red').pack()
+    frame.place(x = 0, y = screen_height - 50, width = screen_height)
 
 
 def viewClub(logged_member_id):
@@ -956,11 +956,11 @@ def switch_camera(event=0, nextCam=-1):
     del (capture)
     capture = cv2.VideoCapture(camIndex, cv2.CAP_DSHOW)
 
-    # try to get a frame, if it returns nothing
+    #try to get a frame, if it returns nothing
     success, frame = capture.read()
     if not success:
         camIndex = 0
-        del (capture)
+        del(capture)
         cap = cv2.VideoCapture(camIndex, cv2.CAP_DSHOW)
 
     f = open(file, 'w')
@@ -970,8 +970,12 @@ def switch_camera(event=0, nextCam=-1):
 
 def render_pip(content_frame):
     global frameimg
+    screen_width = screen.winfo_screenwidth() / 2
+    screen_height = screen.winfo_screenheight() / 2
 
     _, frame = capture.read()
+    capture.set(cv2.CAP_PROP_FRAME_WIDTH, screen_width / 2)
+    capture.set(cv2.CAP_PROP_FRAME_HEIGHT, int(screen_height * 2 / 3))
     picture = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
 
     frameimg = Image.fromarray(picture)
@@ -1005,14 +1009,13 @@ def takeAttendance():
 
     rightFrame = Frame(screenAttendance, padx=10, pady=10)
     rightFrame.place(x=screen_width / 2, y=2, width=screen_width / 2, height=int(screen_height * 2 / 3))
-
     try:
         f = open(file, 'r')
         camIndex = int(f.readline())
     except:
         camIndex = 0
 
-    capture = cv2.VideoCapture(camIndex, cv2.CAP_DSHOW)
+    capture = cv2.VideoCapture(1)
     success, frame = capture.read()
     if not success:
         if camIndex == 0:
@@ -1026,13 +1029,13 @@ def takeAttendance():
                 sys.exit(1)
 
     Label(rightFrame, text="Camera", font=("new roman", 15)).grid(row=0, column=0, sticky=W)
-    cameraFrame = Label(rightFrame, compound=tk.CENTER, anchor=tk.CENTER, relief=tk.RAISED)
-    # Label(rightFrame, padx=10, pady=10, width=screen_width / 3 + 20, height=screen_width / 3 + 20)
-    cameraFrame.grid(row=1, column=0)
+    cameraFrame = Label(rightFrame)
+    #Label(rightFrame, padx=10, pady=10, width=screen_width / 3 + 20, height=screen_width / 3 + 20)
+    cameraFrame.grid(row=0, column=0)
     render_pip(cameraFrame)
 
     Button(screenAttendance, text="Attend", font=("new roman", 15), height=2, width=20, command=attend).place(
-        x=10, y=int(screen_height * 2 / 3) + 30)
+        x=10,y=int(screen_height * 2 / 3) + 30)
     Button(screenAttendance, text="Verify", font=("new roman", 15), height=2, width=20, command=takePhoto).place(
         x=screen_width / 2 + 10, y=int(screen_height * 2 / 3) + 30)
 

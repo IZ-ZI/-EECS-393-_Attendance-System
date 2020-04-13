@@ -922,7 +922,7 @@ def takeAttendance():
     except:
         camIndex = 0
 
-    capture = cv2.VideoCapture(camIndex, cv2.CAP_DSHOW)
+    capture = cv2.VideoCapture(1)
     success, frame = capture.read()
     if not success:
         if camIndex == 0:

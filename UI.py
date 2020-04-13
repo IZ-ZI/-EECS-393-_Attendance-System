@@ -39,6 +39,11 @@ member_confirm_password = None
 member_apply_club_id = None
 member_register_feedback = None
 
+new_date = None
+new_start_time = None
+new_end_time = None
+new_location = None
+
 screenAdmin = None
 activityBox = None
 
@@ -71,6 +76,7 @@ current_member_list = []
 pending_member_list = []
 added_club_list = []
 admin_activity_list = []
+member_activity_list = []
 
 currentMemberBox = None
 currentScroll = None
@@ -254,7 +260,6 @@ def member_info():
     db_controller.request_permission(member_apply_club_id.get(), new_member.get_id(), admin_email,
                                      new_member.get_name())
 
-
     member_id_entry.delete(0, END)
     member_name_entry.delete(0, END)
     member_email_entry.delete(0, END)
@@ -407,7 +412,6 @@ def admin():
         x=screen_width / 30, y=screen_height * 2 / 3)
 
 
-
 def clubList(logged_member_id):
     global added_club_list
     added_club_list = []
@@ -432,9 +436,11 @@ def clubList(logged_member_id):
     clubFrame.pack()
 
     buttonFrameC = Frame(frame, padx=1, pady=3)
-    Button(buttonFrameC, text="Refresh", font=("new roman", 18), height=1, width=9, command=lambda: refreshClub(logged_member_id)).grid(row=0,
-                                                                                                                  column=0)
-    Button(buttonFrameC, text="View", font=("new roman", 18), height=1, width=9, command=viewClub).grid(row=0, column=1)
+    Button(buttonFrameC, text="Refresh", font=("new roman", 18), height=1, width=9,
+           command=lambda: refreshClub(logged_member_id)).grid(row=0,
+                                                               column=0)
+    Button(buttonFrameC, text="View", font=("new roman", 18), height=1, width=9,
+           command=lambda: viewClub(logged_member_id)).grid(row=0, column=1)
     Button(buttonFrameC, text="Leave", font=("new roman", 18), height=1, width=9, command=deleteClub).grid(row=0,
                                                                                                            column=2)
     buttonFrameC.pack()
@@ -472,20 +478,25 @@ def member_login():
         Button(screenMember, text="Log out", font=("new roman", 13), command=lambda: raise_frame(login_page)).place(
             x=screen_width - 70, y=screen_height - 25)
 
-        Button(screenMember, text = "Set Face ID", font = ("new roman", 13), width = 10, command = lambda: setFaceID(logged_member_curse["_id"])).place(x = screen_width/2+10, y = screen_height - 25)
+        Button(screenMember, text="Set Face ID", font=("new roman", 13), width=10,
+               command=lambda: setFaceID(logged_member_curse["_id"])).place(x=screen_width / 2 + 10,
+                                                                            y=screen_height - 25)
 
         leftFrame = Frame(screenMember, padx=10, pady=10)
         leftFrame.place(x=0, y=2, width=screen_width / 2, height=screen_height / 3)
-        Button(leftFrame, text="My Clubs", font=("new roman", 20), height=2, width=25, command=lambda: clubList(logged_member_curse["_id"])).grid(row=0,
-                                                                                                              column=0)
+        Button(leftFrame, text="My Clubs", font=("new roman", 20), height=2, width=25,
+               command=lambda: clubList(logged_member_curse["_id"])).grid(row=0,
+                                                                          column=0)
         Label(leftFrame, text="", height=1, width=25).grid(row=1, column=0)
-        Button(leftFrame, text="My Activities", font=("new roman", 20), height=2, width=25, command=activityList).grid(
+        Button(leftFrame, text="My Activities", font=("new roman", 20), height=2, width=25,
+               command=lambda: activityList(logged_member_curse["_id"])).grid(
             row=2, column=0)
 
         frame = Frame(screenMember, padx=10, pady=10)
         frame.place(x=screen_width / 2, y=2, width=screen_width / 2, height=screen_height - 27)
 
         clubList(logged_member_curse["_id"])
+
 
 def setFaceID(logged_member_id):
     screen_width = screen.winfo_screenwidth() / 2
@@ -494,15 +505,17 @@ def setFaceID(logged_member_id):
     screenSetfaceID = Toplevel(screen)
     screenSetfaceID.title("Set Face ID")
     screenSetfaceID.geometry("%dx%d" % (screen_height, screen_height))
-    Label(screenSetfaceID, text = "").pack()
-    photoFrame = LabelFrame(screenSetfaceID, padx= 10, pady = 10, width = int (screen_height*2/3), height = int (screen_height*2/3))
+    Label(screenSetfaceID, text="").pack()
+    photoFrame = LabelFrame(screenSetfaceID, padx=10, pady=10, width=int(screen_height * 2 / 3),
+                            height=int(screen_height * 2 / 3))
     photoFrame.pack()
     Label(screenSetfaceID, text="").pack()
-    Button(screenSetfaceID, text = "Take Face ID Photo", height = 3, width = 20, command = lambda: takeFaceIDPhoto(logged_member_id)).pack()
+    Button(screenSetfaceID, text="Take Face ID Photo", height=3, width=20,
+           command=lambda: takeFaceIDPhoto(logged_member_id)).pack()
 
 
 def takeFaceIDPhoto(logged_member_id):
-    #conditional statement needed
+    # conditional statement needed
     print("take face id photo")
     photo = ec.capture(1, False, "your photo.jpg")
     fr_photo = face_recognition.load_image_file("your photo.jpg")
@@ -521,53 +534,61 @@ def takeFaceIDPhoto(logged_member_id):
 def setIDSuccess():
     screen_height = screen.winfo_screenheight() / 2
     frame = Frame(screenSetfaceID)
-    Label(frame, text = "Success", fg = 'green').pack()
-    frame.place(x = 0, y = screen_height - 50, width = screen_height)
+    Label(frame, text="Success", fg='green').pack()
+    frame.place(x=0, y=screen_height - 50, width=screen_height)
+
 
 def setIDFail():
     screen_height = screen.winfo_screenheight() / 2
     frame = Frame(screenSetfaceID)
-    Label(frame, text = "Failed", fg = 'red').pack()
-    Label(frame, text = "Please Try Again.", fg = 'red').pack()
-    frame.place(x = 0, y = screen_height - 50, width = screen_height)
+    Label(frame, text="Failed", fg='red').pack()
+    Label(frame, text="Please Try Again.", fg='red').pack()
+    frame.place(x=0, y=screen_height - 50, width=screen_height)
 
 
-def viewClub():
-    print("view club info and my status")
-    screen_width = screen.winfo_screenwidth() / 2
-    screen_height = screen.winfo_screenheight() / 2
-    bottomFrame = LabelFrame(screenMember, padx=10, pady=5)
-    bottomFrame.place(x=5, y=screen_height / 3 + 2, width=screen_width / 2 - 5, height=int(screen_height * 2 / 3 - 10))
-    Label(bottomFrame, text="Club Status", font=("new roman", 15)).pack()
+def viewClub(logged_member_id):
+    if clubBox.curselection() != ():
+        clicked_item_index = clubBox.curselection()[0]
+        view_club_id = db_controller.clubs_member_added(logged_member_id)[clicked_item_index]
+        view_club_curse = db_controller.retrieve_admin(view_club_id)
+        print("view club info and my status")
+        screen_width = screen.winfo_screenwidth() / 2
+        screen_height = screen.winfo_screenheight() / 2
+        bottomFrame = LabelFrame(screenMember, padx=10, pady=5)
+        bottomFrame.place(x=5, y=screen_height / 3 + 2, width=screen_width / 2 - 5,
+                          height=int(screen_height * 2 / 3 - 10))
+        Label(bottomFrame, text="Club Status", font=("new roman", 15)).pack()
 
-    clubInfoFrame = Frame(bottomFrame, padx=1, pady=3)
-    Label(clubInfoFrame, text="Club Name:", font=("new roman", 13)).grid(row=0, column=0, sticky=W)
-    Label(clubInfoFrame, text="EECS 391").grid(row=0, column=1, sticky=W)
-    Label(clubInfoFrame, text="Club ID: ", font=("new roman", 13)).grid(row=1, column=0, sticky=W)
-    Label(clubInfoFrame, text="123123", font=("new roman", 13)).grid(row=1, column=1, sticky=W)
-    Label(clubInfoFrame, text="Total Number of Events:     ").grid(row=2, column=0, sticky=W)
-    Label(clubInfoFrame, text="15", font=("new roman", 13)).grid(row=2, column=1, sticky=W)
-    Label(clubInfoFrame, text="My Absenses", font=("new roman", 13)).grid(row=3, column=0, sticky=W)
-    Label(clubInfoFrame, text="3", font=("new roman", 13)).grid(row=3, column=1, sticky=W)
-    Label(clubInfoFrame, text="Attendance Rate", font=("new roman", 13)).grid(row=4, column=0, sticky=W)
-    Label(clubInfoFrame, text="80", font=("new roman", 13)).grid(row=4, column=1, sticky=W)
-    clubInfoFrame.pack()
+        clubInfoFrame = Frame(bottomFrame, padx=1, pady=3)
+        Label(clubInfoFrame, text="Club Name:", font=("new roman", 13)).grid(row=0, column=0, sticky=W)
+        Label(clubInfoFrame, text=view_club_curse["name"]).grid(row=0, column=1, sticky=W)
+        Label(clubInfoFrame, text="Club ID: ", font=("new roman", 13)).grid(row=1, column=0, sticky=W)
+        Label(clubInfoFrame, text=view_club_curse["_id"], font=("new roman", 13)).grid(row=1, column=1, sticky=W)
+        Label(clubInfoFrame, text="Total Number of Events:     ").grid(row=2, column=0, sticky=W)
+        Label(clubInfoFrame, text=len(view_club_curse["activities"]), font=("new roman", 13)).grid(row=2, column=1,
+                                                                                                   sticky=W)
+        Label(clubInfoFrame, text="My Absenses", font=("new roman", 13)).grid(row=3, column=0, sticky=W)
+        Label(clubInfoFrame, text="3", font=("new roman", 13)).grid(row=3, column=1, sticky=W)
+        Label(clubInfoFrame, text="Attendance Rate", font=("new roman", 13)).grid(row=4, column=0, sticky=W)
+        Label(clubInfoFrame, text="80", font=("new roman", 13)).grid(row=4, column=1, sticky=W)
+        clubInfoFrame.pack()
 
-    global clubActivityBox
-    clubActivityFrame = Frame(bottomFrame, padx=3, pady=3, height=int(screen_height / 6))
-    Label(clubActivityFrame, text="My Events", font=("new roman", 13)).pack()
-    clubActivityScroll = Scrollbar(clubActivityFrame)
-    clubActivityScroll.pack(side=RIGHT, fill=Y)
-    clubActivityBox = Listbox(clubActivityFrame, yscrollcommand=clubActivityScroll.set, width=int(screen_width / 2 - 7),
-                              height=4, selectmode=SINGLE)
+        global clubActivityBox
+        clubActivityFrame = Frame(bottomFrame, padx=3, pady=3, height=int(screen_height / 6))
+        Label(clubActivityFrame, text="My Events", font=("new roman", 13)).pack()
+        clubActivityScroll = Scrollbar(clubActivityFrame)
+        clubActivityScroll.pack(side=RIGHT, fill=Y)
+        clubActivityBox = Listbox(clubActivityFrame, yscrollcommand=clubActivityScroll.set,
+                                  width=int(screen_width / 2 - 7),
+                                  height=4, selectmode=SINGLE)
 
-    for i in range(1, 15):
-        clubActivityBox.insert(END, "LINE" + str(i))
+        for i in range(1, 15):
+            clubActivityBox.insert(END, "LINE" + str(i))
 
-    clubActivityBox.pack(side=LEFT)
-    clubActivityScroll.config(command=clubActivityBox.yview)
-    clubActivityFrame.pack()
-    Button(bottomFrame, text="View Activity Status", font=("new roman", 12), command=viewActivityStatus).pack()
+        clubActivityBox.pack(side=LEFT)
+        clubActivityScroll.config(command=clubActivityBox.yview)
+        clubActivityFrame.pack()
+        Button(bottomFrame, text="View Activity Status", font=("new roman", 12), command=viewActivityStatus).pack()
 
 
 def viewActivityStatus():
@@ -606,8 +627,10 @@ def deleteClub():
     print("leave club")
 
 
-def activityList():
+def activityList(logged_member_id):
     print("show my activities")
+    global member_activity_list
+    member_activity_list = []
 
     screen_width = screen.winfo_screenwidth() / 2
     screen_height = screen.winfo_screenheight() / 2
@@ -623,23 +646,54 @@ def activityList():
     myActivityBox = Listbox(myActivityFrame, yscrollcommand=myActivityScroll.set, width=int(screen_width / 8),
                             height=19, selectmode=SINGLE)
 
-    for i in range(1, 20):
-        myActivityBox.insert(END, "LINE " + str(i))
+    show_my_activities(logged_member_id)
 
     myActivityBox.pack(side=LEFT)
     myActivityScroll.config(command=myActivityBox.yview)
     myActivityFrame.pack()
 
     buttonFrame = Frame(frame, padx=2, pady=3)
-    Button(buttonFrame, text="Refresh", font=("new roman", 18), height=1, width=13, command=refreshMyActivity).grid(
+    Button(buttonFrame, text="Refresh", font=("new roman", 18), height=1, width=13,
+           command=lambda: refreshMyActivity(logged_member_id)).grid(
         row=0, column=0)
     Label(buttonFrame, text=" ").grid(row=0, column=1)
-    Button(buttonFrame, text="View", font=("new roman", 18), height=1, width=13, command=viewMyActivityStatus).grid(
+    Button(buttonFrame, text="View", font=("new roman", 18), height=1, width=13,
+           command=lambda: viewMyActivityStatus(logged_member_id)).grid(
         row=0, column=2)
     buttonFrame.pack()
 
     bottomFrame = Frame(screenMember, padx=10, pady=5)
     bottomFrame.place(x=5, y=screen_height / 3 + 2, width=screen_width / 2 - 5, height=int(screen_height * 2 / 3 - 10))
+
+
+def viewMyActivityStatus(logged_member_id):
+    print("hey")
+
+
+def isUpdated(activity_in_list, activity_from_db):
+    if activity_in_list["_id"] == activity_from_db["_id"]:
+        return activity_in_list["start_time"] is not activity_from_db["start_time"] or activity_in_list[
+            "end_time"] is not activity_from_db["end_time"] or activity_in_list["location"] is not activity_from_db[
+                   "location"]
+
+
+def show_my_activities(logged_member_id):
+    global myActivityBox
+    global member_activity_list
+    for i in db_controller.member_activities(logged_member_id):
+        activity_curse = db_controller.retrieve_activity(i)
+        if activity_curse not in member_activity_list:
+            for j in member_activity_list:
+                if isUpdated(j, activity_curse):
+                    activityList(logged_member_id)
+            myActivityBox.insert(END, "ID: " + activity_curse["_id"] + "  "
+                                     + "Name: " + activity_curse["name"] + "  "
+                                     + "Location: " + activity_curse["location"])
+            member_activity_list.append(activity_curse)
+
+
+def refreshMyActivity(logged_member_id):
+    show_my_activities(logged_member_id)
 
 
 def show_club_list(logged_member_id):
@@ -693,7 +747,8 @@ def memberManagement(logged_admin_id):
     Button(buttonFrameC, text="View", font=("new roman", 18), height=1, width=9,
            command=lambda: viewMember(logged_admin_id)).grid(row=0, column=1)
 
-    Button(buttonFrameC, text="Delete", font=("new roman", 18), height=1, width=9, command=lambda: deleteMember(logged_admin_id)).grid(
+    Button(buttonFrameC, text="Delete", font=("new roman", 18), height=1, width=9,
+           command=lambda: deleteMember(logged_admin_id)).grid(
         row=0, column=2)
     buttonFrameC.pack()
 
@@ -716,13 +771,13 @@ def memberManagement(logged_admin_id):
     buttonFrameP = Frame(frame, padx=1, pady=3)
     Button(buttonFrameP, text="Refresh", font=("new roman", 18), height=1, width=9,
            command=lambda: refreshList(logged_admin_id)).grid(row=0,
-                                                                  column=0)
+                                                              column=0)
     Button(buttonFrameP, text="Accept", font=("new roman", 18), height=1, width=9,
            command=lambda: acceptMember(logged_admin_id)).grid(row=0,
-                                                                   column=1)
+                                                               column=1)
     Button(buttonFrameP, text="Reject", font=("new roman", 18), height=1, width=9,
            command=lambda: rejectMember(logged_admin_id)).grid(row=0,
-                                                                   column=2)
+                                                               column=2)
     buttonFrameP.pack()
 
     bottomFrame = Frame(screenAdmin, padx=10, pady=5)
@@ -753,11 +808,15 @@ def activityManagement(logged_admin_id):
     activityScroll.config(command=activityBox.yview)
     activityFrame.pack()
 
-    buttonFrameA = Frame(frame, padx = 0, pady=3)
-    Button(buttonFrameA, text = "Refresh", font = ("new roman", 18), height = 1, width = 7, command = lambda:refreshActivity(logged_admin_id)).grid(row = 0, column = 0)
-    Button(buttonFrameA, text = "View", font = ("new roman", 18), height = 1, width = 6, command = viewActivity).grid(row = 0, column = 1)
-    Button(buttonFrameA, text = "Create", font = ("new roman", 18), height = 1, width = 7, command = lambda:createActivity(logged_admin_id)).grid(row = 0, column = 2)
-    Button(buttonFrameA, text = "Delete", font = ("new roman", 18), height = 1, width = 7, command = lambda:deleteActivity(logged_admin_id)).grid(row = 0, column = 3)
+    buttonFrameA = Frame(frame, padx=0, pady=3)
+    Button(buttonFrameA, text="Refresh", font=("new roman", 18), height=1, width=7,
+           command=lambda: refreshActivity(logged_admin_id)).grid(row=0, column=0)
+    Button(buttonFrameA, text="View", font=("new roman", 18), height=1, width=6,
+           command=lambda: viewActivity(logged_admin_id)).grid(row=0, column=1)
+    Button(buttonFrameA, text="Create", font=("new roman", 18), height=1, width=7,
+           command=lambda: createActivity(logged_admin_id)).grid(row=0, column=2)
+    Button(buttonFrameA, text="Delete", font=("new roman", 18), height=1, width=7,
+           command=lambda: deleteActivity(logged_admin_id)).grid(row=0, column=3)
     buttonFrameA.pack()
 
     bottomFrame = Frame(screenAdmin, padx=10, pady=5)
@@ -772,8 +831,6 @@ def show_admin_activities(logged_admin_id):
         if activity_curse not in admin_activity_list:
             activityBox.insert(END, "ID: " + activity_curse["_id"] + "  "
                                + "Name: " + activity_curse["name"] + "  "
-                               + "Start Time: " + activity_curse["start_time"] + "  "
-                               + "End Time: " + activity_curse["end_time"] + "  "
                                + "Location: " + activity_curse["location"])
             admin_activity_list.append(activity_curse)
 
@@ -799,113 +856,117 @@ def deleteActivity(logged_admin_id):
         activityBox.delete(clicked_item_index)
 
 
-
-def updateTime():
+def updateTime(logged_admin_id, clicked_item_index, activity_id, activity_name):
     print("update time")
     global updateTimeScreen
+    global new_date
+    global new_start_time
+    global new_end_time
+    global new_location
+
+    new_date = StringVar()
+    new_start_time = StringVar()
+    new_end_time = StringVar()
+    new_location = StringVar()
+
     updateTimeScreen = Toplevel(screen)
-    updateTimeScreen.title("Update Activity Time")
+    updateTimeScreen.title("Update Activity Information")
     updateTimeScreen.geometry("400x400+30+30")
-    Label(updateTimeScreen, text = "").pack()
-    Label(updateTimeScreen, text = "New Date", font = ("new roman", 15)).pack()
-    date_entry = Entry(updateTimeScreen)
+    Label(updateTimeScreen, text="").pack()
+    Label(updateTimeScreen, text="New Date", font=("new roman", 15)).pack()
+    date_entry = Entry(updateTimeScreen, textvariable=new_date)
     date_entry.pack()
     Label(updateTimeScreen, text="").pack()
-    Label(updateTimeScreen, text = "New Start Time", font = ("new roman", 15)).pack()
-    starttime_entry = Entry(updateTimeScreen)
+    Label(updateTimeScreen, text="New Start Time", font=("new roman", 15)).pack()
+    starttime_entry = Entry(updateTimeScreen, textvariable=new_start_time)
     starttime_entry.pack()
     Label(updateTimeScreen, text="").pack()
-    Label(updateTimeScreen, text = "New End Time", font = ("new roman", 15)).pack()
-    endtime_entry = Entry(updateTimeScreen)
+    Label(updateTimeScreen, text="New End Time", font=("new roman", 15)).pack()
+    endtime_entry = Entry(updateTimeScreen, textvariable=new_end_time)
     endtime_entry.pack()
     Label(updateTimeScreen, text="").pack()
+    Label(updateTimeScreen, text="Location", font=("new roman", 15)).pack()
+    location_entry = Entry(updateTimeScreen, textvariable=new_location)
+    location_entry.pack()
+    Label(updateTimeScreen, text="").pack()
 
-    #global newMemberBox
-    #newMemberFrame = Frame(updateTimeScreen, padx = 1, pady = 3, height = 100, width = 200)
-    #newMemberScroll = Scrollbar(newMemberFrame)
-    #newMemberScroll.pack(side = RIGHT, fill = Y)
-    #newMemberBox = Listbox(newMemberFrame, yscrollcommand = newMemberScroll.set, width = 200, height = 4, selectmode = MULTIPLE)
-
-    #for i in range(1, 20):
-    #   newMemberBox.insert(END, "LINE " + str(i))
-
-    #newMemberBox.pack(side = LEFT)
-    #newMemberScroll.config(command = newMemberBox.yview)
-    #newMemberFrame.pack()
-
-    Button(updateTimeScreen, text = "Update Time Information", font = ("new roman", 15), height = 2, width = 20, command = updateTimeInfo).pack()
+    Button(updateTimeScreen, text="Update Information", font=("new roman", 15), height=2, width=20,
+           command=lambda: updateTimeInfo(logged_admin_id, clicked_item_index, activity_id, activity_name)).pack()
 
 
-def refreshActivityInfo():
-    print("refresh activity info, including member list and time")
+def updateTimeInfo(logged_admin_id, clicked_item_index, activity_id, activity_name):
+    start_time_string = new_date.get() + ' ' + new_start_time.get()
+    end_time_string = new_date.get() + ' ' + new_end_time.get()
+    activity = Activity(activity_id, activity_name, start_time_string, end_time_string,
+                        new_location.get())
+    db_controller.update_activity(activity)
+    activityBox.delete(clicked_item_index)
+    refreshActivity(logged_admin_id)
 
 
-def viewActivity():
-    screen_width = screen.winfo_screenwidth() / 2
-    screen_height = screen.winfo_screenheight() / 2
-    bottomFrame = LabelFrame(screenAdmin, padx=10, pady=5)
-    bottomFrame.place(x=5, y=screen_height / 3 + 2, width=screen_width / 2 - 5, height=int(screen_height * 2 / 3 - 10))
-    Label(bottomFrame, text="Activity Status", font=("new roman", 15)).pack()
+def refreshActivityInfo(logged_admin_id):
+    viewActivity(logged_admin_id)
 
-    timeFrame = Frame(bottomFrame, padx=1, pady=3)
-    Label(timeFrame, text="Start Time", font=("new roman", 13)).grid(row=0, column=0)
-    Label(timeFrame, text="         ").grid(row=0, column=1)
-    Label(timeFrame, text="End Time", font=("new roman", 13)).grid(row=0, column=2)
-    # pull out information about the start time and end time
-    Label(timeFrame, text="12:00", font=("new roman", 13)).grid(row=1, column=0)
-    Label(timeFrame, text="         ").grid(row=1, column=1)
-    Label(timeFrame, text="14:00", font=("new roman", 13)).grid(row=1, column=2)
-    timeFrame.pack()
 
-    buttonFrame = Frame(bottomFrame, padx=1, pady=2)
-    Button(buttonFrame, text="Update Info", font=("new roman", 13), width=16, height=2, command=updateTime).grid(row=0,
-                                                                                                                 column=0)
-    Button(buttonFrame, text="Refresh Information", font=("new roman", 13), width=16, height=2,
-           command=refreshActivityInfo).grid(row=0, column=1)
-    buttonFrame.pack()
+def viewActivity(logged_admin_id):
+    if activityBox.curselection() != ():
+        clicked_item_index = activityBox.curselection()[0]
+        view_activity_id = db_controller.admin_activities(logged_admin_id)[clicked_item_index]
+        view_activity_curse = db_controller.retrieve_activity(view_activity_id)
+        screen_width = screen.winfo_screenwidth() / 2
+        screen_height = screen.winfo_screenheight() / 2
+        bottomFrame = LabelFrame(screenAdmin, padx=10, pady=5)
+        bottomFrame.place(x=5, y=screen_height / 3 + 2, width=screen_width / 2 - 5,
+                          height=int(screen_height * 2 / 3 - 10))
+        Label(bottomFrame, text="Activity Status", font=("new roman", 15)).pack()
 
-    global attendingMemberBox
-    attendingFrame = Frame(bottomFrame, padx=3, pady=4, height=int(screen_height / 6))
-    Label(attendingFrame, text="Attending Members", font=("new roman", 13)).pack()
-    attendingScroll = Scrollbar(attendingFrame)
-    attendingScroll.pack(side=RIGHT, fill=Y)
-    attendingMemberBox = Listbox(attendingFrame, yscrollcommand=attendingScroll.set, width=int(screen_width / 2 - 7),
-                                 height=4, selectmode=SINGLE)
+        timeFrame = Frame(bottomFrame, padx=1, pady=3)
+        Label(timeFrame, text="Start Time", font=("new roman", 13)).grid(row=0, column=0)
+        Label(timeFrame, text="         ").grid(row=0, column=1)
+        Label(timeFrame, text="End Time", font=("new roman", 13)).grid(row=0, column=2)
+        # pull out information about the start time and end time
+        Label(timeFrame, text=view_activity_curse["start_time"], font=("new roman", 13)).grid(row=1, column=0)
+        Label(timeFrame, text="         ").grid(row=1, column=1)
+        Label(timeFrame, text=view_activity_curse["end_time"], font=("new roman", 13)).grid(row=1, column=2)
+        timeFrame.pack()
 
-    for i in range(1, 15):
-        attendingMemberBox.insert(END, "LINE" + str(i))
+        buttonFrame = Frame(bottomFrame, padx=1, pady=2)
+        Button(buttonFrame, text="Update Information", font=("new roman", 13), width=16, height=4,
+               command=lambda: updateTime(logged_admin_id, clicked_item_index, view_activity_curse["_id"],
+                                          view_activity_curse["name"])).grid(row=0,
+                                                                             column=0)
+        Button(buttonFrame, text="Refresh Information", font=("new roman", 13), width=16, height=4,
+               command=lambda: refreshActivityInfo(logged_admin_id)).grid(row=0, column=1)
+        buttonFrame.pack()
 
-    attendingMemberBox.pack(side=LEFT)
-    attendingScroll.config(command=attendingMemberBox.yview)
-    attendingFrame.pack()
+        Button(buttonFrame, text="Take Attendance", font=("new roman", 13), width=16, height=4,
+               command=takeAttendance).grid(row=1, column=0)
+        Button(buttonFrame, text="Generate Report", font=("new roman", 13), width=16, height=4,
+               command=generateActivityReport).grid(row=1, column=1)
+        buttonFrame.pack()
 
-    attendanceFrame = Frame(bottomFrame, padx=2, pady=3)
-    Button(attendanceFrame, text="Take Attendance", font=("new roman", 13), width=16, height=2,
-           command=takeAttendance).grid(row=0, column=0)
-    Button(attendanceFrame, text="Generate Report", font=("new roman", 13), width=16, height=2,
-           command=generateActivityReport).grid(row=0, column=1)
-    attendanceFrame.pack()
 
-def switch_camera(event=0, nextCam = -1):
+def switch_camera(event=0, nextCam=-1):
     global camSelected, capture, file
 
     if nextCam == -1:
         camSelected += 1
     else:
         camIndex = nextCam
-    del(capture)
+    del (capture)
     capture = cv2.VideoCapture(camIndex, cv2.CAP_DSHOW)
 
-    #try to get a frame, if it returns nothing
+    # try to get a frame, if it returns nothing
     success, frame = capture.read()
     if not success:
         camIndex = 0
-        del(capture)
+        del (capture)
         cap = cv2.VideoCapture(camIndex, cv2.CAP_DSHOW)
 
     f = open(file, 'w')
     f.write(str(camIndex))
     f.close()
+
 
 def render_pip(content_frame):
     global frameimg
@@ -918,8 +979,6 @@ def render_pip(content_frame):
     content_frame.imgtk = imgtk
     content_frame.configure(image=imgtk)
     content_frame.after(10, render_pip, content_frame)
-
-
 
 
 def takeAttendance():
@@ -968,12 +1027,12 @@ def takeAttendance():
 
     Label(rightFrame, text="Camera", font=("new roman", 15)).grid(row=0, column=0, sticky=W)
     cameraFrame = Label(rightFrame, compound=tk.CENTER, anchor=tk.CENTER, relief=tk.RAISED)
-    #Label(rightFrame, padx=10, pady=10, width=screen_width / 3 + 20, height=screen_width / 3 + 20)
+    # Label(rightFrame, padx=10, pady=10, width=screen_width / 3 + 20, height=screen_width / 3 + 20)
     cameraFrame.grid(row=1, column=0)
     render_pip(cameraFrame)
 
     Button(screenAttendance, text="Attend", font=("new roman", 15), height=2, width=20, command=attend).place(
-        x=10,y=int(screen_height * 2 / 3) + 30)
+        x=10, y=int(screen_height * 2 / 3) + 30)
     Button(screenAttendance, text="Verify", font=("new roman", 15), height=2, width=20, command=takePhoto).place(
         x=screen_width / 2 + 10, y=int(screen_height * 2 / 3) + 30)
 
@@ -999,16 +1058,16 @@ def generateActivityReport():
     screenReport = Toplevel(screen)
     screenReport.title("Activity Report")
     screenReport.geometry("300x300+50+50")
-    Label(screenReport, text = "").grid(row = 0, column = 0)
-    Label(screenReport, text = "Activity Name: ", font = ("new roman", 15)).grid(row = 1, column = 0, sticky = W)
-    Label(screenReport, text = "Class 5", font = ("new roman", 15)).grid(row = 1, column = 1, sticky = W)
-    Label(screenReport, text = "Number of Attendees:     ", font = ("new roman", 15)).grid(row = 2, column = 0, sticky = W)
-    Label(screenReport, text = "30", font = ("new roman", 15)).grid(row = 2, column = 1, sticky = W)
-    Label(screenReport, text = "Number of Attended: ", font = ("new roman", 15)).grid(row = 3, column = 0, sticky = W)
-    Label(screenReport, text = "15", font = ("new roman", 15)).grid(row = 3, column = 1, sticky = W)
-    Label(screenReport, text = "Number of Absenses: ", font = ("new roman", 15)).grid(row = 4, column = 0, sticky = W)
-    Label(screenReport, text = "15", font = ("new roman", 15)).grid(row = 4, column = 1, sticky = W)
-    Label(screenReport, text = "Attendance Rate", font = ("new roman", 15)).grid(row = 5, column = 0, sticky = W)
+    Label(screenReport, text="").grid(row=0, column=0)
+    Label(screenReport, text="Activity Name: ", font=("new roman", 15)).grid(row=1, column=0, sticky=W)
+    Label(screenReport, text="Class 5", font=("new roman", 15)).grid(row=1, column=1, sticky=W)
+    Label(screenReport, text="Number of Attendees:     ", font=("new roman", 15)).grid(row=2, column=0, sticky=W)
+    Label(screenReport, text="30", font=("new roman", 15)).grid(row=2, column=1, sticky=W)
+    Label(screenReport, text="Number of Attended: ", font=("new roman", 15)).grid(row=3, column=0, sticky=W)
+    Label(screenReport, text="15", font=("new roman", 15)).grid(row=3, column=1, sticky=W)
+    Label(screenReport, text="Number of Absenses: ", font=("new roman", 15)).grid(row=4, column=0, sticky=W)
+    Label(screenReport, text="15", font=("new roman", 15)).grid(row=4, column=1, sticky=W)
+    Label(screenReport, text="Attendance Rate", font=("new roman", 15)).grid(row=5, column=0, sticky=W)
     Label(screenReport, text="50", font=("new roman", 15)).grid(row=5, column=1, sticky=W)
 
 
@@ -1031,7 +1090,6 @@ def createActivity(logged_admin_id):
     screenCreateActivity = Toplevel(screenAdmin)
     screenCreateActivity.title("New Activity")
     screenCreateActivity.geometry("400x600+10+10")
-
 
     Label(screenCreateActivity, text="").pack()
     Label(screenCreateActivity, text="Activity ID").pack()
@@ -1071,7 +1129,8 @@ def createActivity(logged_admin_id):
     currentScroll.pack(side=RIGHT, fill=Y)
     memberBox = Listbox(currentFrame, yscrollcommand=currentScroll.set, width=400, height=7, selectmode=MULTIPLE)
 
-    Button(screenCreateActivity, text="Create Activity", height=3, width=20, command=lambda :activity_create_check(logged_admin_id)).pack()
+    Button(screenCreateActivity, text="Create Activity", height=3, width=20,
+           command=lambda: activity_create_check(logged_admin_id)).pack()
 
 
 def activity_create_check(logged_admin_id):
@@ -1085,12 +1144,14 @@ def activity_create_check(logged_admin_id):
 def newActivity(logged_admin_id):
     start_time_string = activity_date.get() + ' ' + activity_start_time.get()
     end_time_string = activity_date.get() + ' ' + activity_end_time.get()
-    activity = Activity(activity_id.get(), activity_name.get(), start_time_string, end_time_string, activity_location.get())
+    activity = Activity(activity_id.get(), activity_name.get(), start_time_string, end_time_string,
+                        activity_location.get())
     db_controller.add_activity(activity)
     db_controller.add_activity_to_admin(activity_id.get(), logged_admin_id)
+    members_id = db_controller.added_members(logged_admin_id)
+    for i in members_id:
+        db_controller.add_activity_to_member(activity_id.get(), i)
     refreshActivity(logged_admin_id)
-
-
 
 
 def addAttendingMember():
@@ -1125,12 +1186,12 @@ def admin_login():
         leftFrame = Frame(screenAdmin, padx=10, pady=10)
         leftFrame.place(x=0, y=2, width=screen_width / 2, height=screen_height / 3)
         Button(leftFrame, text="Member Management", font=("new roman", 20), height=2, width=25,
-               command=lambda:memberManagement(login_account.get())).grid(row=0, column=0)
+               command=lambda: memberManagement(login_account.get())).grid(row=0, column=0)
         Label(leftFrame, text="", height=1, width=25).grid(row=1, column=0)
         Button(leftFrame, text="Activity Management", font=("new roman", 20), height=2, width=25,
-               command=lambda:activityManagement(login_account.get())).grid(row=2, column=0)
+               command=lambda: activityManagement(login_account.get())).grid(row=2, column=0)
 
-        #Button(screenAdmin, text="Log out", font=("new roman", 13), command=lambda: raise_frame(login_frame)).place(
+        # Button(screenAdmin, text="Log out", font=("new roman", 13), command=lambda: raise_frame(login_frame)).place(
         #    x=screen_width - 70, y=screen_height - 25)
         # command = lambda:raise_frame(login_frame)
         memberManagement(logged_admin_curse["_id"])
@@ -1155,6 +1216,7 @@ def showCurrentMember(logged_admin_id):
         if member_curse not in current_member_list:
             currentMemberBox.insert(END, "ID: " + member_curse["_id"] + "  " + "Name: " + member_curse["name"])
             current_member_list.append(member_curse)
+
 
 def rejectMember(logged_admin_id):
     if pendingMemberBox.curselection() != ():
@@ -1200,7 +1262,6 @@ def refreshList(logged_admin_id):
 
 
 def viewMember(logged_admin_id):
-
     if currentMemberBox.curselection() != ():
         clicked_item_index = currentMemberBox.curselection()[0]
 
@@ -1208,22 +1269,22 @@ def viewMember(logged_admin_id):
 
         member_curse = db_controller.retrieve_member(view_member_id)
 
-
         screen_width = screen.winfo_screenwidth() / 2
         screen_height = screen.winfo_screenheight() / 2
         bottomFrame = LabelFrame(screenAdmin, padx=10, pady=5)
-        bottomFrame.place(x=5, y=screen_height / 3 + 2, width=screen_width / 2 - 5, height=int(screen_height * 2 / 3 - 10))
+        bottomFrame.place(x=5, y=screen_height / 3 + 2, width=screen_width / 2 - 5,
+                          height=int(screen_height * 2 / 3 - 10))
         Label(bottomFrame, text="Member Status", font=("new roman", 15)).pack()
 
         infoFrame = Frame(bottomFrame, padx=1, pady=3)
-        Label(infoFrame, text = "Name: ", font = ("new roman", 13)).grid(row = 0, column = 0, sticky = W)
-        Label(infoFrame, text = member_curse["name"], font = ("new roman", 13)).grid(row = 0, column = 1, sticky = W)
-        Label(infoFrame, text = "ID: ", font = ("new roman", 13)).grid(row = 1, column = 0, sticky = W)
-        Label(infoFrame, text = member_curse["_id"], font = ("new roman", 13)).grid(row = 1, column = 1, sticky = W)
-        Label(infoFrame, text = "Email: ", font = ("new roman", 13)).grid(row = 2, column = 0, sticky = W)
-        Label(infoFrame, text = member_curse["email_address"], font = ("new roman", 13)).grid (row = 2, column = 1, sticky = W)
-        Label(infoFrame, text = "Attendance Rate:    ", font = ("new roman", 13)).grid(row = 3, column = 0, sticky = W)
-        Label(infoFrame, text = "50", font = ("new roman", 13)).grid(row = 3, column = 1, sticky = W)
+        Label(infoFrame, text="Name: ", font=("new roman", 13)).grid(row=0, column=0, sticky=W)
+        Label(infoFrame, text=member_curse["name"], font=("new roman", 13)).grid(row=0, column=1, sticky=W)
+        Label(infoFrame, text="ID: ", font=("new roman", 13)).grid(row=1, column=0, sticky=W)
+        Label(infoFrame, text=member_curse["_id"], font=("new roman", 13)).grid(row=1, column=1, sticky=W)
+        Label(infoFrame, text="Email: ", font=("new roman", 13)).grid(row=2, column=0, sticky=W)
+        Label(infoFrame, text=member_curse["email_address"], font=("new roman", 13)).grid(row=2, column=1, sticky=W)
+        Label(infoFrame, text="Attendance Rate:    ", font=("new roman", 13)).grid(row=3, column=0, sticky=W)
+        Label(infoFrame, text="50", font=("new roman", 13)).grid(row=3, column=1, sticky=W)
         infoFrame.pack()
 
         global joinedActivityBox
@@ -1231,7 +1292,8 @@ def viewMember(logged_admin_id):
         Label(joinedFrame, text="Past Activities", font=("new roman", 13)).pack()
         joinedScroll = Scrollbar(joinedFrame)
         joinedScroll.pack(side=RIGHT, fill=Y)
-        joinedActivityBox = Listbox(joinedFrame, yscrollcommand=joinedScroll.set, width=int(screen_width / 2 - 7), height=4,
+        joinedActivityBox = Listbox(joinedFrame, yscrollcommand=joinedScroll.set, width=int(screen_width / 2 - 7),
+                                    height=4,
                                     selectmode=SINGLE)
 
         for i in range(1, 15):
@@ -1240,7 +1302,6 @@ def viewMember(logged_admin_id):
         joinedActivityBox.pack(side=LEFT)
         joinedScroll.config(command=joinedActivityBox.yview)
         joinedFrame.pack()
-
 
 
 def member():

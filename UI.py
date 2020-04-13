@@ -879,8 +879,12 @@ def switch_camera(event=0, nextCam = -1):
 
 def render_pip(content_frame):
     global frameimg
+    screen_width = screen.winfo_screenwidth() / 2
+    screen_height = screen.winfo_screenheight() / 2
 
     _, frame = capture.read()
+    capture.set(cv2.CAP_PROP_FRAME_WIDTH, screen_width / 2)
+    capture.set(cv2.CAP_PROP_FRAME_HEIGHT, int(screen_height * 2 / 3))
     picture = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
 
     frameimg = Image.fromarray(picture)
@@ -915,7 +919,6 @@ def takeAttendance():
 
     rightFrame = Frame(screenAttendance, padx=10, pady=10)
     rightFrame.place(x=screen_width / 2, y=2, width=screen_width / 2, height=int(screen_height * 2 / 3))
-
     try:
         f = open(file, 'r')
         camIndex = int(f.readline())
@@ -936,9 +939,9 @@ def takeAttendance():
                 sys.exit(1)
 
     Label(rightFrame, text="Camera", font=("new roman", 15)).grid(row=0, column=0, sticky=W)
-    cameraFrame = Label(rightFrame, compound=tk.CENTER, anchor=tk.CENTER, relief=tk.RAISED)
+    cameraFrame = Label(rightFrame)
     #Label(rightFrame, padx=10, pady=10, width=screen_width / 3 + 20, height=screen_width / 3 + 20)
-    cameraFrame.grid(row=1, column=0)
+    cameraFrame.grid(row=0, column=0)
     render_pip(cameraFrame)
 
     Button(screenAttendance, text="Attend", font=("new roman", 15), height=2, width=20, command=attend).place(

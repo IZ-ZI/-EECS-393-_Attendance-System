@@ -47,6 +47,8 @@ new_location = None
 screenAdmin = None
 activityBox = None
 
+new_club_id = None
+
 activity_name = None
 activity_date = None
 activity_start_time = None
@@ -435,18 +437,44 @@ def clubList(logged_member_id):
     clubScroll.config(command=clubBox.yview)
     clubFrame.pack()
 
+
+
+
+
     buttonFrameC = Frame(frame, padx=1, pady=3)
     Button(buttonFrameC, text="Refresh", font=("new roman", 18), height=1, width=9,
            command=lambda: refreshClub(logged_member_id)).grid(row=0,
                                                                column=0)
-    Button(buttonFrameC, text="View", font=("new roman", 18), height=1, width=9,
+    Button(buttonFrameC, text="View", font=("new roman", 18), height=1, width=7,
            command=lambda: viewClub(logged_member_id)).grid(row=0, column=1)
-    Button(buttonFrameC, text="Leave", font=("new roman", 18), height=1, width=9, command=deleteClub).grid(row=0,
+    Button(buttonFrameC, text="Apply New", font=("new roman", 18), height=1, width=9,
+           command=lambda: applyClub(logged_member_id)).grid(row=0,
                                                                                                            column=2)
     buttonFrameC.pack()
 
     bottomFrame = Frame(screenMember, padx=10, pady=5)
     bottomFrame.place(x=5, y=screen_height / 3 + 2, width=screen_width / 2 - 5, height=int(screen_height * 2 / 3 - 10))
+
+
+def applyClub(logged_member_id):
+    global new_club_id
+    global applyClubScreen
+    new_club_id = StringVar()
+    applyClubScreen = Toplevel(screen)
+    applyClubScreen.geometry("300x200+30+30")
+    applyClubScreen.title("Apply for New Club")
+    Label(applyClubScreen, text = "").pack()
+    Label(applyClubScreen, text = "Club ID", font = ("new roman", 18)).pack()
+    clubID_entry = Entry(applyClubScreen, textvariable=new_club_id)
+    clubID_entry.pack()
+    Label(applyClubScreen,text = "").pack()
+    Button(applyClubScreen, text = "Apply", width = 20, height = 2, command = lambda: submitClubID(logged_member_id)).pack()
+
+def submitClubID(logged_member_id):
+    db_controller.add_member_to_pending_members(new_club_id.get(),logged_member_id)
+
+
+
 
 
 def member_login():
@@ -591,34 +619,36 @@ def viewClub(logged_member_id):
         Button(bottomFrame, text="View Activity Status", font=("new roman", 12), command=viewActivityStatus).pack()
 
 
-def viewActivityStatus():
-    print("view this activity's status")
-    screen_width = screen.winfo_screenwidth() / 2
-    screen_height = screen.winfo_screenheight() / 2
-    bottomFrame = LabelFrame(screenMember, padx=10, pady=5)
-    bottomFrame.place(x=5, y=screen_height / 3 + 2, width=screen_width / 2 - 5, height=int(screen_height * 2 / 3 - 10))
-    Label(bottomFrame, text="Activity Status", font=("new roman", 15)).pack()
+def viewActivityStatus(logged_member_id):
 
-    activityInfoFrame = Frame(bottomFrame, padx=1, pady=3)
-    Label(activityInfoFrame, text="Club Name:", font=("new roman", 13)).grid(row=0, column=0, sticky=W)
-    Label(activityInfoFrame, text="EECS 391").grid(row=0, column=1, sticky=W)
-    Label(activityInfoFrame, text="Activity Name:", font=("new roman", 13)).grid(row=1, column=0, sticky=W)
-    Label(activityInfoFrame, text="Class 5", font=("new roman", 13)).grid(row=1, column=1, sticky=W)
-    Label(activityInfoFrame, text="Date: ").grid(row=2, column=0, sticky=W)
-    Label(activityInfoFrame, text="2020/04/20", font=("new roman", 13)).grid(row=2, column=1, sticky=W)
-    Label(activityInfoFrame, text="Start Time: ", font=("new roman", 13)).grid(row=3, column=0, sticky=W)
-    Label(activityInfoFrame, text="13:00", font=("new roman", 13)).grid(row=3, column=1, sticky=W)
-    Label(activityInfoFrame, text="End Time: ", font=("new roman", 13)).grid(row=4, column=0, sticky=W)
-    Label(activityInfoFrame, text="14:00", font=("new roman", 13)).grid(row=4, column=1, sticky=W)
-    Label(activityInfoFrame, text="Number of Attendees:          ", font=("new roman", 13)).grid(row=5, column=0,
-                                                                                                 sticky=W)
-    Label(activityInfoFrame, text="30", font=("new roman", 13)).grid(row=5, column=1, sticky=W)
-    Label(activityInfoFrame, text="My Check In Time: ", font=("new roman", 13)).grid(row=6, column=0, sticky=W)
-    Label(activityInfoFrame, text="13:04", font=("new roman", 13)).grid(row=6, column=1, sticky=W)
-    Label(activityInfoFrame, text="Present?", font=("new roman", 13)).grid(row=7, column=0, sticky=W)
-    Label(activityInfoFrame, text="Yes", font=("new roman", 13)).grid(row=7, column=1, sticky=W)
+    if myActivityBox.curselection() != ():
+        clicked_item_index = myActivityBox.curselection()[0]
+        view_activity_id = list(db_controller.member_activity__status_dictionary(logged_member_id))[clicked_item_index]
+        view_activity_curse = db_controller.retrieve_activity(view_activity_id)
+        screen_width = screen.winfo_screenwidth() / 2
+        screen_height = screen.winfo_screenheight() / 2
+        bottomFrame = LabelFrame(screenMember, padx=10, pady=5)
+        bottomFrame.place(x=5, y=screen_height / 3 + 2, width=screen_width / 2 - 5, height=int(screen_height * 2 / 3 - 10))
+        Label(bottomFrame, text="Activity Status", font=("new roman", 15)).pack()
 
-    activityInfoFrame.pack()
+        activityInfoFrame = Frame(bottomFrame, padx=1, pady=3)
+        Label(activityInfoFrame, text="Club Name:", font=("new roman", 13)).grid(row=0, column=0, sticky=W)
+        Label(activityInfoFrame, text="EECS 391").grid(row=0, column=1, sticky=W)
+        Label(activityInfoFrame, text="Activity Name:", font=("new roman", 13)).grid(row=1, column=0, sticky=W)
+        Label(activityInfoFrame, text=view_activity_curse["name"], font=("new roman", 13)).grid(row=1, column=1, sticky=W)
+        Label(activityInfoFrame, text="Start Time: ", font=("new roman", 13)).grid(row=2, column=0, sticky=W)
+        Label(activityInfoFrame, text=view_activity_curse["start_time"], font=("new roman", 13)).grid(row=2, column=1, sticky=W)
+        Label(activityInfoFrame, text="End Time: ", font=("new roman", 13)).grid(row=3, column=0, sticky=W)
+        Label(activityInfoFrame, text=view_activity_curse["end_time"], font=("new roman", 13)).grid(row=3, column=1, sticky=W)
+        Label(activityInfoFrame, text="Number of Attendees:          ", font=("new roman", 13)).grid(row=4, column=0,
+                                                                                                     sticky=W)
+        Label(activityInfoFrame, text="30", font=("new roman", 13)).grid(row=4, column=1, sticky=W)
+        Label(activityInfoFrame, text="My Check In Time: ", font=("new roman", 13)).grid(row=5, column=0, sticky=W)
+        Label(activityInfoFrame, text="13:04", font=("new roman", 13)).grid(row=5, column=1, sticky=W)
+        Label(activityInfoFrame, text="Present?", font=("new roman", 13)).grid(row=6, column=0, sticky=W)
+        Label(activityInfoFrame, text=db_controller.member_status_in_activity(logged_member_id, view_activity_id) , font=("new roman", 13)).grid(row=6, column=1, sticky=W)
+
+        activityInfoFrame.pack()
 
 
 def deleteClub():
@@ -658,16 +688,13 @@ def activityList(logged_member_id):
         row=0, column=0)
     Label(buttonFrame, text=" ").grid(row=0, column=1)
     Button(buttonFrame, text="View", font=("new roman", 18), height=1, width=13,
-           command=lambda: viewMyActivityStatus(logged_member_id)).grid(
+           command=lambda: viewActivityStatus(logged_member_id)).grid(
         row=0, column=2)
     buttonFrame.pack()
 
     bottomFrame = Frame(screenMember, padx=10, pady=5)
     bottomFrame.place(x=5, y=screen_height / 3 + 2, width=screen_width / 2 - 5, height=int(screen_height * 2 / 3 - 10))
 
-
-def viewMyActivityStatus(logged_member_id):
-    print("hey")
 
 
 def isUpdated(activity_in_list, activity_from_db):
@@ -1151,7 +1178,7 @@ def newActivity(logged_admin_id):
     db_controller.add_activity_to_admin(activity_id.get(), logged_admin_id)
     members_id = db_controller.added_members(logged_admin_id)
     for i in members_id:
-        db_controller.add_activity_to_member(activity_id.get(), i)
+        db_controller.add_activity_to_member(activity_id.get(), i, "")
     refreshActivity(logged_admin_id)
 
 

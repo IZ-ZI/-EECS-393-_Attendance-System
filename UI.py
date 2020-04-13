@@ -1,4 +1,7 @@
 from tkinter import *
+import tkinter as tk
+import cv2
+from PIL import Image, ImageTk
 
 import face_recognition
 import numpy
@@ -11,7 +14,8 @@ from ecapture import ecapture as ec
 
 import pymongo
 from DBController import DBController
-
+from Activity import Activity
+from datetime import datetime
 
 screen = None
 
@@ -37,6 +41,13 @@ member_register_feedback = None
 
 screenAdmin = None
 
+
+activity_name = None
+activity_date = None
+activity_start_time = None
+activity_end_time = None
+activity_id = None
+activity_location = None
 screen1 = None
 screenMember = None
 club_register_feedback = None
@@ -75,6 +86,11 @@ clubScroll = None
 clubFrame = None
 
 show_password = None
+
+camSelected = None
+frameimg = None
+capture = None
+file = None
 
 cluster = MongoClient(
     "mongodb+srv://wz:1999314Zwh%2F@attendancemanagementsystem-7immk.mongodb.net/test?retryWrites=true&w"
@@ -840,8 +856,44 @@ def viewActivity():
            command=generateActivityReport).grid(row=0, column=1)
     attendanceFrame.pack()
 
+def switch_camera(event=0, nextCam = -1):
+    global camSelected, capture, file
+
+    if nextCam == -1:
+        camSelected += 1
+    else:
+        camIndex = nextCam
+    del(capture)
+    capture = cv2.VideoCapture(camIndex)
+
+    #try to get a frame, if it returns nothing
+    success, frame = capture.read()
+    if not success:
+        camIndex = 0
+        del(capture)
+        cap = cv2.VideoCapture(camIndex)
+
+    f = open(file, 'w')
+    f.write(str(camIndex))
+    f.close()
+
+def render_pip(content_frame):
+    global frameimg
+
+    _, frame = capture.read()
+    picture = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
+
+    frameimg = Image.fromarray(picture)
+    imgtk = ImageTk.PhotoImage(image=frameimg)
+    content_frame.imgtk = imgtk
+    content_frame.configure(image=imgtk)
+    content_frame.after(10, render_pip, content_frame)
+
+
 
 def takeAttendance():
+    global capture, file
+
     print("taking attendance")
     global screenAttendance
     screenAttendance = Toplevel(screenAdmin)
@@ -863,13 +915,36 @@ def takeAttendance():
 
     rightFrame = Frame(screenAttendance, padx=10, pady=10)
     rightFrame.place(x=screen_width / 2, y=2, width=screen_width / 2, height=int(screen_height * 2 / 3))
-    Label(rightFrame, text="Camera", font=("new roman", 15)).grid(row=0, column=0, sticky=W)
-    cameraFrame = LabelFrame(rightFrame, padx=10, pady=10, width=screen_width / 3 + 20, height=screen_width / 3 + 20)
-    cameraFrame.grid(row=1, column=0)
 
-    Button(screenAttendance, text="Attend", font=("new roman", 15), height=2, width=20, command=attend).place(x=10,
-                                                                                                              y=int(
-                                                                                                                  screen_height * 2 / 3) + 30)
+    try:
+        f = open(file, 'r')
+        camIndex = int(f.readline())
+    except:
+        camIndex = 0
+
+    capture = cv2.VideoCapture(camIndex)
+    capWidth = capture.get(4)
+    capHeight = capture.get(4)
+    success, frame = capture.read()
+    if not success:
+        if camIndex == 0:
+            print("Camera not detected. Check connection.")
+            sys.exit(1)
+        else:
+            switch_camera(nextCam=0)
+            success, frame = capture.read()
+            if not success:
+                print("Camera not detected. Check connection.")
+                sys.exit(1)
+
+    Label(rightFrame, text="Camera", font=("new roman", 15)).grid(row=0, column=0, sticky=W)
+    cameraFrame = Label(rightFrame, compound=tk.CENTER, anchor=tk.CENTER, relief=tk.RAISED)
+    #Label(rightFrame, padx=10, pady=10, width=screen_width / 3 + 20, height=screen_width / 3 + 20)
+    cameraFrame.grid(row=1, column=0)
+    render_pip(cameraFrame)
+
+    Button(screenAttendance, text="Attend", font=("new roman", 15), height=2, width=20, command=attend).place(
+        x=10,y=int(screen_height * 2 / 3) + 30)
     Button(screenAttendance, text="Verify", font=("new roman", 15), height=2, width=20, command=takePhoto).place(
         x=screen_width / 2 + 10, y=int(screen_height * 2 / 3) + 30)
 
@@ -909,31 +984,56 @@ def generateActivityReport():
 
 
 def createActivity():
+    global activity_name
+    global activity_date
+    global activity_start_time
+    global activity_end_time
+    global activity_id
+    global activity_location
+    activity_name = StringVar()
+    activity_date = StringVar()
+    activity_start_time = StringVar()
+    activity_end_time = StringVar()
+    activity_id = StringVar()
+    activity_location = StringVar()
+
     print("create activity")
     global screenCreateActivity
     screenCreateActivity = Toplevel(screenAdmin)
     screenCreateActivity.title("New Activity")
     screenCreateActivity.geometry("400x600+10+10")
+
+
+    Label(screenCreateActivity, text="").pack()
+    Label(screenCreateActivity, text="Activity ID").pack()
+    id_entry = Entry(screenCreateActivity, textvariable=activity_id)
+    id_entry.pack()
+
     # 1
     Label(screenCreateActivity, text="").pack()
     Label(screenCreateActivity, text="Activity Name").pack()
-    activity_entry = Entry(screenCreateActivity)
+    activity_entry = Entry(screenCreateActivity, textvariable=activity_name)
     activity_entry.pack()
     # 2
     Label(screenCreateActivity, text="").pack()
     Label(screenCreateActivity, text="Date").pack()
-    date_entry = Entry(screenCreateActivity)
+    date_entry = Entry(screenCreateActivity, textvariable=activity_date)
     date_entry.pack()
     # 3
     Label(screenCreateActivity, text="").pack()
     Label(screenCreateActivity, text="Start Time").pack()
-    starttime_entry = Entry(screenCreateActivity)
+    starttime_entry = Entry(screenCreateActivity, textvariable=activity_start_time)
     starttime_entry.pack()
     # 4
     Label(screenCreateActivity, text="").pack()
     Label(screenCreateActivity, text="End Time").pack()
-    endtime_entry = Entry(screenCreateActivity)
+    endtime_entry = Entry(screenCreateActivity, textvariable=activity_end_time)
     endtime_entry.pack()
+
+    Label(screenCreateActivity, text="").pack()
+    Label(screenCreateActivity, text="Location").pack()
+    location_entry = Entry(screenCreateActivity, textvariable=activity_location)
+    location_entry.pack()
 
     global memberBox
     Label(screenCreateActivity, text="").pack()
@@ -953,11 +1053,27 @@ def createActivity():
     Button(screenCreateActivity, text="Add Attending Members", height=2, width=20, command=addAttendingMember).pack()
 
     Label(screenCreateActivity, text="").pack()
-    Button(screenCreateActivity, text="Create Activity", height=3, width=20, command=newActivity).pack()
+
+    Button(screenCreateActivity, text="Create Activity", height=3, width=20, command=activity_create_check).pack()
+
+
+def activity_create_check():
+    global db_controller
+    if db_controller.activity_is_present(activity_id.get()):
+        print("id has already been registered")
+    else:
+        newActivity()
 
 
 def newActivity():
-    print("create new activity")
+    start_time_string = activity_date.get() + ' ' + activity_start_time.get()
+    start_time = datetime.strptime(start_time_string, '%Y-%m-%d %H:%M:%S')
+    end_time_string = activity_date.get() + ' ' + activity_end_time.get()
+    end_time = datetime.strptime(end_time_string, '%Y-%m-%d %H:%M:%S')
+    activity = Activity(activity_id.get(), activity_name.get(), start_time, end_time, activity_location.get())
+    db_controller.add_activity(activity)
+
+
 
 
 def addAttendingMember():

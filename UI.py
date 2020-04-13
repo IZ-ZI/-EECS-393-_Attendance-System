@@ -1,13 +1,18 @@
 from tkinter import *
-import tkinter as tk
-import cv2
+
+import face_recognition
+import numpy
+
+from FaceIdentification import FaceIdentification
 from Administrator import Administrator
 from Member import Member
 from pymongo import MongoClient
-from PIL import Image, ImageTk
+from ecapture import ecapture as ec
+
 import pymongo
 from DBController import DBController
-
+from Activity import Activity
+from datetime import datetime
 
 screen = None
 
@@ -33,6 +38,13 @@ member_register_feedback = None
 
 screenAdmin = None
 
+
+activity_name = None
+activity_date = None
+activity_start_time = None
+activity_end_time = None
+activity_id = None
+activity_location = None
 screen1 = None
 screenMember = None
 club_register_feedback = None
@@ -456,7 +468,7 @@ def member_login():
         Button(screenMember, text="Log out", font=("new roman", 13), command=lambda: raise_frame(login_page)).place(
             x=screen_width - 70, y=screen_height - 25)
 
-        Button(screenMember, text = "Set Face ID", font = ("new roman", 13), width = 10).place(x = screen_width/2+10, y = screen_height - 25)
+        Button(screenMember, text = "Set Face ID", font = ("new roman", 13), width = 10, command = lambda: setFaceID(logged_member_curse["_id"])).place(x = screen_width/2+10, y = screen_height - 25)
 
         leftFrame = Frame(screenMember, padx=10, pady=10)
         leftFrame.place(x=0, y=2, width=screen_width / 2, height=screen_height / 3)
@@ -471,7 +483,37 @@ def member_login():
 
         clubList(logged_member_curse["_id"])
 
+def setFaceID(logged_member_id):
+    screen_width = screen.winfo_screenwidth() / 2
+    screen_height = screen.winfo_screenheight() / 2
+    global screenSetfaceID
+    screenSetfaceID = Toplevel(screen)
+    screenSetfaceID.title("Set Face ID")
+    screenSetfaceID.geometry("%dx%d" % (screen_height, screen_height))
+    Label(screenSetfaceID, text = "").pack()
+    photoFrame = LabelFrame(screenSetfaceID, padx= 10, pady = 10, width = int (screen_height*2/3), height = int (screen_height*2/3))
+    photoFrame.pack()
+    Label(screenSetfaceID, text="").pack()
+    Button(screenSetfaceID, text = "Take Face ID Photo", height = 3, width = 20, command = lambda: takeFaceIDPhoto(logged_member_id)).pack()
 
+
+def takeFaceIDPhoto(logged_member_id):
+    #conditional statement needed
+    print("take face id photo")
+    photo = ec.capture(1, False, "your photo.jpg")
+    fr_photo = face_recognition.load_image_file("your photo.jpg")
+    face_id = FaceIdentification.encoding_from_photo(fr_photo)
+    db_controller.update_member_face_id(logged_member_id, face_id)
+    encoding = numpy.fromstring(db_controller.retrieve_member_face_id(logged_member_id))
+    print(FaceIdentification.compare_to(encoding, encoding))
+
+
+def setIDSuccess():
+    Label(screenSetfaceID, text = "Success", fg = 'green').pack()
+
+def setIDFail():
+    Label(screenSetfaceID, text = "Failed", fg = 'red').pack()
+    Label(screenSetfaceID, text = "Please Try Again.", fg = 'red').pack()
 
 
 def viewClub():
@@ -893,6 +935,9 @@ def takeAttendance():
 
 
 def takePhoto():
+    ec.capture(1, False, "your photo.jpg")
+    photo = face_recognition.load_image_file("your photo.jpg")
+
     print("take photo")
 
 
@@ -924,31 +969,56 @@ def generateActivityReport():
 
 
 def createActivity():
+    global activity_name
+    global activity_date
+    global activity_start_time
+    global activity_end_time
+    global activity_id
+    global activity_location
+    activity_name = StringVar()
+    activity_date = StringVar()
+    activity_start_time = StringVar()
+    activity_end_time = StringVar()
+    activity_id = StringVar()
+    activity_location = StringVar()
+
     print("create activity")
     global screenCreateActivity
     screenCreateActivity = Toplevel(screenAdmin)
     screenCreateActivity.title("New Activity")
     screenCreateActivity.geometry("400x600+10+10")
+
+
+    Label(screenCreateActivity, text="").pack()
+    Label(screenCreateActivity, text="Activity ID").pack()
+    id_entry = Entry(screenCreateActivity, textvariable=activity_id)
+    id_entry.pack()
+
     # 1
     Label(screenCreateActivity, text="").pack()
     Label(screenCreateActivity, text="Activity Name").pack()
-    activity_entry = Entry(screenCreateActivity)
+    activity_entry = Entry(screenCreateActivity, textvariable=activity_name)
     activity_entry.pack()
     # 2
     Label(screenCreateActivity, text="").pack()
     Label(screenCreateActivity, text="Date").pack()
-    date_entry = Entry(screenCreateActivity)
+    date_entry = Entry(screenCreateActivity, textvariable=activity_date)
     date_entry.pack()
     # 3
     Label(screenCreateActivity, text="").pack()
     Label(screenCreateActivity, text="Start Time").pack()
-    starttime_entry = Entry(screenCreateActivity)
+    starttime_entry = Entry(screenCreateActivity, textvariable=activity_start_time)
     starttime_entry.pack()
     # 4
     Label(screenCreateActivity, text="").pack()
     Label(screenCreateActivity, text="End Time").pack()
-    endtime_entry = Entry(screenCreateActivity)
+    endtime_entry = Entry(screenCreateActivity, textvariable=activity_end_time)
     endtime_entry.pack()
+
+    Label(screenCreateActivity, text="").pack()
+    Label(screenCreateActivity, text="Location").pack()
+    location_entry = Entry(screenCreateActivity, textvariable=activity_location)
+    location_entry.pack()
 
     global memberBox
     Label(screenCreateActivity, text="").pack()
@@ -968,11 +1038,27 @@ def createActivity():
     Button(screenCreateActivity, text="Add Attending Members", height=2, width=20, command=addAttendingMember).pack()
 
     Label(screenCreateActivity, text="").pack()
-    Button(screenCreateActivity, text="Create Activity", height=3, width=20, command=newActivity).pack()
+
+    Button(screenCreateActivity, text="Create Activity", height=3, width=20, command=activity_create_check).pack()
+
+
+def activity_create_check():
+    global db_controller
+    if db_controller.activity_is_present(activity_id.get()):
+        print("id has already been registered")
+    else:
+        newActivity()
 
 
 def newActivity():
-    print("create new activity")
+    start_time_string = activity_date.get() + ' ' + activity_start_time.get()
+    start_time = datetime.strptime(start_time_string, '%Y-%m-%d %H:%M:%S')
+    end_time_string = activity_date.get() + ' ' + activity_end_time.get()
+    end_time = datetime.strptime(end_time_string, '%Y-%m-%d %H:%M:%S')
+    activity = Activity(activity_id.get(), activity_name.get(), start_time, end_time, activity_location.get())
+    db_controller.add_activity(activity)
+
+
 
 
 def addAttendingMember():

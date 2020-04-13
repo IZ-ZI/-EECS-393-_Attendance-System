@@ -299,7 +299,7 @@ class DBController:
             return False
 
     def add_activity_to_admin(self, activity_id, admin_id):
-        if self.member_is_present(admin_id) and activity_id not in self.admin_activities(admin_id):
+        if self.admin_is_present(admin_id) and activity_id not in self.admin_activities(admin_id):
             self.collection_admin.update_one(
                 {"_id": admin_id},
                 {'$push': {"activities": activity_id}}

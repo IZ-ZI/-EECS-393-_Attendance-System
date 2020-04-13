@@ -223,34 +223,18 @@ class DBController:
                       member_email, admin_name, admin_id, False)
         return True
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     def activity_is_present(self, activity_id):
         activity = self.collection_activity.find_one({"_id": activity_id})
         return activity is not None
 
-    def add_activity(self, activity):
+    def add_activity(self, activity, admin_id):
         if not self.activity_is_present(activity.get_id()):
             post = {"_id": activity.get_id(), "name": activity.get_name(), "start_time": activity.get_start_time(),
-                    "end_time": activity.get_end_time(), "location": activity.get_location()}
+                    "end_time": activity.get_end_time(), "location": activity.get_location(), "admin": admin_id}
             self.collection_activity.insert_one(post)
             return True
         else:
             return False
-
 
     def update_activity(self, activity):
         if self.activity_is_present(activity.get_id()):
@@ -276,39 +260,40 @@ class DBController:
         else:
             return False
 
-    def add_activity_to_member(self, activity_id, member_id, status):
+
+    def add_activity_to_member(self, admin_id, activity_id, member_id, status):
         if self.member_is_present(member_id) and activity_id not in self.member_activities(member_id):
             self.collection_member.update_one(
                 {"_id": member_id},
-                {'$set': {"activities." + activity_id: status}}
+                {'$set': {"activities." + admin_id + "." + activity_id: status}}
             )
             return True
         else:
             return False
 
-    def set_member_activity_status(self, activity_id, member_id, status):
+
+    def set_member_activity_status(self, admin_id, activity_id, member_id, status):
         if self.member_is_present(member_id) and activity_id in self.member_activities(member_id):
             self.collection_member.update_one(
                 {"_id": member_id},
-                {'$set': {"activities." + activity_id: status}}
+                {'$set': {"activities." + admin_id + "." + activity_id: status}}
             )
             return True
         else:
             return False
 
-    def member_status_in_activity(self, member_id, activity_id):
-        return self.member_activity__status_dictionary(member_id).get(activity_id)
 
-
-    def remove_activity_from_member(self, activity_id, member_id):
+    def remove_activity_from_member(self, admin_id, activity_id, member_id):
         if self.member_is_present(member_id) and activity_id in self.member_activities(member_id):
             self.collection_member.update_one(
                 {"_id": member_id},
-                {'$unset': {"activities." + activity_id: ""}}
+                {'$unset': {"activities." + admin_id + "." + activity_id: ""}}
             )
             return True
         else:
             return False
+
+
 
     def add_activity_to_admin(self, activity_id, admin_id):
         if self.admin_is_present(admin_id) and activity_id not in self.admin_activities(admin_id):
@@ -320,6 +305,8 @@ class DBController:
         else:
             return False
 
+
+
     def remove_activity_from_admin(self, activity_id, admin_id):
         if self.admin_is_present(admin_id) and activity_id in self.admin_activities(admin_id):
             self.collection_admin.update_one(
@@ -330,16 +317,22 @@ class DBController:
         else:
             return False
 
+
+    def member_status_in_actvity(self, member_id, admin_id, activity_id):
+        cursor = self.collection_member.find_one({"_id": member_id})
+        print(cursor["activities"][admin_id].get(activity_id))
+
     def member_activities(self, member_id):
-        return self.member_activity__status_dictionary(member_id).keys()
-
-
-    def member_activity__status_dictionary(self, member_id):
         if self.member_is_present(member_id):
+            activity_list = []
             cursor = self.collection_member.find_one({"_id": member_id})
-            return cursor["activities"]
+            for key, value in cursor["activities"].items():
+                for i in value:
+                    activity_list.append(i)
+            return activity_list
         else:
             return None
+
 
     def admin_activities(self, admin_id):
         if self.admin_is_present(admin_id):

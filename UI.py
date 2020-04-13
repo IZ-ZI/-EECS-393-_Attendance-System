@@ -18,7 +18,7 @@ from Activity import Activity
 from datetime import datetime
 
 screen = None
-
+joinedActivityBox = None
 login_account_entry = None
 login_password_entry = None
 login_account = None
@@ -437,10 +437,6 @@ def clubList(logged_member_id):
     clubScroll.config(command=clubBox.yview)
     clubFrame.pack()
 
-
-
-
-
     buttonFrameC = Frame(frame, padx=1, pady=3)
     Button(buttonFrameC, text="Refresh", font=("new roman", 18), height=1, width=9,
            command=lambda: refreshClub(logged_member_id)).grid(row=0,
@@ -449,7 +445,7 @@ def clubList(logged_member_id):
            command=lambda: viewClub(logged_member_id)).grid(row=0, column=1)
     Button(buttonFrameC, text="Apply New", font=("new roman", 18), height=1, width=9,
            command=lambda: applyClub(logged_member_id)).grid(row=0,
-                                                                                                           column=2)
+                                                             column=2)
     buttonFrameC.pack()
 
     bottomFrame = Frame(screenMember, padx=10, pady=5)
@@ -463,18 +459,16 @@ def applyClub(logged_member_id):
     applyClubScreen = Toplevel(screen)
     applyClubScreen.geometry("300x200+30+30")
     applyClubScreen.title("Apply for New Club")
-    Label(applyClubScreen, text = "").pack()
-    Label(applyClubScreen, text = "Club ID", font = ("new roman", 18)).pack()
+    Label(applyClubScreen, text="").pack()
+    Label(applyClubScreen, text="Club ID", font=("new roman", 18)).pack()
     clubID_entry = Entry(applyClubScreen, textvariable=new_club_id)
     clubID_entry.pack()
-    Label(applyClubScreen,text = "").pack()
-    Button(applyClubScreen, text = "Apply", width = 20, height = 2, command = lambda: submitClubID(logged_member_id)).pack()
+    Label(applyClubScreen, text="").pack()
+    Button(applyClubScreen, text="Apply", width=20, height=2, command=lambda: submitClubID(logged_member_id)).pack()
+
 
 def submitClubID(logged_member_id):
-    db_controller.add_member_to_pending_members(new_club_id.get(),logged_member_id)
-
-
-
+    db_controller.add_member_to_pending_members(new_club_id.get(), logged_member_id)
 
 
 def member_login():
@@ -569,9 +563,9 @@ def setIDSuccess():
 def setIDFail():
     screen_height = screen.winfo_screenheight() / 2
     frame = Frame(screenSetfaceID)
-    Label(frame, text = "Failed", fg = 'red').pack()
-    Label(frame, text = "Please Try Again.", fg = 'red').pack()
-    frame.place(x = 0, y = screen_height - 50, width = screen_height)
+    Label(frame, text="Failed", fg='red').pack()
+    Label(frame, text="Please Try Again.", fg='red').pack()
+    frame.place(x=0, y=screen_height - 50, width=screen_height)
 
 
 def viewClub(logged_member_id):
@@ -620,33 +614,35 @@ def viewClub(logged_member_id):
 
 
 def viewActivityStatus(logged_member_id):
-
     if myActivityBox.curselection() != ():
         clicked_item_index = myActivityBox.curselection()[0]
-        view_activity_id = list(db_controller.member_activity__status_dictionary(logged_member_id))[clicked_item_index]
+        view_activity_id = db_controller.member_activities(logged_member_id)[clicked_item_index]
         view_activity_curse = db_controller.retrieve_activity(view_activity_id)
         screen_width = screen.winfo_screenwidth() / 2
         screen_height = screen.winfo_screenheight() / 2
         bottomFrame = LabelFrame(screenMember, padx=10, pady=5)
-        bottomFrame.place(x=5, y=screen_height / 3 + 2, width=screen_width / 2 - 5, height=int(screen_height * 2 / 3 - 10))
+        bottomFrame.place(x=5, y=screen_height / 3 + 2, width=screen_width / 2 - 5,
+                          height=int(screen_height * 2 / 3 - 10))
         Label(bottomFrame, text="Activity Status", font=("new roman", 15)).pack()
 
         activityInfoFrame = Frame(bottomFrame, padx=1, pady=3)
         Label(activityInfoFrame, text="Club Name:", font=("new roman", 13)).grid(row=0, column=0, sticky=W)
-        Label(activityInfoFrame, text="EECS 391").grid(row=0, column=1, sticky=W)
+        Label(activityInfoFrame, text=view_activity_curse["admin"]).grid(row=0, column=1, sticky=W)
         Label(activityInfoFrame, text="Activity Name:", font=("new roman", 13)).grid(row=1, column=0, sticky=W)
-        Label(activityInfoFrame, text=view_activity_curse["name"], font=("new roman", 13)).grid(row=1, column=1, sticky=W)
+        Label(activityInfoFrame, text=view_activity_curse["name"], font=("new roman", 13)).grid(row=1, column=1,
+                                                                                                sticky=W)
         Label(activityInfoFrame, text="Start Time: ", font=("new roman", 13)).grid(row=2, column=0, sticky=W)
-        Label(activityInfoFrame, text=view_activity_curse["start_time"], font=("new roman", 13)).grid(row=2, column=1, sticky=W)
+        Label(activityInfoFrame, text=view_activity_curse["start_time"], font=("new roman", 13)).grid(row=2, column=1,
+                                                                                                      sticky=W)
         Label(activityInfoFrame, text="End Time: ", font=("new roman", 13)).grid(row=3, column=0, sticky=W)
-        Label(activityInfoFrame, text=view_activity_curse["end_time"], font=("new roman", 13)).grid(row=3, column=1, sticky=W)
-        Label(activityInfoFrame, text="Number of Attendees:          ", font=("new roman", 13)).grid(row=4, column=0,
-                                                                                                     sticky=W)
-        Label(activityInfoFrame, text="30", font=("new roman", 13)).grid(row=4, column=1, sticky=W)
-        Label(activityInfoFrame, text="My Check In Time: ", font=("new roman", 13)).grid(row=5, column=0, sticky=W)
-        Label(activityInfoFrame, text="13:04", font=("new roman", 13)).grid(row=5, column=1, sticky=W)
-        Label(activityInfoFrame, text="Present?", font=("new roman", 13)).grid(row=6, column=0, sticky=W)
-        Label(activityInfoFrame, text=db_controller.member_status_in_activity(logged_member_id, view_activity_id) , font=("new roman", 13)).grid(row=6, column=1, sticky=W)
+        Label(activityInfoFrame, text=view_activity_curse["end_time"], font=("new roman", 13)).grid(row=3, column=1,
+                                                                                                    sticky=W)
+        Label(activityInfoFrame, text="Present?", font=("new roman", 13)).grid(row=4, column=0, sticky=W)
+        Label(activityInfoFrame,
+              text=db_controller.member_status_in_actvity(logged_member_id, view_activity_curse["admin"],
+                                                          view_activity_id), font=("new roman", 13)).grid(row=4,
+                                                                                                          column=1,
+                                                                                                          sticky=W)
 
         activityInfoFrame.pack()
 
@@ -696,7 +692,6 @@ def activityList(logged_member_id):
     bottomFrame.place(x=5, y=screen_height / 3 + 2, width=screen_width / 2 - 5, height=int(screen_height * 2 / 3 - 10))
 
 
-
 def isUpdated(activity_in_list, activity_from_db):
     if activity_in_list["_id"] == activity_from_db["_id"]:
         return activity_in_list["start_time"] is not activity_from_db["start_time"] or activity_in_list[
@@ -714,8 +709,8 @@ def show_my_activities(logged_member_id):
                 if isUpdated(j, activity_curse):
                     activityList(logged_member_id)
             myActivityBox.insert(END, "ID: " + activity_curse["_id"] + "  "
-                                     + "Name: " + activity_curse["name"] + "  "
-                                     + "Location: " + activity_curse["location"])
+                                 + "Name: " + activity_curse["name"] + "  "
+                                 + "Location: " + activity_curse["location"])
             member_activity_list.append(activity_curse)
 
 
@@ -879,6 +874,8 @@ def deleteActivity(logged_admin_id):
         clicked_item_index = activityBox.curselection()[0]
         del_activity_id = db_controller.admin_activities(logged_admin_id)[clicked_item_index]
         db_controller.remove_activity_from_admin(del_activity_id, logged_admin_id)
+        for i in db_controller.added_members(logged_admin_id):
+            db_controller.remove_activity_from_member(logged_admin_id, del_activity_id, i)
         db_controller.delete_activity(del_activity_id)
         activityBox.delete(clicked_item_index)
 
@@ -973,26 +970,27 @@ def viewActivity(logged_admin_id):
         buttonFrame.pack()
 
 
-def switch_camera(event=0, nextCam = -1):
+def switch_camera(event=0, nextCam=-1):
     global camSelected, capture, file
 
     if nextCam == -1:
         camSelected += 1
     else:
         camIndex = nextCam
-    del(capture)
-    capture = cv2.VideoCapture(camIndex+ cv2.CAP_DSHOW)
+    del (capture)
+    capture = cv2.VideoCapture(camIndex + cv2.CAP_DSHOW)
 
-    #try to get a frame, if it returns nothing
+    # try to get a frame, if it returns nothing
     success, frame = capture.read()
     if not success:
         camIndex = 0
-        del(capture)
-        cap = cv2.VideoCapture(camIndex+ cv2.CAP_DSHOW)
+        del (capture)
+        cap = cv2.VideoCapture(camIndex + cv2.CAP_DSHOW)
 
     f = open(file, 'w')
     f.write(str(camIndex))
     f.close()
+
 
 def render_pip(content_frame):
     global frameimg
@@ -1060,7 +1058,7 @@ def takeAttendance():
     render_pip(cameraFrame)
 
     Button(screenAttendance, text="Attend", font=("new roman", 15), height=2, width=20, command=attend).place(
-        x=10,y=int(screen_height * 2 / 3) + 30)
+        x=10, y=int(screen_height * 2 / 3) + 30)
     Button(screenAttendance, text="Verify", font=("new roman", 15), height=2, width=20, command=takePhoto).place(
         x=screen_width / 2 + 10, y=int(screen_height * 2 / 3) + 30)
 
@@ -1174,11 +1172,11 @@ def newActivity(logged_admin_id):
     end_time_string = activity_date.get() + ' ' + activity_end_time.get()
     activity = Activity(activity_id.get(), activity_name.get(), start_time_string, end_time_string,
                         activity_location.get())
-    db_controller.add_activity(activity)
+    db_controller.add_activity(activity, logged_admin_id)
     db_controller.add_activity_to_admin(activity_id.get(), logged_admin_id)
     members_id = db_controller.added_members(logged_admin_id)
     for i in members_id:
-        db_controller.add_activity_to_member(activity_id.get(), i, "")
+        db_controller.add_activity_to_member(logged_admin_id, activity_id.get(), i, "")
     refreshActivity(logged_admin_id)
 
 
@@ -1324,12 +1322,35 @@ def viewMember(logged_admin_id):
                                     height=4,
                                     selectmode=SINGLE)
 
-        for i in range(1, 15):
-            joinedActivityBox.insert(END, "LINE" + str(i))
+        show_member_status(logged_admin_id, view_member_id)
 
         joinedActivityBox.pack(side=LEFT)
         joinedScroll.config(command=joinedActivityBox.yview)
         joinedFrame.pack()
+
+
+def show_admin_activities(logged_admin_id):
+    global activityBox
+    global admin_activity_list
+    for i in db_controller.admin_activities(logged_admin_id):
+        activity_curse = db_controller.retrieve_activity(i)
+        if activity_curse not in admin_activity_list:
+            activityBox.insert(END, "ID: " + activity_curse["_id"] + "  "
+                               + "Name: " + activity_curse["name"] + "  "
+                               + "Location: " + activity_curse["location"])
+            admin_activity_list.append(activity_curse)
+
+
+def show_member_status(logged_admin_id, view_member_id):
+    global joinedActivityBox
+    for j in db_controller.admin_activities(logged_admin_id):
+        print(j)
+        activity_curse = db_controller.retrieve_activity(j)
+        print(activity_curse["_id"] is None)
+        status = db_controller.member_status_in_actvity(view_member_id, logged_admin_id, j)
+        joinedActivityBox.insert(END, "Activity_ID:  " , activity_curse["_id"] , "  "
+                                 , "Activity_name:  " , activity_curse["name"] , "  "
+                                 , "Status:  " , status)
 
 
 def member():

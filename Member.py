@@ -45,17 +45,6 @@ class Member:
     def get_face_id(self) -> FaceIdentification:
         return self.face_id
 
-    def set_face_id(self) -> bool:
-        trial = FaceIdentification.set_face_id(self.get_id())
-
-        tries = 0
-        while trial is None and tries != 3:  # give up after 3 unsuccessful trials
-            trial = FaceIdentification.set_face_id(self.get_id())
-            tries = tries + 1
-
-        if trial is not None:
-            self.face_id = trial
-
     def requestPermission(self, admin: Administrator) -> bool:
         se.send_email('attsystem393@gmail.com', 'eecs_393', admin.get_email_adderss(), self.get_name(), self.get_id(), True)
         return True

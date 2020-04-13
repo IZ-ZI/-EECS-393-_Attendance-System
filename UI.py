@@ -40,7 +40,7 @@ member_apply_club_id = None
 member_register_feedback = None
 
 screenAdmin = None
-
+activityBox = None
 
 activity_name = None
 activity_date = None
@@ -70,6 +70,7 @@ member_list = []
 current_member_list = []
 pending_member_list = []
 added_club_list = []
+admin_activity_list = []
 
 currentMemberBox = None
 currentScroll = None
@@ -730,8 +731,9 @@ def memberManagement(logged_admin_id):
     showPendingMember(logged_admin_id)
 
 
-def activityManagement():
-    print("hhh")
+def activityManagement(logged_admin_id):
+    global admin_activity_list
+    admin_activity_list = []
     screen_width = screen.winfo_screenwidth() / 2
     screen_height = screen.winfo_screenheight() / 2
     frame = Frame(screenAdmin, padx=10, pady=10)
@@ -745,29 +747,57 @@ def activityManagement():
     activityBox = Listbox(activityFrame, yscrollcommand=activityScroll.set, width=int(screen_width / 8), height=19,
                           selectmode=SINGLE)
 
-    for i in range(1, 20):
-        activityBox.insert(END, "LINE " + str(i))
+    show_admin_activities(logged_admin_id)
 
     activityBox.pack(side=LEFT)
     activityScroll.config(command=activityBox.yview)
     activityFrame.pack()
 
     buttonFrameA = Frame(frame, padx = 0, pady=3)
-    Button(buttonFrameA, text = "Refresh", font = ("new roman", 18), height = 1, width = 7, command = refreshActivity).grid(row = 0, column = 0)
+    Button(buttonFrameA, text = "Refresh", font = ("new roman", 18), height = 1, width = 7, command = lambda:refreshActivity(logged_admin_id)).grid(row = 0, column = 0)
     Button(buttonFrameA, text = "View", font = ("new roman", 18), height = 1, width = 6, command = viewActivity).grid(row = 0, column = 1)
-    Button(buttonFrameA, text = "Create", font = ("new roman", 18), height = 1, width = 7, command = createActivity).grid(row = 0, column = 2)
-    Button(buttonFrameA, text = "Delete", font = ("new roman", 18), height = 1, width = 7, command = deleteActivity).grid(row = 0, column = 3)
+    Button(buttonFrameA, text = "Create", font = ("new roman", 18), height = 1, width = 7, command = lambda:createActivity(logged_admin_id)).grid(row = 0, column = 2)
+    Button(buttonFrameA, text = "Delete", font = ("new roman", 18), height = 1, width = 7, command = lambda:deleteActivity(logged_admin_id)).grid(row = 0, column = 3)
     buttonFrameA.pack()
 
     bottomFrame = Frame(screenAdmin, padx=10, pady=5)
     bottomFrame.place(x=5, y=screen_height / 3 + 2, width=screen_width / 2 - 5, height=int(screen_height * 2 / 3 - 10))
 
 
-def deleteActivity():
-    print("delete activity")
+def show_admin_activities(logged_admin_id):
+    global activityBox
+    global admin_activity_list
+    for i in db_controller.admin_activities(logged_admin_id):
+        activity_curse = db_controller.retrieve_activity(i)
+        if activity_curse not in admin_activity_list:
+            activityBox.insert(END, "ID: " + activity_curse["_id"] + "  "
+                               + "Name: " + activity_curse["name"] + "  "
+                               + "Start Time: " + activity_curse["start_time"] + "  "
+                               + "End Time: " + activity_curse["end_time"] + "  "
+                               + "Location: " + activity_curse["location"])
+            admin_activity_list.append(activity_curse)
 
-def refreshActivity():
-    print("refresh activity")
+
+def refreshActivity(logged_admin_id):
+    show_admin_activities(logged_admin_id)
+
+
+def deleteMember(logged_admin_id):
+    if currentMemberBox.curselection() != ():
+        clicked_item_index = currentMemberBox.curselection()[0]
+        del_member_id = db_controller.added_members(logged_admin_id)[clicked_item_index]
+        db_controller.remove_member_from_added_members(logged_admin_id, del_member_id)
+        currentMemberBox.delete(clicked_item_index)
+
+
+def deleteActivity(logged_admin_id):
+    if activityBox.curselection() != ():
+        clicked_item_index = activityBox.curselection()[0]
+        del_activity_id = db_controller.admin_activities(logged_admin_id)[clicked_item_index]
+        db_controller.remove_activity_from_admin(del_activity_id, logged_admin_id)
+        db_controller.delete_activity(del_activity_id)
+        activityBox.delete(clicked_item_index)
+
 
 
 def updateTime():
@@ -828,7 +858,7 @@ def viewActivity():
     timeFrame.pack()
 
     buttonFrame = Frame(bottomFrame, padx=1, pady=2)
-    Button(buttonFrame, text="Update Time", font=("new roman", 13), width=16, height=2, command=updateTime).grid(row=0,
+    Button(buttonFrame, text="Update Info", font=("new roman", 13), width=16, height=2, command=updateTime).grid(row=0,
                                                                                                                  column=0)
     Button(buttonFrame, text="Refresh Information", font=("new roman", 13), width=16, height=2,
            command=refreshActivityInfo).grid(row=0, column=1)
@@ -888,6 +918,7 @@ def render_pip(content_frame):
     content_frame.imgtk = imgtk
     content_frame.configure(image=imgtk)
     content_frame.after(10, render_pip, content_frame)
+
 
 
 
@@ -981,7 +1012,7 @@ def generateActivityReport():
     Label(screenReport, text="50", font=("new roman", 15)).grid(row=5, column=1, sticky=W)
 
 
-def createActivity():
+def createActivity(logged_admin_id):
     global activity_name
     global activity_date
     global activity_start_time
@@ -1035,41 +1066,29 @@ def createActivity():
 
     global memberBox
     Label(screenCreateActivity, text="").pack()
-    Label(screenCreateActivity, text="Select attending members below").pack()
     currentFrame = Frame(screenCreateActivity, padx=10, pady=3, width=400)
     currentScroll = Scrollbar(currentFrame)
     currentScroll.pack(side=RIGHT, fill=Y)
     memberBox = Listbox(currentFrame, yscrollcommand=currentScroll.set, width=400, height=7, selectmode=MULTIPLE)
 
-    for i in range(1, 15):
-        memberBox.insert(END, "LINE " + str(i))
-
-    memberBox.pack(side=LEFT)
-    currentScroll.config(command=memberBox.yview)
-    currentFrame.pack()
-
-    Button(screenCreateActivity, text="Add Attending Members", height=2, width=20, command=addAttendingMember).pack()
-
-    Label(screenCreateActivity, text="").pack()
-
-    Button(screenCreateActivity, text="Create Activity", height=3, width=20, command=activity_create_check).pack()
+    Button(screenCreateActivity, text="Create Activity", height=3, width=20, command=lambda :activity_create_check(logged_admin_id)).pack()
 
 
-def activity_create_check():
+def activity_create_check(logged_admin_id):
     global db_controller
     if db_controller.activity_is_present(activity_id.get()):
         print("id has already been registered")
     else:
-        newActivity()
+        newActivity(logged_admin_id)
 
 
-def newActivity():
+def newActivity(logged_admin_id):
     start_time_string = activity_date.get() + ' ' + activity_start_time.get()
-    start_time = datetime.strptime(start_time_string, '%Y-%m-%d %H:%M:%S')
     end_time_string = activity_date.get() + ' ' + activity_end_time.get()
-    end_time = datetime.strptime(end_time_string, '%Y-%m-%d %H:%M:%S')
-    activity = Activity(activity_id.get(), activity_name.get(), start_time, end_time, activity_location.get())
+    activity = Activity(activity_id.get(), activity_name.get(), start_time_string, end_time_string, activity_location.get())
     db_controller.add_activity(activity)
+    db_controller.add_activity_to_admin(activity_id.get(), logged_admin_id)
+    refreshActivity(logged_admin_id)
 
 
 
@@ -1109,7 +1128,7 @@ def admin_login():
                command=lambda:memberManagement(login_account.get())).grid(row=0, column=0)
         Label(leftFrame, text="", height=1, width=25).grid(row=1, column=0)
         Button(leftFrame, text="Activity Management", font=("new roman", 20), height=2, width=25,
-               command=activityManagement).grid(row=2, column=0)
+               command=lambda:activityManagement(login_account.get())).grid(row=2, column=0)
 
         #Button(screenAdmin, text="Log out", font=("new roman", 13), command=lambda: raise_frame(login_frame)).place(
         #    x=screen_width - 70, y=screen_height - 25)

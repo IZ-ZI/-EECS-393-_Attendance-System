@@ -946,27 +946,26 @@ def viewActivity(logged_admin_id):
         buttonFrame.pack()
 
 
-def switch_camera(event=0, nextCam=-1):
+def switch_camera(event=0, nextCam = -1):
     global camSelected, capture, file
 
     if nextCam == -1:
         camSelected += 1
     else:
         camIndex = nextCam
-    del (capture)
-    capture = cv2.VideoCapture(camIndex, cv2.CAP_DSHOW)
+    del(capture)
+    capture = cv2.VideoCapture(camIndex+ cv2.CAP_DSHOW)
 
     #try to get a frame, if it returns nothing
     success, frame = capture.read()
     if not success:
         camIndex = 0
         del(capture)
-        cap = cv2.VideoCapture(camIndex, cv2.CAP_DSHOW)
+        cap = cv2.VideoCapture(camIndex+ cv2.CAP_DSHOW)
 
     f = open(file, 'w')
     f.write(str(camIndex))
     f.close()
-
 
 def render_pip(content_frame):
     global frameimg
@@ -1015,7 +1014,7 @@ def takeAttendance():
     except:
         camIndex = 0
 
-    capture = cv2.VideoCapture(1)
+    capture = cv2.VideoCapture(camIndex + cv2.CAP_DSHOW)
     success, frame = capture.read()
     if not success:
         if camIndex == 0:
@@ -1030,7 +1029,6 @@ def takeAttendance():
 
     Label(rightFrame, text="Camera", font=("new roman", 15)).grid(row=0, column=0, sticky=W)
     cameraFrame = Label(rightFrame)
-    #Label(rightFrame, padx=10, pady=10, width=screen_width / 3 + 20, height=screen_width / 3 + 20)
     cameraFrame.grid(row=0, column=0)
     render_pip(cameraFrame)
 

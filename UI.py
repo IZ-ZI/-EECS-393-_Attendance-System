@@ -531,24 +531,24 @@ def render_setFaceID(content_frame):
 
 def setFaceID(logged_member_id):
     global file, screenSetfaceID, frameimg, capture
-    try:
-        f = open(file, 'r')
-        camIndex = int(f.readline())
-    except:
-        camIndex = 0
+    # try:
+    #     f = open(file, 'r')
+    #     camIndex = int(f.readline())
+    # except:
+    #     camIndex = 0
 
     capture = cv2.VideoCapture(1 + cv2.CAP_DSHOW)
-    success, frame = capture.read()
-    if not success:
-        if camIndex == 0:
-            print("Camera not detected 1. Check connection.")
-            sys.exit(1)
-        else:
-            switch_camera(nextCam=1)
-            success, frame = capture.read()
-            if not success:
-                print("Camera not detected. Check connection.")
-                sys.exit(1)
+    # success, frame = capture.read()
+    # if not success:
+    #     if camIndex == 0:
+    #         print("Camera not detected 1. Check connection.")
+    #         sys.exit(1)
+    #     else:
+    #         switch_camera(nextCam=1)
+    #         success, frame = capture.read()
+    #         if not success:
+    #             print("Camera not detected. Check connection.")
+    #             sys.exit(1)
 
     screen_width = screen.winfo_screenwidth() / 2
     screen_height = screen.winfo_screenheight() / 2
@@ -568,8 +568,7 @@ def setFaceID(logged_member_id):
 
 def takeFaceIDPhoto(logged_member_id):
     global face_photo
-    # conditional statement needed
-    encoding = ""
+
     print("take face id photo")
 
     photo = cv2.imwrite('face.png', face_photo)

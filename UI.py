@@ -563,6 +563,7 @@ def setFaceID(logged_member_id):
                             height=int(screen_height * 2 / 3))
     photoFrame.pack()
     render_setFaceID(photoFrame)
+    capture.release()
 
 
 def takeFaceIDPhoto(logged_member_id):
@@ -1390,7 +1391,7 @@ def show_member_status(logged_admin_id, view_member_id):
     global joinedActivityBox
     for j in db_controller.admin_activities(logged_admin_id):
         activity_curse = db_controller.retrieve_activity(j)
-        status = db_controller.member_status_in_actvity(view_member_id, logged_admin_id, j)
+        status = db_controller.member_status_in_activity(view_member_id, logged_admin_id, j)
         joinedActivityBox.insert(END, "Activity_ID:  " + str(activity_curse["_id"])+ "  " + "Activity_name:  " + activity_curse["name"] + "  " + "Status:  " + status)
         '''+ "Activity_name:  " + activity_curse["name"] + "  "
                                         + "Status:  " + status)'''

@@ -567,7 +567,7 @@ def takeFaceIDPhoto(logged_member_id):
     # conditional statement needed
     encoding = ""
     print("take face id photo")
-    photo = ec.capture(0, False, "your photo.jpg")
+    photo = ec.capture(1, False, "your photo.jpg")
     fr_photo = face_recognition.load_image_file("your photo.jpg")
     face_id = FaceIdentification.encoding_from_photo(fr_photo)
     db_controller.update_member_face_id(logged_member_id, face_id)
@@ -592,8 +592,7 @@ def setIDSuccess():
 def setIDFail():
     screen_height = screen.winfo_screenheight() / 2
     frame = Frame(screenSetfaceID)
-    Label(frame, text="Failed", fg='red').pack()
-    Label(frame, text="Please Try Again.", fg='red').pack()
+    Label(frame, text="Failed, Please Try Again.", fg='red').pack()
     frame.place(x=0, y=screen_height - 50, width=screen_height)
 
 

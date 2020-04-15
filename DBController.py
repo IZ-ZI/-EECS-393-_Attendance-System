@@ -17,7 +17,7 @@ class DBController:
     def add_member(self, member):
         if not self.member_is_present(member.get_id()):
             post = {"_id": member.get_id(), "name": member.get_name(), "email_address": member.get_email_address(),
-                    "password": member.get_password(), "face id": member.get_face_id(), "clubs": [], "activities": {}}
+                    "password": member.get_password(), "clubs": [], "activities": {}}
             self.collection_member.insert_one(post)
             return True
         else:
@@ -309,7 +309,6 @@ class DBController:
             return False
 
 
-
     def remove_activity_from_admin(self, activity_id, admin_id):
         if self.admin_is_present(admin_id) and activity_id in self.admin_activities(admin_id):
             self.collection_admin.update_one(
@@ -321,7 +320,7 @@ class DBController:
             return False
 
 
-    def member_status_in_actvity(self, member_id, admin_id, activity_id):
+    def member_status_in_activity(self, member_id, admin_id, activity_id):
         cursor = self.collection_member.find_one({"_id": member_id})
         return cursor["activities"][admin_id].get(activity_id)
 

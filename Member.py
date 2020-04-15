@@ -4,7 +4,7 @@ associated with a specific member of certain organization(s).
 """
 from Activity import Activity
 from Administrator import Administrator
-from FaceIdentification import FaceIdentification
+# from FaceIdentification import FaceIdentification
 import sendEmail as se
 
 
@@ -42,8 +42,9 @@ class Member:
         # returns the average attendance score of the member
         return self.score
 
-    def get_face_id(self) -> FaceIdentification:
-        return self.face_id
+
+    # def get_face_id(self) -> FaceIdentification:
+    #     return self.face_id
 
     def requestPermission(self, admin: Administrator) -> bool:
         se.send_email('attsystem393@gmail.com', 'eecs_393', admin.get_email_adderss(), self.get_name(), self.get_id(), True)

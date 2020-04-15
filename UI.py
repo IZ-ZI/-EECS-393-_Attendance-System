@@ -177,6 +177,27 @@ def main_screen():
     raise_frame(login_page)
     screen.mainloop()
 
+def switch_camera(event=0, nextCam=-1):
+    global camSelected, capture, file
+
+    if nextCam == -1:
+        camSelected += 1
+    else:
+        camIndex = nextCam
+    del (capture)
+    capture = cv2.VideoCapture(camIndex + cv2.CAP_DSHOW)
+
+    # try to get a frame, if it returns nothing
+    success, frame = capture.read()
+    if not success:
+        camIndex = 0
+        del (capture)
+        cap = cv2.VideoCapture(camIndex + cv2.CAP_DSHOW)
+
+    f = open(file, 'w')
+    f.write(str(camIndex))
+    f.close()
+
 
 def raise_frame(frame):
     frame.tkraise()
@@ -512,9 +533,13 @@ def member_login():
         clubList(logged_member_curse["_id"])
 
 
-def render_setFaceID(content_frame):
+def render_setFaceID(content_frame, camindex):
+    global capture
+
     screen_width = screen.winfo_screenwidth() / 2
     screen_height = screen.winfo_screenheight() / 2
+    capture.release()
+    capture = cv2.VideoCapture(camindex + cv2.CAP_DSHOW)
     _, frame = capture.read()
     capture.set(cv2.CAP_PROP_FRAME_WIDTH, screen_width / 2)
     capture.set(cv2.CAP_PROP_FRAME_HEIGHT, int(screen_height * 2 / 3))
@@ -525,7 +550,7 @@ def render_setFaceID(content_frame):
     content_frame.imgtk = imgtk
     content_frame.configure(image=imgtk)
 
-    content_frame.after(10, render_setFaceID, content_frame)
+    content_frame.after(10, render_setFaceID, content_frame, camindex)
 
 def setFaceID(logged_member_id):
     global file, screenSetfaceID, frameimg, capture
@@ -535,7 +560,7 @@ def setFaceID(logged_member_id):
     except:
         camIndex = 0
 
-    capture = cv2.VideoCapture(1 + cv2.CAP_DSHOW)
+    capture = cv2.VideoCapture(camIndex + cv2.CAP_DSHOW)
     success, frame = capture.read()
     if not success:
         if camIndex == 0:
@@ -560,17 +585,21 @@ def setFaceID(logged_member_id):
     photoFrame = Label(screenSetfaceID, padx=10, pady=10, width=int(screen_height * 2 / 3),
                             height=int(screen_height * 2 / 3))
     photoFrame.pack()
-    render_setFaceID(photoFrame)
+    render_setFaceID(photoFrame,camIndex)
     capture.release()
 
 
 def takeFaceIDPhoto(logged_member_id):
+    global capture
+
+    _, face_photo = capture.read()
+    photo = cv2.imwrite('face.png', face_photo)
     # conditional statement needed
     encoding = ""
     print("take face id photo")
-    photo = ec.capture(1, False, "your photo.jpg")
+    #photo = ec.capture(1, False, "your photo.jpg")
 
-    fr_photo = face_recognition.load_image_file("your photo.jpg")
+    fr_photo = face_recognition.load_image_file("face.png")
     face_id = FaceIdentification.encoding_from_photo(fr_photo)
     db_controller.update_member_face_id(logged_member_id, face_id)
     try:
@@ -981,28 +1010,6 @@ def viewActivity(logged_admin_id):
                command=generateActivityReport).grid(row=1, column=1)
         buttonFrame.pack()
 
-
-def switch_camera(event=0, nextCam=-1):
-    global camSelected, capture, file
-
-    if nextCam == -1:
-        camSelected += 1
-    else:
-        camIndex = nextCam
-    del (capture)
-    capture = cv2.VideoCapture(1 + cv2.CAP_DSHOW)
-
-    # try to get a frame, if it returns nothing
-    success, frame = capture.read()
-    if not success:
-        camIndex = 0
-        del (capture)
-        cap = cv2.VideoCapture(1 + cv2.CAP_DSHOW)
-
-    f = open(file, 'w')
-    f.write(str(camIndex))
-    f.close()
-
 def render_pip(content_frame, logged_admin_id, camindex):
     global frameimg, capture
     screen_width = screen.winfo_screenwidth() / 2
@@ -1017,7 +1024,7 @@ def render_pip(content_frame, logged_admin_id, camindex):
         members_names.append(db_controller.retrieve_member_name(member))
 
     capture.release()
-    capture = cv2.VideoCapture(1 + cv2.CAP_DSHOW)
+    capture = cv2.VideoCapture(camindex + cv2.CAP_DSHOW)
     process_this_frame = True
 
     while True:

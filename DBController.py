@@ -17,7 +17,7 @@ class DBController:
     def add_member(self, member):
         if not self.member_is_present(member.get_id()):
             post = {"_id": member.get_id(), "name": member.get_name(), "email_address": member.get_email_address(),
-                    "password": member.get_password(), "clubs": [], "activities": {}}
+                    "password": member.get_password(), "face id": " ", "clubs": [], "activities": {}}
             self.collection_member.insert_one(post)
             return True
         else:

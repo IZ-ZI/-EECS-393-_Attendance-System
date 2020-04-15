@@ -513,19 +513,48 @@ def member_login():
 
 
 def setFaceID(logged_member_id):
+    global file, screenSetfaceID, frameimg, capture
+    try:
+        f = open(file, 'r')
+        camIndex = int(f.readline())
+    except:
+        camIndex = 0
+
+    capture = cv2.VideoCapture(camIndex + cv2.CAP_DSHOW)
+    success, frame = capture.read()
+    if not success:
+        if camIndex == 0:
+            print("Camera not detected. Check connection.")
+            sys.exit(1)
+        else:
+            switch_camera(nextCam=0)
+            success, frame = capture.read()
+            if not success:
+                print("Camera not detected. Check connection.")
+                sys.exit(1)
     screen_width = screen.winfo_screenwidth() / 2
     screen_height = screen.winfo_screenheight() / 2
-    global screenSetfaceID
     screenSetfaceID = Toplevel(screen)
     screenSetfaceID.title("Set Face ID")
     screenSetfaceID.geometry("%dx%d" % (screen_height, screen_height))
     Label(screenSetfaceID, text="").pack()
-    photoFrame = LabelFrame(screenSetfaceID, padx=10, pady=10, width=int(screen_height * 2 / 3),
-                            height=int(screen_height * 2 / 3))
-    photoFrame.pack()
     Label(screenSetfaceID, text="").pack()
     Button(screenSetfaceID, text="Take Face ID Photo", height=3, width=20,
            command=lambda: takeFaceIDPhoto(logged_member_id)).pack()
+    photoFrame = Label(screenSetfaceID, padx=10, pady=10, width=int(screen_height * 2 / 3),
+                            height=int(screen_height * 2 / 3))
+    photoFrame.pack()
+    _, frame = capture.read()
+    capture.set(cv2.CAP_PROP_FRAME_WIDTH, screen_width / 2)
+    capture.set(cv2.CAP_PROP_FRAME_HEIGHT, int(screen_height * 2 / 3))
+    picture = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
+
+    frameimg = Image.fromarray(picture)
+    imgtk = ImageTk.PhotoImage(image=frameimg)
+    photoFrame.imgtk = imgtk
+    photoFrame.configure(image=imgtk)
+
+    photoFrame.after(10, setFaceID, logged_member_id)
 
 
 def takeFaceIDPhoto(logged_member_id):
@@ -974,6 +1003,7 @@ def render_pip(content_frame, logged_admin_id, camindex):
     members_list = db_controller.added_members(logged_admin_id)
     members_faces = []
     members_names = []
+    render_names = []
     for member in members_list:
         members_faces.append(numpy.frombuffer(db_controller.retrieve_member_face_id(member)))
         members_names.append(db_controller.retrieve_member_name(member))
@@ -984,7 +1014,6 @@ def render_pip(content_frame, logged_admin_id, camindex):
 
     while True:
         _, frame = capture.read()
-        print("after read\n")
         # capture.set(cv2.CAP_PROP_FRAME_WIDTH, screen_width / 2)
         # capture.set(cv2.CAP_PROP_FRAME_HEIGHT, int(screen_height * 2 / 3))
         # picture = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
@@ -1002,18 +1031,17 @@ def render_pip(content_frame, logged_admin_id, camindex):
             face_locations = face_recognition.face_locations(rgb_small_frame)
             face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
 
-            members_names = []
+            render_names = []
             for face_encoding in face_encodings:
                 matches = face_recognition.compare_faces(members_faces, face_encoding)
                 name = "UNKNOWN"
 
                 face_distances = face_recognition.face_distance(members_faces, face_encoding)
                 best_match_index = numpy.argmin(face_distances)
-
                 if matches[best_match_index]:
                     name = members_names[best_match_index]
 
-                members_names.append(name)
+                render_names.append(name)
         process_this_frame = not process_this_frame
 
         for (top, right, bottom, left, name) in zip(face_locations, members_names):
@@ -1028,15 +1056,14 @@ def render_pip(content_frame, logged_admin_id, camindex):
             cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
 
         cv2.imshow('Taking Attendance', frame)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        if cv2.waitKey(33) & 0xFF == 27:
             break
 
 
 def takeAttendance(logged_admin_id):
-    global capture, file
+    global capture, file, screenAttendance
 
     print("taking attendance")
-    global screenAttendance
     screenAttendance = Toplevel(screenAdmin)
     screenAttendance.title("Taking Attendance")
     screen_width = screen.winfo_screenwidth() / 2

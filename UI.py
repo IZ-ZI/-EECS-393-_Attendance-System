@@ -704,16 +704,17 @@ def isUpdated(activity_in_list, activity_from_db):
 def show_my_activities(logged_member_id):
     global myActivityBox
     global member_activity_list
+    myActivityBox.delete(0, tk.END)
     for i in db_controller.member_activities(logged_member_id):
         activity_curse = db_controller.retrieve_activity(i)
-        if activity_curse not in member_activity_list:
-            for j in member_activity_list:
-                if isUpdated(j, activity_curse):
-                    activityList(logged_member_id)
-            myActivityBox.insert(END, "ID: " + activity_curse["_id"] + "  "
+        #if activity_curse not in member_activity_list:
+            #for j in member_activity_list:
+             #   if isUpdated(j, activity_curse):
+             #       activityList(logged_member_id)
+        myActivityBox.insert(END, "ID: " + activity_curse["_id"] + "  "
                                  + "Name: " + activity_curse["name"] + "  "
                                  + "Location: " + activity_curse["location"])
-            member_activity_list.append(activity_curse)
+            #member_activity_list.append(activity_curse)
 
 
 def refreshMyActivity(logged_member_id):
@@ -1219,9 +1220,9 @@ def admin_login():
         Button(leftFrame, text="Activity Management", font=("new roman", 20), height=2, width=25,
                command=lambda: activityManagement(login_account.get())).grid(row=2, column=0)
 
-        # Button(screenAdmin, text="Log out", font=("new roman", 13), command=lambda: raise_frame(login_frame)).place(
-        #    x=screen_width - 70, y=screen_height - 25)
-        # command = lambda:raise_frame(login_frame)
+        Button(screenAdmin, text="Log out", font=("new roman", 13), command=lambda: raise_frame(login_page)).place(
+            x=screen_width - 70, y=screen_height - 25)
+
         memberManagement(logged_admin_curse["_id"])
 
 
@@ -1336,11 +1337,8 @@ def viewMember(logged_admin_id):
 def show_member_status(logged_admin_id, view_member_id):
     global joinedActivityBox
     for j in db_controller.admin_activities(logged_admin_id):
-        print(j)
         activity_curse = db_controller.retrieve_activity(j)
-        print(activity_curse["_id"] is None)
         status = db_controller.member_status_in_actvity(view_member_id, logged_admin_id, j)
-        print(status)
         joinedActivityBox.insert(END, "Activity_ID:  " + str(activity_curse["_id"])+ "  " + "Activity_name:  " + activity_curse["name"] + "  " + "Status:  " + status)
         '''+ "Activity_name:  " + activity_curse["name"] + "  "
                                         + "Status:  " + status)'''

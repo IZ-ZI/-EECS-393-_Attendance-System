@@ -594,7 +594,8 @@ def setIDSuccess():
 def setIDFail():
     screen_height = screen.winfo_screenheight() / 2
     frame = Frame(screenSetfaceID)
-    Label(frame, text="Failed, Please Try Again.", fg='red').pack()
+    Label(frame, text="Failed", fg='red').pack()
+    Label(frame, text="Please Try Again.", fg='red').pack()
     frame.place(x=0, y=screen_height - 50, width=screen_height)
 
 

@@ -540,6 +540,7 @@ def takeFaceIDPhoto(logged_member_id):
         encoding = numpy.fromstring(db_controller.retrieve_member_face_id(logged_member_id))
     except:
         setIDFail()
+        encoding = None
     if FaceIdentification.compare_to(encoding, encoding):
         setIDSuccess()
     else:

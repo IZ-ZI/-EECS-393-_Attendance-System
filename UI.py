@@ -535,14 +535,14 @@ def setFaceID(logged_member_id):
     except:
         camIndex = 0
 
-    capture = cv2.VideoCapture(camIndex + cv2.CAP_DSHOW)
+    capture = cv2.VideoCapture(1 + cv2.CAP_DSHOW)
     success, frame = capture.read()
     if not success:
         if camIndex == 0:
             print("Camera not detected 1. Check connection.")
             sys.exit(1)
         else:
-            switch_camera(nextCam=0)
+            switch_camera(nextCam=1)
             success, frame = capture.read()
             if not success:
                 print("Camera not detected. Check connection.")
@@ -568,6 +568,7 @@ def takeFaceIDPhoto(logged_member_id):
     encoding = ""
     print("take face id photo")
     photo = ec.capture(1, False, "your photo.jpg")
+
     fr_photo = face_recognition.load_image_file("your photo.jpg")
     face_id = FaceIdentification.encoding_from_photo(fr_photo)
     db_controller.update_member_face_id(logged_member_id, face_id)

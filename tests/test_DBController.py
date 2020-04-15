@@ -1,8 +1,11 @@
 import unittest
+from datetime import datetime
+
 import mongomock
-from DBController_for_test import DBController_for_test
+from DBController import DBController
 from Member import Member
 from Administrator import Administrator
+from Activity import Activity
 
 class test_DBController(unittest.TestCase):
     # def setUp(self):
@@ -13,10 +16,7 @@ class test_DBController(unittest.TestCase):
 
     def setUp(self):
         self.database = mongomock.MongoClient().db
-        post1 = {"_id": "393", "name": "software",
-                "email_address": "eecs393@gmail.com",
-                "password": "pass"}
-        # "added_members": [], "pending_members": []
+        post1 = {"_id": "393", "name": "software", "email_address": "eecs393@gmail.com", "password": "pass"}
 
         self.collection_admin = self.database.create_collection("Administrator")
         self.collection_admin.insert_one(post1)
@@ -24,7 +24,14 @@ class test_DBController(unittest.TestCase):
         post2 = {"_id": "123", "name": "Terry", "email_address": "terry@gmail.com","password":"pass"}
         self.collection_member = self.database.create_collection("Member")
         self.collection_member.insert_one(post2)
-        self.db = DBController_for_test(self.collection_member, self.collection_admin)
+
+        post3 = {"_id":"888","name":"meeting","start_time": "Apr10", "end_time":"Apr11","location":"case"}
+
+        self.collection_activity = self.database.create_collection("Activity")
+        self.collection_activity.insert_one(post3)
+
+        self.db = DBController(self.collection_member, self.collection_admin, self.collection_activity)
+
 
     def test_member_is_present(self):
         self.assertTrue(self.db.member_is_present("123"))
@@ -90,6 +97,19 @@ class test_DBController(unittest.TestCase):
     def test_admin_is_present(self):
         self.assertTrue(self.db.admin_is_present("393"))
         self.assertFalse(self.db.admin_is_present("000"))
+
+    def test_update_member_face_id(self):
+        member1 = Member("Marcus", "847", "xxl844@gmail.com", "password")
+        self.db.add_member(member1)
+        self.assertTrue(self.db.update_member_face_id("847", "face_id"))
+        self.assertFalse(self.db.update_member_face_id("000", "face_id"))
+
+    def test_retrieve_member_face_id(self):
+        member1 = Member("Marcus", "847", "xxl844@gmail.com", "password")
+        self.db.add_member(member1)
+        self.db.update_member_face_id("847", "face_id")
+        self.assertEqual(self.db.retrieve_member_face_id("847"),"face_id")
+        
 
     def test_add_admin(self):
         admin1 = Administrator("new_admin","000","new@gmail.com","new_password")
@@ -170,7 +190,7 @@ class test_DBController(unittest.TestCase):
         self.db.add_admin(admin1)
         self.db.add_member(member1)
         self.db.add_member_to_pending_members("110", "847")
-        self.assertTrue(self.db.permit("847", "xxl844@gmail.com", "110", "terry@gmail.com"))
+        self.assertTrue(self.db.permit("xxl844@gmail.com", "110", "terry"))
 
     def test_reject(self):
         admin1 = Administrator("terry", "110", "terry@gmail.com", "pass")
@@ -178,7 +198,82 @@ class test_DBController(unittest.TestCase):
         self.db.add_admin(admin1)
         self.db.add_member(member1)
         self.db.add_member_to_pending_members("110", "847")
-        self.assertTrue(self.db.reject("847", "xxl844@gmail.com", "110", "terry@gmail.com"))
+        self.assertTrue(self.db.reject("xxl844@gmail.com", "110", "terry"))
+
+
+    def test_activity_is_present(self):
+        self.assertTrue(self.db.activity_is_present("888"))
+        self.assertFalse(self.db.activity_is_present("000"))
+
+    def test_add_activity(self):
+        activity1 = Activity("999","party", datetime(2020,2,2,3,20), datetime(2020,2,2,4,30) , "case")
+        self.assertTrue(self.db.add_activity(activity1,"393"))
+        self.assertFalse(self.db.add_activity(activity1,"393"))
+
+    def test_update_activity(self):
+        activity1 = Activity("888","party", datetime(2020,2,2,3,20), datetime(2020,2,2,4,30) , "case")
+        activity2 = Activity("000","party", datetime(2020,2,2,3,20), datetime(2020,2,2,4,30) , "case")
+        self.assertTrue(self.db.update_activity(activity1))
+        self.assertFalse(self.db.update_activity(activity2))
+
+    def test_retrieve_activity(self):
+        self.assertEqual(self.collection_activity.find_one({"_id": "888"}), self.db.retrieve_activity("888"))
+        self.assertIsNone(self.db.retrieve_activity("000"))
+
+    def test_delete_activity(self):
+        self.assertTrue(self.db.delete_activity("888"))
+        self.assertFalse(self.db.delete_activity("000"))
+
+    def test_add_activity_to_member(self):
+        member1 = Member("Marcus", "847", "xxl844@gmail.com", "password")
+        self.db.add_member(member1)
+        self.assertTrue(self.db.add_activity_to_member("393","888","847","on_time"))
+        self.assertFalse(self.db.add_activity_to_member("393","888","847","on_time"))
+
+    def test_set_member_activity_status(self):
+        member1 = Member("Marcus", "847", "xxl844@gmail.com", "password")
+        self.db.add_member(member1)
+        self.db.add_activity_to_member("393", "888", "847", "on_time")
+        self.assertTrue(self.db.set_member_activity_status("393","888","847","on_time"))
+        self.assertFalse(self.db.set_member_activity_status("393","000","847","on_time"))
+
+
+    def test_remove_activity_from_member(self):
+        member1 = Member("Marcus", "847", "xxl844@gmail.com", "password")
+        self.db.add_member(member1)
+        self.db.add_activity_to_member("393", "888", "847", "on_time")
+        self.assertTrue(self.db.remove_activity_from_member("393", "888", "847"))
+        self.assertFalse(self.db.remove_activity_from_member("393", "888", "847"))
+
+    def test_add_activity_to_admin(self):
+        admin1 = Administrator("terry", "110", "terry@gmail.com", "pass")
+        self.db.add_admin(admin1)
+        self.assertTrue(self.db.add_activity_to_admin("888","110"))
+        self.assertFalse(self.db.add_activity_to_admin("888","000"))
+
+    def test_remove_activity_from_admin(self):
+        admin1 = Administrator("terry", "110", "terry@gmail.com", "pass")
+        self.db.add_admin(admin1)
+        self.db.add_activity_to_admin("888", "110")
+        self.assertTrue(self.db.remove_activity_from_admin("888", "110"))
+        self.assertFalse(self.db.remove_activity_from_admin("888", "110"))
+
+    # def test_member_status_in_activity(self):
+
+
+    def test_member_activities(self):
+        member1 = Member("Marcus", "847", "xxl844@gmail.com", "password")
+        self.db.add_member(member1)
+        self.assertEqual(self.db.member_activities("847"),[])
+        self.assertIsNone(self.db.member_activities("000"))
+
+    def test_admin_activities(self):
+        admin1 = Administrator("new_admin","000","new@gmail.com","new_password")
+        self.db.add_admin(admin1)
+        self.assertEqual(self.db.admin_activities("000"),[])
+        self.assertIsNone(self.db.admin_activities("111"))
+
+
 
     # def test_self_insert(self):
     #     results = self.collection_member.find_one({"_id": "123"})

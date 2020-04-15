@@ -93,6 +93,9 @@ class test_DBController(unittest.TestCase):
         self.db.add_admin(admin1)
         self.db.add_member(member1)
         self.assertTrue(self.db.request_permission("110", "847", "terry@gmail.com", "Marcus"))
+        self.assertFalse(self.db.request_permission("000", "847", "terry@gmail.com", "Marcus"))
+        self.assertFalse(self.db.request_permission("110", "847", "terry@gmail.com", "Marcus"))
+
 
     def test_admin_is_present(self):
         self.assertTrue(self.db.admin_is_present("393"))
@@ -273,6 +276,14 @@ class test_DBController(unittest.TestCase):
         self.assertEqual(self.db.admin_activities("000"),[])
         self.assertIsNone(self.db.admin_activities("111"))
 
+    def test_activity_start_time(self):
+        self.assertEqual(self.db.activity_start_time("888"),"Apr10")
+        self.assertIsNone(self.db.activity_start_time("000"))
+
+
+    def test_activity_end_time(self):
+        self.assertEqual(self.db.activity_end_time("888"),"Apr11")
+        self.assertIsNone(self.db.activity_end_time("000"))
 
 
     # def test_self_insert(self):

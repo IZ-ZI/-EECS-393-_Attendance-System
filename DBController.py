@@ -320,7 +320,7 @@ class DBController:
 
     def member_status_in_actvity(self, member_id, admin_id, activity_id):
         cursor = self.collection_member.find_one({"_id": member_id})
-        print(cursor["activities"][admin_id].get(activity_id))
+        return cursor["activities"][admin_id].get(activity_id)
 
     def member_activities(self, member_id):
         if self.member_is_present(member_id):

@@ -19,6 +19,8 @@ from datetime import datetime
 
 screen = None
 joinedActivityBox = None
+joinedFrame = None
+joinedScroll = None
 login_account_entry = None
 login_password_entry = None
 login_account = None
@@ -1176,7 +1178,7 @@ def newActivity(logged_admin_id):
     db_controller.add_activity_to_admin(activity_id.get(), logged_admin_id)
     members_id = db_controller.added_members(logged_admin_id)
     for i in members_id:
-        db_controller.add_activity_to_member(logged_admin_id, activity_id.get(), i, "")
+        db_controller.add_activity_to_member(logged_admin_id, activity_id.get(), i, " ")
     refreshActivity(logged_admin_id)
 
 
@@ -1314,6 +1316,8 @@ def viewMember(logged_admin_id):
         infoFrame.pack()
 
         global joinedActivityBox
+        global joinedFrame
+        global joinedScroll
         joinedFrame = Frame(bottomFrame, padx=3, pady=5, height=int(screen_height / 6))
         Label(joinedFrame, text="Past Activities", font=("new roman", 13)).pack()
         joinedScroll = Scrollbar(joinedFrame)
@@ -1329,18 +1333,6 @@ def viewMember(logged_admin_id):
         joinedFrame.pack()
 
 
-def show_admin_activities(logged_admin_id):
-    global activityBox
-    global admin_activity_list
-    for i in db_controller.admin_activities(logged_admin_id):
-        activity_curse = db_controller.retrieve_activity(i)
-        if activity_curse not in admin_activity_list:
-            activityBox.insert(END, "ID: " + activity_curse["_id"] + "  "
-                               + "Name: " + activity_curse["name"] + "  "
-                               + "Location: " + activity_curse["location"])
-            admin_activity_list.append(activity_curse)
-
-
 def show_member_status(logged_admin_id, view_member_id):
     global joinedActivityBox
     for j in db_controller.admin_activities(logged_admin_id):
@@ -1348,9 +1340,10 @@ def show_member_status(logged_admin_id, view_member_id):
         activity_curse = db_controller.retrieve_activity(j)
         print(activity_curse["_id"] is None)
         status = db_controller.member_status_in_actvity(view_member_id, logged_admin_id, j)
-        joinedActivityBox.insert(END, "Activity_ID:  " , activity_curse["_id"] , "  "
-                                 , "Activity_name:  " , activity_curse["name"] , "  "
-                                 , "Status:  " , status)
+        print(status)
+        joinedActivityBox.insert(END, "Activity_ID:  " + str(activity_curse["_id"])+ "  " + "Activity_name:  " + activity_curse["name"] + "  " + "Status:  " + status)
+        '''+ "Activity_name:  " + activity_curse["name"] + "  "
+                                        + "Status:  " + status)'''
 
 
 def member():

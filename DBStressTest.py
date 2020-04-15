@@ -64,7 +64,7 @@ db_controller = DBController(collection_member, collection_admin, collection_act
 
 # for i in range (0 ,100):
 #         db_controller.delete_activity(str(i))
-
+#
 
 # for i in range (0 ,100):
 #     db_controller.add_club_to_member(str(i), "0")

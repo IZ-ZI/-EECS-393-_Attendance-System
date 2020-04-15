@@ -513,19 +513,48 @@ def member_login():
 
 
 def setFaceID(logged_member_id):
+    global file, screenSetfaceID, frameimg, capture
+    try:
+        f = open(file, 'r')
+        camIndex = int(f.readline())
+    except:
+        camIndex = 0
+
+    capture = cv2.VideoCapture(camIndex + cv2.CAP_DSHOW)
+    success, frame = capture.read()
+    if not success:
+        if camIndex == 0:
+            print("Camera not detected. Check connection.")
+            sys.exit(1)
+        else:
+            switch_camera(nextCam=0)
+            success, frame = capture.read()
+            if not success:
+                print("Camera not detected. Check connection.")
+                sys.exit(1)
     screen_width = screen.winfo_screenwidth() / 2
     screen_height = screen.winfo_screenheight() / 2
-    global screenSetfaceID
     screenSetfaceID = Toplevel(screen)
     screenSetfaceID.title("Set Face ID")
     screenSetfaceID.geometry("%dx%d" % (screen_height, screen_height))
     Label(screenSetfaceID, text="").pack()
-    photoFrame = LabelFrame(screenSetfaceID, padx=10, pady=10, width=int(screen_height * 2 / 3),
-                            height=int(screen_height * 2 / 3))
-    photoFrame.pack()
     Label(screenSetfaceID, text="").pack()
     Button(screenSetfaceID, text="Take Face ID Photo", height=3, width=20,
            command=lambda: takeFaceIDPhoto(logged_member_id)).pack()
+    photoFrame = Label(screenSetfaceID, padx=10, pady=10, width=int(screen_height * 2 / 3),
+                            height=int(screen_height * 2 / 3))
+    photoFrame.pack()
+    _, frame = capture.read()
+    capture.set(cv2.CAP_PROP_FRAME_WIDTH, screen_width / 2)
+    capture.set(cv2.CAP_PROP_FRAME_HEIGHT, int(screen_height * 2 / 3))
+    picture = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
+
+    frameimg = Image.fromarray(picture)
+    imgtk = ImageTk.PhotoImage(image=frameimg)
+    photoFrame.imgtk = imgtk
+    photoFrame.configure(image=imgtk)
+
+    photoFrame.after(10, setFaceID, logged_member_id)
 
 
 def takeFaceIDPhoto(logged_member_id):
@@ -953,42 +982,88 @@ def switch_camera(event=0, nextCam=-1):
     else:
         camIndex = nextCam
     del (capture)
-    capture = cv2.VideoCapture(camIndex + cv2.CAP_DSHOW)
+    capture = cv2.VideoCapture(1 + cv2.CAP_DSHOW)
 
     # try to get a frame, if it returns nothing
     success, frame = capture.read()
     if not success:
         camIndex = 0
         del (capture)
-        cap = cv2.VideoCapture(camIndex + cv2.CAP_DSHOW)
+        cap = cv2.VideoCapture(1 + cv2.CAP_DSHOW)
 
     f = open(file, 'w')
     f.write(str(camIndex))
     f.close()
 
-
-def render_pip(content_frame):
-    global frameimg
+def render_pip(content_frame, logged_admin_id, camindex):
+    global frameimg, capture
     screen_width = screen.winfo_screenwidth() / 2
     screen_height = screen.winfo_screenheight() / 2
 
-    _, frame = capture.read()
-    capture.set(cv2.CAP_PROP_FRAME_WIDTH, screen_width / 2)
-    capture.set(cv2.CAP_PROP_FRAME_HEIGHT, int(screen_height * 2 / 3))
-    picture = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
+    members_list = db_controller.added_members(logged_admin_id)
+    members_faces = []
+    members_names = []
+    render_names = []
+    for member in members_list:
+        members_faces.append(numpy.frombuffer(db_controller.retrieve_member_face_id(member)))
+        members_names.append(db_controller.retrieve_member_name(member))
 
-    frameimg = Image.fromarray(picture)
-    imgtk = ImageTk.PhotoImage(image=frameimg)
-    content_frame.imgtk = imgtk
-    content_frame.configure(image=imgtk)
-    content_frame.after(10, render_pip, content_frame)
+    capture.release()
+    capture = cv2.VideoCapture(1 + cv2.CAP_DSHOW)
+    process_this_frame = True
+
+    while True:
+        _, frame = capture.read()
+        # capture.set(cv2.CAP_PROP_FRAME_WIDTH, screen_width / 2)
+        # capture.set(cv2.CAP_PROP_FRAME_HEIGHT, int(screen_height * 2 / 3))
+        # picture = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
+        #
+        # frameimg = Image.fromarray(picture)
+        # imgtk = ImageTk.PhotoImage(image=frameimg)
+        # content_frame.imgtk = imgtk
+        # content_frame.configure(image=imgtk)
+        #content_frame.after(10, render_pip, content_frame)
+
+        small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
+        rgb_small_frame = small_frame[:, :, ::-1]
+
+        if process_this_frame:
+            face_locations = face_recognition.face_locations(rgb_small_frame)
+            face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
+
+            render_names = []
+            for face_encoding in face_encodings:
+                matches = face_recognition.compare_faces(members_faces, face_encoding)
+                name = "UNKNOWN"
+
+                face_distances = face_recognition.face_distance(members_faces, face_encoding)
+                best_match_index = numpy.argmin(face_distances)
+                if matches[best_match_index]:
+                    name = members_names[best_match_index]
+
+                render_names.append(name)
+        process_this_frame = not process_this_frame
+
+        for (top, right, bottom, left, name) in zip(face_locations, members_names):
+            top *= 4
+            right *= 4
+            bottom *= 4
+            left *= 4
+
+            cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
+            cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0 , 255), cv2.FILLED)
+            font = cv2.FONT_HERSHEY_DUPLEX
+            cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
+
+        cv2.imshow('Taking Attendance', frame)
+        if cv2.waitKey(33) & 0xFF == 27:
+            break
 
 
 def takeAttendance(logged_admin_id):
-    global capture, file
+    global capture, file, screenAttendance
 
     print("taking attendance")
-    global screenAttendance
     screenAttendance = Toplevel(screenAdmin)
     screenAttendance.title("Taking Attendance")
     screen_width = screen.winfo_screenwidth() / 2
@@ -1030,12 +1105,12 @@ def takeAttendance(logged_admin_id):
     Label(rightFrame, text="Camera", font=("new roman", 15)).grid(row=0, column=0, sticky=W)
     cameraFrame = Label(rightFrame)
     cameraFrame.grid(row=0, column=0)
-    render_pip(cameraFrame)
+    render_pip(cameraFrame, logged_admin_id, camIndex)
 
-    Button(screenAttendance, text="Attend", font=("new roman", 15), height=2, width=20, command=attend).place(
-        x=10, y=int(screen_height * 2 / 3) + 30)
-    Button(screenAttendance, text="Verify", font=("new roman", 15), height=2, width=20, command=takePhoto).place(
-        x=screen_width / 2 + 10, y=int(screen_height * 2 / 3) + 30)
+    # Button(screenAttendance, text="Attend", font=("new roman", 15), height=2, width=20, command=attend).place(
+    #     x=10, y=int(screen_height * 2 / 3) + 30)
+    # Button(screenAttendance, text="Verify", font=("new roman", 15), height=2, width=20, command=takePhoto).place(
+    #     x=screen_width / 2 + 10, y=int(screen_height * 2 / 3) + 30)
 
 
 def takePhoto():

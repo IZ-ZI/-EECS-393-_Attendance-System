@@ -114,8 +114,6 @@ class DBController:
 
 
 
-
-
     def admin_is_present(self, admin_id):
         admin = self.collection_admin.find_one({"_id": admin_id})
         return admin is not None
@@ -338,5 +336,19 @@ class DBController:
         if self.admin_is_present(admin_id):
             cursor = self.collection_admin.find_one({"_id": admin_id})
             return cursor["activities"]
+        else:
+            return None
+
+    def activity_start_time(self, activity_id):
+        if self.activity_is_present(activity_id):
+            cursor = self.collection_activity.find_one({"_id": activity_id})
+            return cursor["start_time"]
+        else:
+            return None
+
+    def activity_end_time(self, activity_id):
+        if self.activity_is_present(activity_id):
+            cursor = self.collection_activity.find_one({"_id": activity_id})
+            return cursor["end_time"]
         else:
             return None

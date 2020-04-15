@@ -939,7 +939,7 @@ def viewActivity(logged_admin_id):
         buttonFrame.pack()
 
         Button(buttonFrame, text="Take Attendance", font=("new roman", 13), width=16, height=4,
-               command=takeAttendance).grid(row=1, column=0)
+               command=lambda: takeAttendance(logged_admin_id)).grid(row=1, column=0)
         Button(buttonFrame, text="Generate Report", font=("new roman", 13), width=16, height=4,
                command=generateActivityReport).grid(row=1, column=1)
         buttonFrame.pack()
@@ -984,7 +984,7 @@ def render_pip(content_frame):
     content_frame.after(10, render_pip, content_frame)
 
 
-def takeAttendance():
+def takeAttendance(logged_admin_id):
     global capture, file
 
     print("taking attendance")

@@ -19,6 +19,8 @@ from datetime import datetime
 
 screen = None
 joinedActivityBox = None
+joinedFrame = None
+joinedScroll = None
 login_account_entry = None
 login_password_entry = None
 login_account = None
@@ -71,14 +73,6 @@ club_email_entry = None
 club_password_entry = None
 club_confirm_password_entry = None
 
-administrator_list = []
-member_list = []
-
-current_member_list = []
-pending_member_list = []
-added_club_list = []
-admin_activity_list = []
-member_activity_list = []
 
 currentMemberBox = None
 currentScroll = None
@@ -415,8 +409,6 @@ def admin():
 
 
 def clubList(logged_member_id):
-    global added_club_list
-    added_club_list = []
     screen_width = screen.winfo_screenwidth() / 2
     screen_height = screen.winfo_screenheight() / 2
 
@@ -538,8 +530,9 @@ def setFaceID(logged_member_id):
 
 def takeFaceIDPhoto(logged_member_id):
     # conditional statement needed
+    encoding = ""
     print("take face id photo")
-    photo = ec.capture(1, False, "your photo.jpg")
+    photo = ec.capture(0, False, "your photo.jpg")
     fr_photo = face_recognition.load_image_file("your photo.jpg")
     face_id = FaceIdentification.encoding_from_photo(fr_photo)
     db_controller.update_member_face_id(logged_member_id, face_id)
@@ -547,6 +540,7 @@ def takeFaceIDPhoto(logged_member_id):
         encoding = numpy.fromstring(db_controller.retrieve_member_face_id(logged_member_id))
     except:
         setIDFail()
+        encoding = None
     if FaceIdentification.compare_to(encoding, encoding):
         setIDSuccess()
     else:
@@ -595,7 +589,7 @@ def viewClub(logged_member_id):
         Label(clubInfoFrame, text="80", font=("new roman", 13)).grid(row=4, column=1, sticky=W)
         clubInfoFrame.pack()
 
-        global clubActivityBox
+        '''global clubActivityBox
         clubActivityFrame = Frame(bottomFrame, padx=3, pady=3, height=int(screen_height / 6))
         Label(clubActivityFrame, text="My Events", font=("new roman", 13)).pack()
         clubActivityScroll = Scrollbar(clubActivityFrame)
@@ -610,7 +604,7 @@ def viewClub(logged_member_id):
         clubActivityBox.pack(side=LEFT)
         clubActivityScroll.config(command=clubActivityBox.yview)
         clubActivityFrame.pack()
-        Button(bottomFrame, text="View Activity Status", font=("new roman", 12), command=viewActivityStatus).pack()
+        Button(bottomFrame, text="View Activity Status", font=("new roman", 12), command=viewActivityStatus).pack()'''
 
 
 def viewActivityStatus(logged_member_id):
@@ -654,9 +648,6 @@ def deleteClub():
 
 
 def activityList(logged_member_id):
-    print("show my activities")
-    global member_activity_list
-    member_activity_list = []
 
     screen_width = screen.winfo_screenwidth() / 2
     screen_height = screen.winfo_screenheight() / 2
@@ -701,17 +692,12 @@ def isUpdated(activity_in_list, activity_from_db):
 
 def show_my_activities(logged_member_id):
     global myActivityBox
-    global member_activity_list
+    myActivityBox.delete(0, tk.END)
     for i in db_controller.member_activities(logged_member_id):
         activity_curse = db_controller.retrieve_activity(i)
-        if activity_curse not in member_activity_list:
-            for j in member_activity_list:
-                if isUpdated(j, activity_curse):
-                    activityList(logged_member_id)
-            myActivityBox.insert(END, "ID: " + activity_curse["_id"] + "  "
+        myActivityBox.insert(END, "ID: " + activity_curse["_id"] + "  "
                                  + "Name: " + activity_curse["name"] + "  "
                                  + "Location: " + activity_curse["location"])
-            member_activity_list.append(activity_curse)
 
 
 def refreshMyActivity(logged_member_id):
@@ -720,12 +706,10 @@ def refreshMyActivity(logged_member_id):
 
 def show_club_list(logged_member_id):
     global clubBox
-    global added_club_list
+    clubBox.delete(0, tk.END)
     for i in db_controller.clubs_member_added(logged_member_id):
         club_curse = db_controller.retrieve_admin(i)
-        if club_curse not in added_club_list:
-            clubBox.insert(END, "ID: " + club_curse["_id"] + "  " + "Name: " + club_curse["name"])
-            added_club_list.append(club_curse)
+        clubBox.insert(END, "ID: " + club_curse["_id"] + "  " + "Name: " + club_curse["name"])
 
 
 def refreshClub(logged_member_id):
@@ -733,11 +717,6 @@ def refreshClub(logged_member_id):
 
 
 def memberManagement(logged_admin_id):
-    global pending_member_list
-    global current_member_list
-    print('hey')
-    pending_member_list = []
-    current_member_list = []
 
     screen_width = screen.winfo_screenwidth() / 2
     screen_height = screen.winfo_screenheight() / 2
@@ -809,8 +788,6 @@ def memberManagement(logged_admin_id):
 
 
 def activityManagement(logged_admin_id):
-    global admin_activity_list
-    admin_activity_list = []
     screen_width = screen.winfo_screenwidth() / 2
     screen_height = screen.winfo_screenheight() / 2
     frame = Frame(screenAdmin, padx=10, pady=10)
@@ -847,14 +824,12 @@ def activityManagement(logged_admin_id):
 
 def show_admin_activities(logged_admin_id):
     global activityBox
-    global admin_activity_list
+    activityBox.delete(0, tk.END)
     for i in db_controller.admin_activities(logged_admin_id):
         activity_curse = db_controller.retrieve_activity(i)
-        if activity_curse not in admin_activity_list:
-            activityBox.insert(END, "ID: " + activity_curse["_id"] + "  "
+        activityBox.insert(END, "ID: " + activity_curse["_id"] + "  "
                                + "Name: " + activity_curse["name"] + "  "
                                + "Location: " + activity_curse["location"])
-            admin_activity_list.append(activity_curse)
 
 
 def refreshActivity(logged_admin_id):
@@ -964,7 +939,7 @@ def viewActivity(logged_admin_id):
         buttonFrame.pack()
 
         Button(buttonFrame, text="Take Attendance", font=("new roman", 13), width=16, height=4,
-               command=takeAttendance).grid(row=1, column=0)
+               command=lambda: takeAttendance(logged_admin_id)).grid(row=1, column=0)
         Button(buttonFrame, text="Generate Report", font=("new roman", 13), width=16, height=4,
                command=generateActivityReport).grid(row=1, column=1)
         buttonFrame.pack()
@@ -1009,7 +984,7 @@ def render_pip(content_frame):
     content_frame.after(10, render_pip, content_frame)
 
 
-def takeAttendance():
+def takeAttendance(logged_admin_id):
     global capture, file
 
     print("taking attendance")
@@ -1176,7 +1151,7 @@ def newActivity(logged_admin_id):
     db_controller.add_activity_to_admin(activity_id.get(), logged_admin_id)
     members_id = db_controller.added_members(logged_admin_id)
     for i in members_id:
-        db_controller.add_activity_to_member(logged_admin_id, activity_id.get(), i, "")
+        db_controller.add_activity_to_member(logged_admin_id, activity_id.get(), i, " ")
     refreshActivity(logged_admin_id)
 
 
@@ -1217,31 +1192,26 @@ def admin_login():
         Button(leftFrame, text="Activity Management", font=("new roman", 20), height=2, width=25,
                command=lambda: activityManagement(login_account.get())).grid(row=2, column=0)
 
-        # Button(screenAdmin, text="Log out", font=("new roman", 13), command=lambda: raise_frame(login_frame)).place(
-        #    x=screen_width - 70, y=screen_height - 25)
-        # command = lambda:raise_frame(login_frame)
+        Button(screenAdmin, text="Log out", font=("new roman", 13), command=lambda: raise_frame(login_page)).place(
+            x=screen_width - 70, y=screen_height - 25)
+
         memberManagement(logged_admin_curse["_id"])
 
 
 def showPendingMember(logged_admin_id):
     global pendingMemberBox
-    global pending_member_list
-    print("wtffff")
+    pendingMemberBox.delete(0, tk.END)
     for i in db_controller.pending_members(logged_admin_id):
         member_curse = db_controller.retrieve_member(i)
-        if member_curse not in pending_member_list:
-            pendingMemberBox.insert(END, "ID: " + member_curse["_id"] + "  " + "Name: " + member_curse["name"])
-            pending_member_list.append(member_curse)
+        pendingMemberBox.insert(END, "ID: " + member_curse["_id"] + "  " + "Name: " + member_curse["name"])
 
 
 def showCurrentMember(logged_admin_id):
     global currentMemberBox
-    global current_member_list
+    currentMemberBox.delete(0, tk.END)
     for i in db_controller.added_members(logged_admin_id):
         member_curse = db_controller.retrieve_member(i)
-        if member_curse not in current_member_list:
-            currentMemberBox.insert(END, "ID: " + member_curse["_id"] + "  " + "Name: " + member_curse["name"])
-            current_member_list.append(member_curse)
+        currentMemberBox.insert(END, "ID: " + member_curse["_id"] + "  " + "Name: " + member_curse["name"])
 
 
 def rejectMember(logged_admin_id):
@@ -1314,6 +1284,8 @@ def viewMember(logged_admin_id):
         infoFrame.pack()
 
         global joinedActivityBox
+        global joinedFrame
+        global joinedScroll
         joinedFrame = Frame(bottomFrame, padx=3, pady=5, height=int(screen_height / 6))
         Label(joinedFrame, text="Past Activities", font=("new roman", 13)).pack()
         joinedScroll = Scrollbar(joinedFrame)
@@ -1329,28 +1301,14 @@ def viewMember(logged_admin_id):
         joinedFrame.pack()
 
 
-def show_admin_activities(logged_admin_id):
-    global activityBox
-    global admin_activity_list
-    for i in db_controller.admin_activities(logged_admin_id):
-        activity_curse = db_controller.retrieve_activity(i)
-        if activity_curse not in admin_activity_list:
-            activityBox.insert(END, "ID: " + activity_curse["_id"] + "  "
-                               + "Name: " + activity_curse["name"] + "  "
-                               + "Location: " + activity_curse["location"])
-            admin_activity_list.append(activity_curse)
-
-
 def show_member_status(logged_admin_id, view_member_id):
     global joinedActivityBox
     for j in db_controller.admin_activities(logged_admin_id):
-        print(j)
         activity_curse = db_controller.retrieve_activity(j)
-        print(activity_curse["_id"] is None)
         status = db_controller.member_status_in_actvity(view_member_id, logged_admin_id, j)
-        joinedActivityBox.insert(END, "Activity_ID:  " , activity_curse["_id"] , "  "
-                                 , "Activity_name:  " , activity_curse["name"] , "  "
-                                 , "Status:  " , status)
+        joinedActivityBox.insert(END, "Activity_ID:  " + str(activity_curse["_id"])+ "  " + "Activity_name:  " + activity_curse["name"] + "  " + "Status:  " + status)
+        '''+ "Activity_name:  " + activity_curse["name"] + "  "
+                                        + "Status:  " + status)'''
 
 
 def member():

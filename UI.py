@@ -554,11 +554,11 @@ def render_setFaceID(content_frame, camindex):
 
 def setFaceID(logged_member_id):
     global file, screenSetfaceID, frameimg, capture
-    try:
-        f = open(file, 'r')
-        camIndex = int(f.readline())
-    except:
-        camIndex = 0
+    # try:
+    #     f = open(file, 'r')
+    #     camIndex = int(f.readline())
+    # except:
+    #     camIndex = 0
 
     capture = cv2.VideoCapture(camIndex + cv2.CAP_DSHOW)
     success, frame = capture.read()

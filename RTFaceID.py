@@ -4,7 +4,7 @@ import numpy as np
 
 video_capture = cv2.VideoCapture(0)
 
-your_face_encoding = fc.face_encodings(fc.load_image_file("insert your picture here"))[0]
+your_face_encoding = fc.face_encodings(fc.load_image_file("y_ha.png"))[0]
 
 # Create arrays of known face encodings and their names
 known_face_encodings = [

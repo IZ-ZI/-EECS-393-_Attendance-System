@@ -40,6 +40,11 @@ class DBController:
     def retrieve_member(self, member_id):
         return self.collection_member.find_one({"_id": member_id})
 
+    def retrieve_member_name(self, member_id):
+        if self.member_is_present(member_id):
+            curse = self.collection_member.find_one({"_id": member_id})
+            return curse['name']
+
     def delete_member(self, member_id):
         if self.member_is_present(member_id):
             self.collection_member.delete_one({"_id": member_id})

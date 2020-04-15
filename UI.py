@@ -512,6 +512,21 @@ def member_login():
         clubList(logged_member_curse["_id"])
 
 
+def render_setFaceID(content_frame):
+    screen_width = screen.winfo_screenwidth() / 2
+    screen_height = screen.winfo_screenheight() / 2
+    _, frame = capture.read()
+    capture.set(cv2.CAP_PROP_FRAME_WIDTH, screen_width / 2)
+    capture.set(cv2.CAP_PROP_FRAME_HEIGHT, int(screen_height * 2 / 3))
+    picture = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
+
+    frameimg = Image.fromarray(picture)
+    imgtk = ImageTk.PhotoImage(image=frameimg)
+    content_frame.imgtk = imgtk
+    content_frame.configure(image=imgtk)
+
+    content_frame.after(10, render_setFaceID, content_frame)
+
 def setFaceID(logged_member_id):
     global file, screenSetfaceID, frameimg, capture
     try:
@@ -524,7 +539,7 @@ def setFaceID(logged_member_id):
     success, frame = capture.read()
     if not success:
         if camIndex == 0:
-            print("Camera not detected. Check connection.")
+            print("Camera not detected 1. Check connection.")
             sys.exit(1)
         else:
             switch_camera(nextCam=0)
@@ -532,6 +547,7 @@ def setFaceID(logged_member_id):
             if not success:
                 print("Camera not detected. Check connection.")
                 sys.exit(1)
+
     screen_width = screen.winfo_screenwidth() / 2
     screen_height = screen.winfo_screenheight() / 2
     screenSetfaceID = Toplevel(screen)
@@ -544,17 +560,7 @@ def setFaceID(logged_member_id):
     photoFrame = Label(screenSetfaceID, padx=10, pady=10, width=int(screen_height * 2 / 3),
                             height=int(screen_height * 2 / 3))
     photoFrame.pack()
-    _, frame = capture.read()
-    capture.set(cv2.CAP_PROP_FRAME_WIDTH, screen_width / 2)
-    capture.set(cv2.CAP_PROP_FRAME_HEIGHT, int(screen_height * 2 / 3))
-    picture = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
-
-    frameimg = Image.fromarray(picture)
-    imgtk = ImageTk.PhotoImage(image=frameimg)
-    photoFrame.imgtk = imgtk
-    photoFrame.configure(image=imgtk)
-
-    photoFrame.after(10, setFaceID, logged_member_id)
+    render_setFaceID(photoFrame)
 
 
 def takeFaceIDPhoto(logged_member_id):

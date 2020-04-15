@@ -533,7 +533,7 @@ def member_login():
         clubList(logged_member_curse["_id"])
 
 
-def render_setFaceID(content_frame, camindex):
+def render_PIP(content_frame, camindex):
     global capture
 
     screen_width = screen.winfo_screenwidth() / 2
@@ -550,15 +550,16 @@ def render_setFaceID(content_frame, camindex):
     content_frame.imgtk = imgtk
     content_frame.configure(image=imgtk)
 
-    content_frame.after(10, render_setFaceID, content_frame, camindex)
+    content_frame.after(10, render_PIP, content_frame, camindex)
 
 def setFaceID(logged_member_id):
     global file, screenSetfaceID, frameimg, capture
-    # try:
-    #     f = open(file, 'r')
-    #     camIndex = int(f.readline())
-    # except:
-    #     camIndex = 0
+    camIndex = 0
+    try:
+        f = open(file, 'r')
+        camIndex = int(f.readline())
+    except:
+        camIndex = 0
 
     capture = cv2.VideoCapture(camIndex + cv2.CAP_DSHOW)
     success, frame = capture.read()
@@ -579,13 +580,13 @@ def setFaceID(logged_member_id):
     screenSetfaceID.title("Set Face ID")
     screenSetfaceID.geometry("%dx%d" % (screen_height, screen_height))
     Label(screenSetfaceID, text="").pack()
-    Label(screenSetfaceID, text="").pack()
+    # Label(screenSetfaceID, text="").pack()
     Button(screenSetfaceID, text="Take Face ID Photo", height=3, width=20,
            command=lambda: takeFaceIDPhoto(logged_member_id)).pack()
     photoFrame = Label(screenSetfaceID, padx=10, pady=10, width=int(screen_height * 2 / 3),
                             height=int(screen_height * 2 / 3))
     photoFrame.pack()
-    render_setFaceID(photoFrame,camIndex)
+    render_PIP(photoFrame,camIndex)
     capture.release()
 
 
@@ -699,7 +700,7 @@ def viewActivityStatus(logged_member_id):
                                                                                                     sticky=W)
         Label(activityInfoFrame, text="Present?", font=("new roman", 13)).grid(row=4, column=0, sticky=W)
         Label(activityInfoFrame,
-              text=db_controller.member_status_in_actvity(logged_member_id, view_activity_curse["admin"],
+              text=db_controller.member_status_in_activity(logged_member_id, view_activity_curse["admin"],
                                                           view_activity_id), font=("new roman", 13)).grid(row=4,
                                                                                                           column=1,
                                                                                                           sticky=W)
@@ -1005,15 +1006,13 @@ def viewActivity(logged_admin_id):
         buttonFrame.pack()
 
         Button(buttonFrame, text="Take Attendance", font=("new roman", 13), width=16, height=4,
-               command=lambda: takeAttendance(logged_admin_id)).grid(row=1, column=0)
+               command=lambda: takeAttendance(logged_admin_id, view_activity_id)).grid(row=1, column=0)
         Button(buttonFrame, text="Generate Report", font=("new roman", 13), width=16, height=4,
                command=generateActivityReport).grid(row=1, column=1)
         buttonFrame.pack()
 
-def render_pip(content_frame, logged_admin_id, camindex):
+def takeAttendancePicture(logged_admin_id, view_activity_id):
     global frameimg, capture
-    screen_width = screen.winfo_screenwidth() / 2
-    screen_height = screen.winfo_screenheight() / 2
 
     members_list = db_controller.added_members(logged_admin_id)
     members_faces = []
@@ -1023,12 +1022,27 @@ def render_pip(content_frame, logged_admin_id, camindex):
         members_faces.append(numpy.frombuffer(db_controller.retrieve_member_face_id(member)))
         members_names.append(db_controller.retrieve_member_name(member))
 
-    capture.release()
-    capture = cv2.VideoCapture(camindex + cv2.CAP_DSHOW)
-    process_this_frame = True
 
-    while True:
-        _, frame = capture.read()
+    global capture
+
+    _, face_photo = capture.read()
+    photo = cv2.imwrite('pending.png', face_photo)
+    # conditional statement needed
+    encoding = ""
+    print("take photo")
+    #photo = ec.capture(1, False, "your photo.jpg")
+
+    fr_photo = face_recognition.load_image_file("pending.png")
+    face_encoding = FaceIdentification.encoding_from_photo(fr_photo)
+
+    matches = face_recognition.compare_faces(members_faces, face_encoding)
+    if not len(matches) == 0:
+        matched_face = matches[1]
+        matched_member_id = members_list[members_faces.index(matched_face)]
+        db_controller.set_member_activity_status(logged_admin_id, view_activity_id, view_activity_id, matched_member_id, "present")
+
+    # while True:
+    #     _, frame = capture.read()
         # capture.set(cv2.CAP_PROP_FRAME_WIDTH, screen_width / 2)
         # capture.set(cv2.CAP_PROP_FRAME_HEIGHT, int(screen_height * 2 / 3))
         # picture = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
@@ -1039,43 +1053,43 @@ def render_pip(content_frame, logged_admin_id, camindex):
         # content_frame.configure(image=imgtk)
         #content_frame.after(10, render_pip, content_frame)
 
-        small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
-        rgb_small_frame = small_frame[:, :, ::-1]
+        # small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
+        # rgb_small_frame = small_frame[:, :, ::-1]
+        #
+        # if process_this_frame:
+        #     face_locations = face_recognition.face_locations(rgb_small_frame)
+        #     face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
+        #
+        #     render_names = []
+        #     for face_encoding in face_encodings:
+        #         matches = face_recognition.compare_faces(members_faces, face_encoding)
+        #         name = "UNKNOWN"
+        #
+        #         face_distances = face_recognition.face_distance(members_faces, face_encoding)
+        #         best_match_index = numpy.argmin(face_distances)
+        #         if matches[best_match_index]:
+        #             name = members_names[best_match_index]
+        #
+        #         render_names.append(name)
+        # process_this_frame = not process_this_frame
+        #
+        # for (top, right, bottom, left, name) in zip(face_locations, members_names):
+        #     top *= 4
+        #     right *= 4
+        #     bottom *= 4
+        #     left *= 4
+        #
+        #     cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
+        #     cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0 , 255), cv2.FILLED)
+        #     font = cv2.FONT_HERSHEY_DUPLEX
+        #     cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
+        #
+        # cv2.imshow('Taking Attendance', frame)
+        # if cv2.waitKey(33) & 0xFF == 27:
+        #     break
 
-        if process_this_frame:
-            face_locations = face_recognition.face_locations(rgb_small_frame)
-            face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
 
-            render_names = []
-            for face_encoding in face_encodings:
-                matches = face_recognition.compare_faces(members_faces, face_encoding)
-                name = "UNKNOWN"
-
-                face_distances = face_recognition.face_distance(members_faces, face_encoding)
-                best_match_index = numpy.argmin(face_distances)
-                if matches[best_match_index]:
-                    name = members_names[best_match_index]
-
-                render_names.append(name)
-        process_this_frame = not process_this_frame
-
-        for (top, right, bottom, left, name) in zip(face_locations, members_names):
-            top *= 4
-            right *= 4
-            bottom *= 4
-            left *= 4
-
-            cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
-            cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0 , 255), cv2.FILLED)
-            font = cv2.FONT_HERSHEY_DUPLEX
-            cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
-
-        cv2.imshow('Taking Attendance', frame)
-        if cv2.waitKey(33) & 0xFF == 27:
-            break
-
-
-def takeAttendance(logged_admin_id):
+def takeAttendance(logged_admin_id, view_activity_id):
     global capture, file, screenAttendance
 
     print("taking attendance")
@@ -1117,10 +1131,13 @@ def takeAttendance(logged_admin_id):
                 print("Camera not detected. Check connection.")
                 sys.exit(1)
 
-    Label(rightFrame, text="Camera", font=("new roman", 15)).grid(row=0, column=0, sticky=W)
-    cameraFrame = Label(rightFrame)
-    cameraFrame.grid(row=0, column=0)
-    render_pip(cameraFrame, logged_admin_id, camIndex)
+    # Label(rightFrame, text="Camera", font=("new roman", 15)).grid(row=0, column=0, sticky=W)
+    Button(rightFrame, text="Verify", font=("new roman", 15), height=2, width=20,
+           command=lambda: takeAttendancePicture(logged_admin_id, view_activity_id)).pack()
+    cameraframe = Label(rightFrame, padx=10, pady=10, width=int(screen_height * 2 / 3),
+                            height=int(screen_height * 2 / 3))
+    cameraframe.pack()
+    render_PIP(cameraframe, camIndex)
 
     # Button(screenAttendance, text="Attend", font=("new roman", 15), height=2, width=20, command=attend).place(
     #     x=10, y=int(screen_height * 2 / 3) + 30)

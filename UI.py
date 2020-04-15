@@ -530,8 +530,9 @@ def setFaceID(logged_member_id):
 
 def takeFaceIDPhoto(logged_member_id):
     # conditional statement needed
+    encoding = ""
     print("take face id photo")
-    photo = ec.capture(1, False, "your photo.jpg")
+    photo = ec.capture(0, False, "your photo.jpg")
     fr_photo = face_recognition.load_image_file("your photo.jpg")
     face_id = FaceIdentification.encoding_from_photo(fr_photo)
     db_controller.update_member_face_id(logged_member_id, face_id)
@@ -587,7 +588,7 @@ def viewClub(logged_member_id):
         Label(clubInfoFrame, text="80", font=("new roman", 13)).grid(row=4, column=1, sticky=W)
         clubInfoFrame.pack()
 
-        global clubActivityBox
+        '''global clubActivityBox
         clubActivityFrame = Frame(bottomFrame, padx=3, pady=3, height=int(screen_height / 6))
         Label(clubActivityFrame, text="My Events", font=("new roman", 13)).pack()
         clubActivityScroll = Scrollbar(clubActivityFrame)
@@ -602,7 +603,7 @@ def viewClub(logged_member_id):
         clubActivityBox.pack(side=LEFT)
         clubActivityScroll.config(command=clubActivityBox.yview)
         clubActivityFrame.pack()
-        Button(bottomFrame, text="View Activity Status", font=("new roman", 12), command=viewActivityStatus).pack()
+        Button(bottomFrame, text="View Activity Status", font=("new roman", 12), command=viewActivityStatus).pack()'''
 
 
 def viewActivityStatus(logged_member_id):

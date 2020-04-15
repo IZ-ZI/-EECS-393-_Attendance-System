@@ -93,7 +93,6 @@ show_password = None
 camSelected = None
 frameimg = None
 capture = None
-face_photo = None
 file = None
 
 cluster = MongoClient(
@@ -514,13 +513,12 @@ def member_login():
 
 
 def render_setFaceID(content_frame):
-    global face_photo
     screen_width = screen.winfo_screenwidth() / 2
     screen_height = screen.winfo_screenheight() / 2
-    _, face_photo = capture.read()
+    _, frame = capture.read()
     capture.set(cv2.CAP_PROP_FRAME_WIDTH, screen_width / 2)
     capture.set(cv2.CAP_PROP_FRAME_HEIGHT, int(screen_height * 2 / 3))
-    picture = cv2.cvtColor(face_photo, cv2.COLOR_BGR2RGBA)
+    picture = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
 
     frameimg = Image.fromarray(picture)
     imgtk = ImageTk.PhotoImage(image=frameimg)
@@ -567,14 +565,12 @@ def setFaceID(logged_member_id):
 
 
 def takeFaceIDPhoto(logged_member_id):
-    global face_photo
     # conditional statement needed
     encoding = ""
     print("take face id photo")
+    photo = ec.capture(1, False, "your photo.jpg")
 
-    photo = cv2.imwrite('face.png', face_photo)
-    # photo = ec.capture(0, False, "your photo.jpg")
-    fr_photo = face_recognition.load_image_file('face.png')
+    fr_photo = face_recognition.load_image_file("your photo.jpg")
     face_id = FaceIdentification.encoding_from_photo(fr_photo)
     db_controller.update_member_face_id(logged_member_id, face_id)
     try:

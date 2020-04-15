@@ -953,14 +953,14 @@ def switch_camera(event=0, nextCam=-1):
     else:
         camIndex = nextCam
     del (capture)
-    capture = cv2.VideoCapture(camIndex + cv2.CAP_DSHOW)
+    capture = cv2.VideoCapture(1 + cv2.CAP_DSHOW)
 
     # try to get a frame, if it returns nothing
     success, frame = capture.read()
     if not success:
         camIndex = 0
         del (capture)
-        cap = cv2.VideoCapture(camIndex + cv2.CAP_DSHOW)
+        cap = cv2.VideoCapture(1 + cv2.CAP_DSHOW)
 
     f = open(file, 'w')
     f.write(str(camIndex))
@@ -979,7 +979,7 @@ def render_pip(content_frame, logged_admin_id, camindex):
         members_names.append(db_controller.retrieve_member_name(member))
 
     capture.release()
-    capture = cv2.VideoCapture(camindex + cv2.CAP_DSHOW)
+    capture = cv2.VideoCapture(1 + cv2.CAP_DSHOW)
     process_this_frame = True
 
     while True:

@@ -1020,7 +1020,7 @@ def takeAttendancePicture(logged_admin_id, view_activity_id):
     for member in members_list:
         face = db_controller.retrieve_member_face_id(member)
         numpy.append(members_faces, numpy.fromstring(face))
-        members_names.append(db_controller.retrieve_member_name(member))
+        # members_names.append(db_controller.retrieve_member_name(member))
 
 
     global capture

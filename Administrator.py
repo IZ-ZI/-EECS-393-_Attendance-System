@@ -20,13 +20,4 @@ class Administrator:
     def get_password(self) -> str:
         return self.password
 
-    def permit(self, member):
-        se.send_email('attsystem393@gmail.com', 'eecs_393',
-                      member.get_email_address(), self.get_organization_name(), self.get_organization_id(), False)
-        return True
-
-    def reject(self, member):
-        se.send_email('attsystem393@gmail.com', 'eecs_393',
-                      member.get_email_address(), self.get_organization_name(), self.get_organization_id(), False)
-        return True
 

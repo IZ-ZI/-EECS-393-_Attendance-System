@@ -46,17 +46,6 @@ class Member:
     # def get_face_id(self) -> FaceIdentification:
     #     return self.face_id
 
-    def requestPermission(self, admin: Administrator) -> bool:
-        se.send_email('attsystem393@gmail.com', 'eecs_393', admin.get_email_adderss(), self.get_name(), self.get_id(), True)
-        return True
 
-    def joinActivity(self, activity: Activity) -> bool:
-        # To do
-        return True
 
-    def attendanceRecord(self) -> list:
-        return self.attendance_record
 
-    def __modifyAttendanceRecord(self) -> bool:
-        # To do
-        return True

@@ -57,6 +57,13 @@ class test_DBController(unittest.TestCase):
         self.assertEqual(self.collection_member.find_one({"_id": "123"}), self.db.retrieve_member("123"))
         self.assertIsNone(self.db.retrieve_member("000"))
 
+    def test_retrieve_member_name(self):
+        member1 = Member("Marcus","847","xxl844@gmail.com","password")
+        self.db.add_member(member1)
+        self.assertEqual(self.db.retrieve_member_name("123"),"Terry")
+        self.assertEqual(self.db.retrieve_member_name("847"),"Marcus")
+
+
     def test_delete_member(self):
         self.assertTrue(self.db.delete_member("123"))
         self.assertFalse(self.db.delete_member("123"))
@@ -261,7 +268,12 @@ class test_DBController(unittest.TestCase):
         self.assertTrue(self.db.remove_activity_from_admin("888", "110"))
         self.assertFalse(self.db.remove_activity_from_admin("888", "110"))
 
-    # def test_member_status_in_activity(self):
+    def test_member_status_in_activity(self):
+        member1 = Member("Marcus", "847", "xxl844@gmail.com", "password")
+        self.db.add_member(member1)
+        self.db.add_activity_to_member("393", "888", "847", "on_time")
+        self.db.set_member_activity_status("393", "888", "847", "on_time")
+        self.assertEqual(self.db.member_status_in_activity("847","393","888"),"on_time")
 
 
     def test_member_activities(self):

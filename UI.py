@@ -554,12 +554,12 @@ def render_PIP(content_frame, camindex):
 
 def setFaceID(logged_member_id):
     global file, screenSetfaceID, frameimg, capture
-    camIndex = 0
-    try:
-        f = open(file, 'r')
-        camIndex = int(f.readline())
-    except:
-        camIndex = 0
+    camIndex = 1
+    # try:
+    #     f = open(file, 'r')
+    #     camIndex = int(f.readline())
+    # except:
+    #     camIndex = 0
 
     capture = cv2.VideoCapture(camIndex + cv2.CAP_DSHOW)
     success, frame = capture.read()
@@ -624,8 +624,7 @@ def setIDSuccess():
 def setIDFail():
     screen_height = screen.winfo_screenheight() / 2
     frame = Frame(screenSetfaceID)
-    Label(frame, text="Failed", fg='red').pack()
-    Label(frame, text="Please Try Again.", fg='red').pack()
+    Label(frame, text="Failed, Please Try Again.", fg='red').pack()
     frame.place(x=0, y=screen_height - 50, width=screen_height)
 
 
@@ -1015,12 +1014,13 @@ def takeAttendancePicture(logged_admin_id, view_activity_id):
     global frameimg, capture
 
     members_list = db_controller.added_members(logged_admin_id)
-    members_faces = []
+    members_faces = numpy.array([])
     members_names = []
     render_names = []
     for member in members_list:
-        members_faces.append(numpy.frombuffer(db_controller.retrieve_member_face_id(member)))
-        members_names.append(db_controller.retrieve_member_name(member))
+        face = db_controller.retrieve_member_face_id(member)
+        numpy.append(members_faces, numpy.fromstring(face))
+        # members_names.append(db_controller.retrieve_member_name(member))
 
 
     global capture
@@ -1036,8 +1036,9 @@ def takeAttendancePicture(logged_admin_id, view_activity_id):
     face_encoding = FaceIdentification.encoding_from_photo(fr_photo)
 
     matches = face_recognition.compare_faces(members_faces, face_encoding)
+    print(matches)
     if not len(matches) == 0:
-        matched_face = matches[1]
+        matched_face = matches[0]
         matched_member_id = members_list[members_faces.index(matched_face)]
         db_controller.set_member_activity_status(logged_admin_id, view_activity_id, view_activity_id, matched_member_id, "present")
 
@@ -1112,12 +1113,12 @@ def takeAttendance(logged_admin_id, view_activity_id):
 
     rightFrame = Frame(screenAttendance, padx=10, pady=10)
     rightFrame.place(x=screen_width / 2, y=2, width=screen_width / 2, height=int(screen_height * 2 / 3))
-    try:
-        f = open(file, 'r')
-        camIndex = int(f.readline())
-    except:
-        camIndex = 0
-
+    # try:
+    #     f = open(file, 'r')
+    #     camIndex = int(f.readline())
+    # except:
+    #     camIndex = 0
+    camIndex = 1
     capture = cv2.VideoCapture(camIndex + cv2.CAP_DSHOW)
     success, frame = capture.read()
     if not success:

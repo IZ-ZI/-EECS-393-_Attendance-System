@@ -17,7 +17,7 @@ class DBController:
     def add_member(self, member):
         if not self.member_is_present(member.get_id()):
             post = {"_id": member.get_id(), "name": member.get_name(), "email_address": member.get_email_address(),
-                    "password": member.get_password(), "clubs": [], "activities": {}}
+                    "password": member.get_password(), "face id": " ", "clubs": [], "activities": {}}
             self.collection_member.insert_one(post)
             return True
         else:
@@ -40,10 +40,10 @@ class DBController:
     def retrieve_member(self, member_id):
         return self.collection_member.find_one({"_id": member_id})
 
-    # def retrieve_member_name(self, member_id):
-    #     if self.member_is_present(member_id):
-    #         curse = self.collection_member.find_one({"_id": member_id})
-    #         return curse['name']
+    def retrieve_member_name(self, member_id):
+        if self.member_is_present(member_id):
+            curse = self.collection_member.find_one({"_id": member_id})
+            return curse['name']
 
     def delete_member(self, member_id):
         if self.member_is_present(member_id):
@@ -112,12 +112,6 @@ class DBController:
         if self.member_is_present(member_id):
             curse = self.collection_member.find_one({"_id": member_id})
             return curse['face id']
-
-
-
-
-
-
 
     def admin_is_present(self, admin_id):
         admin = self.collection_admin.find_one({"_id": admin_id})

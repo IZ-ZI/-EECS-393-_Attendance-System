@@ -1046,11 +1046,43 @@ def updateTimeInfo(logged_admin_id, clicked_item_index, activity_id, activity_na
         db_controller.update_activity(activity)
         activityBox.delete(clicked_item_index)
         refreshActivity(logged_admin_id)
+        refreshActivityInfo(logged_admin_id, activity_id)
         update_activity_feedback['text'] = 'Update Success'
 
 
-def refreshActivityInfo(logged_admin_id):
-    viewActivity(logged_admin_id)
+def refreshActivityInfo(logged_admin_id, view_activity_id):
+    view_activity_curse = db_controller.retrieve_activity(view_activity_id)
+    screen_width = screen.winfo_screenwidth() / 2
+    screen_height = screen.winfo_screenheight() / 2
+    bottomFrame = LabelFrame(screenAdmin, padx=10, pady=5)
+    bottomFrame.place(x=5, y=screen_height / 3 + 2, width=screen_width / 2 - 5,
+                      height=int(screen_height * 2 / 3 - 10))
+    Label(bottomFrame, text="Activity Status", font=("new roman", 15)).pack()
+
+    timeFrame = Frame(bottomFrame, padx=1, pady=3)
+    Label(timeFrame, text="Start Time", font=("new roman", 13)).grid(row=0, column=0)
+    Label(timeFrame, text="         ").grid(row=0, column=1)
+    Label(timeFrame, text="End Time", font=("new roman", 13)).grid(row=0, column=2)
+    # pull out information about the start time and end time
+    Label(timeFrame, text=view_activity_curse["start_time"], font=("new roman", 13)).grid(row=1, column=0)
+    Label(timeFrame, text="         ").grid(row=1, column=1)
+    Label(timeFrame, text=view_activity_curse["end_time"], font=("new roman", 13)).grid(row=1, column=2)
+    timeFrame.pack()
+
+    buttonFrame = Frame(bottomFrame, padx=1, pady=2)
+    Button(buttonFrame, text="Update Information", font=("new roman", 13), width=16, height=4,
+           command=lambda: updateTime(logged_admin_id, view_activity_id, view_activity_curse["_id"],
+                                      view_activity_curse["name"])).grid(row=0,
+                                                                         column=0)
+    Button(buttonFrame, text="Refresh Information", font=("new roman", 13), width=16, height=4,
+           command=lambda: refreshActivityInfo(logged_admin_id, view_activity_id)).grid(row=0, column=1)
+    buttonFrame.pack()
+
+    Button(buttonFrame, text="Take Attendance", font=("new roman", 13), width=16, height=4,
+           command=lambda: takeAttendance(logged_admin_id, view_activity_id)).grid(row=1, column=0)
+    Button(buttonFrame, text="Change Status", font=("new roman", 13), width=16, height=4,
+           command=memberStatusChange).grid(row=1, column=1)
+    buttonFrame.pack()
 
 
 def viewActivity(logged_admin_id):
@@ -1081,7 +1113,7 @@ def viewActivity(logged_admin_id):
                                           view_activity_curse["name"])).grid(row=0,
                                                                              column=0)
         Button(buttonFrame, text="Refresh Information", font=("new roman", 13), width=16, height=4,
-               command=lambda: refreshActivityInfo(logged_admin_id)).grid(row=0, column=1)
+               command=lambda: refreshActivityInfo(logged_admin_id, view_activity_id)).grid(row=0, column=1)
         buttonFrame.pack()
 
         Button(buttonFrame, text="Take Attendance", font=("new roman", 13), width=16, height=4,

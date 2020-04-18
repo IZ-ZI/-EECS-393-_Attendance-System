@@ -1437,6 +1437,14 @@ def newActivity(logged_admin_id):
         db_controller.add_activity_to_member(logged_admin_id, activity_id.get(), i, " ")
     refreshActivity(logged_admin_id)
 
+    year = yearClickedCreate.get()
+    month = monthClickedCreate.get()
+    day = dayClickedCreate.get()
+    startHour = hourClickedStart.get()
+    startMinute = minuteClickedStart.get()
+    endHour = hourClickedEnd.get()
+    endMinute = minuteClickedEnd.get(
+
 
 def addAttendingMember():
     # need to have curse selection for multiple

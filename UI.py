@@ -1037,12 +1037,16 @@ def updateTimeInfo(logged_admin_id, clicked_item_index, activity_id, activity_na
 
     start_time_string = year + "-" + month + "-" + day + " " + startHour + ":" + startMinute + ":" + "00"
     end_time_string = year + "-" + month + "-" + day + " " + endHour + ":" + endMinute + ":" + "00"
-    activity = Activity(activity_id, activity_name, start_time_string, end_time_string,
-                        new_location.get())
-    db_controller.update_activity(activity)
-    activityBox.delete(clicked_item_index)
-    refreshActivity(logged_admin_id)
-    update_activity_feedback['text'] ='Update Success'
+
+    if(new_location.get()==''):
+        update_activity_feedback['text'] = 'Enter new location please'
+    else:
+        activity = Activity(activity_id, activity_name, start_time_string, end_time_string,
+                            new_location.get())
+        db_controller.update_activity(activity)
+        activityBox.delete(clicked_item_index)
+        refreshActivity(logged_admin_id)
+        update_activity_feedback['text'] = 'Update Success'
 
 
 def refreshActivityInfo(logged_admin_id):
@@ -1144,6 +1148,7 @@ def takeAttendancePicture(logged_admin_id, view_activity_id):
 
     matches = face_recognition.compare_faces(members_faces, face_encoding)
     if True in matches:
+        verify_attendance_feedback['text'] = 'Take Attendance Successfully'
         matched_face_index = matches.index(True)
         matched_member_id = members_list[matched_face_index]
         act_start = datetime.strptime(db_controller.activity_start_time(view_activity_id), '%Y-%m-%d %H:%M:%S')
@@ -1155,7 +1160,7 @@ def takeAttendancePicture(logged_admin_id, view_activity_id):
             db_controller.set_member_activity_status(logged_admin_id, view_activity_id, matched_member_id, "Late")
         else:
             db_controller.set_member_activity_status(logged_admin_id, view_activity_id, matched_member_id, "Absence")
-        # give success message
+
     else:
         verify_attendance_feedback['text'] = 'Take Attendance Failed'
 

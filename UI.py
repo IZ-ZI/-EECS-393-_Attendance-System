@@ -1286,15 +1286,9 @@ def takeAttendance(logged_admin_id, view_activity_id):
     screenAttendance.geometry("%dx%d+%d+%d" % (screen_width, screen_height, 0, 0))
 
     leftFrame = Frame(screenAttendance, padx=10, pady=10)
-    leftFrame.place(x=0, y=2, width=screen_width / 2, height=int(screen_height * 2 / 3))
-    Label(leftFrame, text="Member ID", font=("new roman", 15)).grid(row=0, column=0, sticky=W)
-    memberid_entry = Entry(leftFrame, width=20)
-    memberid_entry.grid(row=1, column=0)
-    Button(leftFrame, text="OK", font=("new roman", 15), command=getMemberPhoto).grid(row=1, column=1)
-    Label(leftFrame, text="").grid(row=2, column=0)
-    Label(leftFrame, text="Photo on File", font=("new roman", 15)).grid(row=3, column=0, sticky=W)
-    photoFrame = LabelFrame(leftFrame, padx=10, pady=10, width=screen_width / 4, height=screen_width / 4)
-    photoFrame.grid(row=4, column=0)
+    leftFrame.place(x=0, y=screen_height/3, width=screen_width / 2, height=int(screen_height*2/3))
+    Button(leftFrame, text = "Manually Take Attendance", font = ("new roman", 15), command = manualAttendance, width = 30, height = 3).pack()
+
 
     rightFrame = Frame(screenAttendance, padx=10, pady=10)
     rightFrame.place(x=screen_width / 2, y=2, width=screen_width / 2, height=int(screen_height * 2 / 3))
@@ -1332,6 +1326,37 @@ def takeAttendance(logged_admin_id, view_activity_id):
     # Button(screenAttendance, text="Verify", font=("new roman", 15), height=2, width=20, command=takePhoto).place(
     #     x=screen_width / 2 + 10, y=int(screen_height * 2 / 3) + 30)
 
+def manualAttendance():
+    global manualAttendanceScreen
+    manualAttendanceScreen = Toplevel(screen)
+    manualAttendanceScreen.title("Manually Taking Attendance")
+    manualAttendanceScreen.geometry("300x300+40+40")
+    passwordFrame = Frame(manualAttendanceScreen, width = 340, height = 340)
+    passwordFrame.grid(row = 0, column = 0)
+
+    Label(passwordFrame, text = "Administrator Password", font = ("new roman", 15)).place(x = 60, y = 60)
+    admin_entry = Entry(passwordFrame)
+    admin_entry.place(x = 55, y = 100)
+    Button(passwordFrame, text = "Confirm", font = ("new roman", 15), height = 2, width = 20, command = manualAttendanceLogin).place(x = 50, y = 200)
+
+def manualAttendanceLogin():
+    attendanceFrame = Frame(manualAttendanceScreen, width = 300, height = 300)
+    attendanceFrame.grid(row = 0, column = 0)
+    Label(attendanceFrame, text = "Member ID", font = ("new roman", 15)).place(x = 87, y = 30)
+    attendanceMember_entry = Entry(attendanceFrame)
+    attendanceMember_entry.place(x = 35, y = 60)
+    Label(attendanceFrame, text = "Status", font = ("new roman", 15)).place(x = 100, y = 100)
+    global manualStatusClicked
+    manualStatusClicked = StringVar()
+    manualStatusClicked.set("On Time")
+
+    drop = OptionMenu(attendanceFrame, manualStatusClicked, "On Time", "Late")
+    drop.place(x = 87, y = 140)
+
+    Button(attendanceFrame, text = ("Update Status"), font = ("new roman", 15), width = 15, height = 2, command = manualUpdate).place(x = 55, y = 200)
+
+def manualUpdate():
+    status = manualStatusClicked.get()
 
 def takePhoto():
     ec.capture(1, False, "your photo.jpg")

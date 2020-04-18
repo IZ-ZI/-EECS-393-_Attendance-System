@@ -221,13 +221,16 @@ def raise_frame(frame):
 def club_register_check():
     global db_controller
     if (club_password.get() != club_confirm_password.get()):
+        club_register_feedback['fg'] = 'red'
         club_register_feedback['text'] = 'Password difference'
         # club_register_feedback.set("Password Difference")
     elif (
             club_id.get() == '' or club_name.get() == '' or club_email.get() == '' or club_password.get() == '' or club_confirm_password.get() == ''):
+        club_register_feedback['fg'] = 'red'
         club_register_feedback['text'] = 'Please fill all the spaces'
     elif (
             db_controller.admin_is_present(club_id.get())):
+        club_register_feedback['fg'] = 'red'
         club_register_feedback['text'] = 'This id has already been registered'
     else:
         club_info()
@@ -236,15 +239,19 @@ def club_register_check():
 def member_register_check():
     global db_controller
     if (member_password.get() != member_confirm_password.get()):
+        member_register_feedback['fg'] = 'red'
         member_register_feedback['text'] = 'Password difference'
     elif (
             member_id.get() == '' or member_name.get() == '' or member_email.get() == '' or member_password.get() == '' or member_confirm_password.get() == '' or member_apply_club_id.get() == ''):
+        member_register_feedback['fg'] = 'red'
         member_register_feedback['text'] = 'Please fill all the spaces'
     elif (
             db_controller.member_is_present(member_id.get())):
+        member_register_feedback['fg'] = 'red'
         member_register_feedback['text'] = 'User id has already been registered'
     elif (
             not db_controller.admin_is_present(member_apply_club_id.get())):
+        member_register_feedback['fg'] = 'red'
         member_register_feedback['text'] = 'Club id does not exist'
     else:
         member_info()
@@ -501,6 +508,7 @@ def submitClubID(logged_member_id):
         db_controller.add_member_to_pending_members(new_club_id.get(), logged_member_id)
         apply_club_feedback['text'] = 'Apply Success'
     else:
+        apply_club_feedback['fg'] = 'red'
         apply_club_feedback['text'] = 'Club not exists'
 
 
@@ -1039,6 +1047,7 @@ def updateTimeInfo(logged_admin_id, clicked_item_index, activity_id, activity_na
     end_time_string = year + "-" + month + "-" + day + " " + endHour + ":" + endMinute + ":" + "00"
 
     if(new_location.get()==''):
+        apply_club_feedback['fg'] = 'red'
         update_activity_feedback['text'] = 'Enter new location please'
     else:
         activity = Activity(activity_id, activity_name, start_time_string, end_time_string,
@@ -1157,8 +1166,10 @@ def updateStatus(logged_admin_id, view_activity_id):
     if(db_controller.member_is_present(member_id)):
         status = status_clicked.get()
         db_controller.set_member_activity_status(logged_admin_id, view_activity_id, modified_member.get(), status)
+        apply_club_feedback['fg'] = 'red'
         update_status_feedback['text'] = 'Member not exists'
     elif (member_id== ''):
+        apply_club_feedback['fg'] = 'red'
         update_status_feedback['text'] = 'Enter Member ID please'
     else:
         update_status_feedback['text'] = 'Update Successfully'
@@ -1205,6 +1216,7 @@ def takeAttendancePicture(logged_admin_id, view_activity_id):
             db_controller.set_member_activity_status(logged_admin_id, view_activity_id, matched_member_id, "Absence")
         # give success message
     else:
+        verify_attendance_feedback['fg'] = 'red'
         verify_attendance_feedback['text'] = 'Take Attendance Failed'
 
 
@@ -1460,6 +1472,7 @@ def createActivity(logged_admin_id):
 def activity_create_check(logged_admin_id):
     global db_controller
     if db_controller.activity_is_present(activity_id.get()):
+        create_activity_feedback['fg'] = 'red'
         create_activity_feedback['text'] = 'ID has already been registered'
     else:
         newActivity(logged_admin_id)

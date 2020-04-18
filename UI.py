@@ -1037,12 +1037,16 @@ def updateTimeInfo(logged_admin_id, clicked_item_index, activity_id, activity_na
 
     start_time_string = year + "-" + month + "-" + day + " " + startHour + ":" + startMinute + ":" + "00"
     end_time_string = year + "-" + month + "-" + day + " " + endHour + ":" + endMinute + ":" + "00"
-    activity = Activity(activity_id, activity_name, start_time_string, end_time_string,
-                        new_location.get())
-    db_controller.update_activity(activity)
-    activityBox.delete(clicked_item_index)
-    refreshActivity(logged_admin_id)
-    update_activity_feedback['text'] ='Update Success'
+
+    if(new_location.get()==''):
+        update_activity_feedback['text'] = 'Enter new location please'
+    else:
+        activity = Activity(activity_id, activity_name, start_time_string, end_time_string,
+                            new_location.get())
+        db_controller.update_activity(activity)
+        activityBox.delete(clicked_item_index)
+        refreshActivity(logged_admin_id)
+        update_activity_feedback['text'] = 'Update Success'
 
 
 def refreshActivityInfo(logged_admin_id):

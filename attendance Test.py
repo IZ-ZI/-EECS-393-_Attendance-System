@@ -32,3 +32,11 @@ list.append(ent)
 
 result = face_recognition.compare_faces(list, enha)
 print(result)
+
+t1 = datetime(2020,2,2,12,12)
+t2 = datetime(2020,2,2,13,12)
+
+
+print(t1< t2, t1 > t2)
+print(str(t1))
+print(datetime.strptime("2020-02-02 12:12:00", "%Y-%m-%d %H:%M:%S"))

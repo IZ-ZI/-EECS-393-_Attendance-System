@@ -1042,6 +1042,7 @@ def updateTimeInfo(logged_admin_id, clicked_item_index, activity_id, activity_na
     db_controller.update_activity(activity)
     activityBox.delete(clicked_item_index)
     refreshActivity(logged_admin_id)
+    viewActivity(logged_admin_id)
     update_activity_feedback['text'] ='Update Success'
 
 
@@ -1082,7 +1083,7 @@ def viewActivity(logged_admin_id):
 
         Button(buttonFrame, text="Take Attendance", font=("new roman", 13), width=16, height=4,
                command=lambda: takeAttendance(logged_admin_id, view_activity_id)).grid(row=1, column=0)
-        Button(buttonFrame, text="Change Status", font=("new roman", 13), width=16, height=4,
+        Button(buttonFrame, text="Modify Status", font=("new roman", 13), width=16, height=4,
                command=memberStatusChange).grid(row=1, column=1)
         buttonFrame.pack()
 

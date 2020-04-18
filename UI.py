@@ -562,6 +562,7 @@ def render_PIP(content_frame, camindex):
     capture.release()
     capture = cv2.VideoCapture(camindex + cv2.CAP_DSHOW)
     _, frame = capture.read()
+    capture.set(cv2.CAP_PROP_BUFFERSIZE, 3)
     capture.set(cv2.CAP_PROP_FRAME_WIDTH, screen_width / 2)
     capture.set(cv2.CAP_PROP_FRAME_HEIGHT, int(screen_height * 2 / 3))
     picture = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
@@ -952,18 +953,68 @@ def updateTime(logged_admin_id, clicked_item_index, activity_id, activity_name):
     updateTimeScreen.geometry("400x400+30+30")
     Label(updateTimeScreen, text="").pack()
     Label(updateTimeScreen, text="New Date", font=("new roman", 15)).pack()
-    date_entry = Entry(updateTimeScreen, textvariable=new_date)
-    date_entry.pack()
+    dateFrame = Frame(updateTimeScreen)
+    Label(dateFrame, text = "Year").grid(row = 0, column = 0)
+    Label(dateFrame, text = "Month").grid(row = 0, column = 1)
+    Label(dateFrame, text = "Day").grid(row = 0, column = 2)
+    global yearClickedUpdate
+    yearClickedUpdate = IntVar()
+    yearClickedUpdate.set(yearOption[0])
+    global monthClickedUpdate
+    monthClickedUpdate = IntVar()
+    monthClickedUpdate.set(monthOption[0])
+    global dayClickedUpdate
+    dayClickedUpdate = IntVar()
+    dayClickedUpdate.set(dayOption[0])
+
+    yearDrop = OptionMenu(dateFrame, yearClickedUpdate, *yearOption)
+    yearDrop.grid(row = 1, column = 0)
+    monthDrop = OptionMenu(dateFrame, monthClickedUpdate, *monthOption)
+    monthDrop.grid(row = 1, column = 1)
+    dayDrop = OptionMenu(dateFrame, dayClickedUpdate, *dayOption)
+    dayDrop.grid(row = 1, column = 2)
+    dateFrame.pack()
+
     Label(updateTimeScreen, text="").pack()
-    Label(updateTimeScreen, text="New Start Time", font=("new roman", 15)).pack()
-    starttime_entry = Entry(updateTimeScreen, textvariable=new_start_time)
-    starttime_entry.pack()
+    Label(updateTimeScreen, text = "New Start Time", font = ("new roman", 15)).pack()
+    startTimeFrame = Frame(updateTimeScreen)
+    Label(startTimeFrame, text = "Hour").grid(row = 0, column = 0)
+    Label(startTimeFrame, text = "").grid(row = 0, column = 1)
+    Label(startTimeFrame, text = "Minute").grid(row = 0, column = 2)
+    global hourClickedStartUpdate
+    hourClickedStartUpdate = IntVar()
+    hourClickedStartUpdate.set(hourOption[0])
+    global minuteClickedStartUpdate
+    minuteClickedStartUpdate= IntVar()
+    minuteClickedStartUpdate.set(minuteOption[0])
+
+    hourDropStart = OptionMenu(startTimeFrame, hourClickedStartUpdate, *hourOption)
+    hourDropStart.grid(row = 1, column = 0)
+    minuteDropStart = OptionMenu(startTimeFrame, minuteClickedStartUpdate, *minuteOption)
+    minuteDropStart.grid(row = 1, column = 2)
+    startTimeFrame.pack()
+
     Label(updateTimeScreen, text="").pack()
-    Label(updateTimeScreen, text="New End Time", font=("new roman", 15)).pack()
-    endtime_entry = Entry(updateTimeScreen, textvariable=new_end_time)
-    endtime_entry.pack()
+    Label(updateTimeScreen, text = "New End Time", font = ("new roman", 15)).pack()
+    endTimeFrame = Frame(updateTimeScreen)
+    Label(endTimeFrame, text = "Hour").grid(row = 0, column = 0)
+    Label(endTimeFrame, text = "").grid(row = 0, column = 1)
+    Label(endTimeFrame, text = "Minute").grid(row = 0, column = 2)
+    global hourClickedEndUpdate
+    hourClickedEndUpdate = IntVar()
+    hourClickedEndUpdate.set(hourOption[0])
+    global minuteClickedEndUpdate
+    minuteClickedEndUpdate= IntVar()
+    minuteClickedEndUpdate.set(minuteOption[0])
+
+    hourDropEnd = OptionMenu(endTimeFrame, hourClickedEndUpdate, *hourOption)
+    hourDropEnd.grid(row = 1, column = 0)
+    minuteDropEnd = OptionMenu(endTimeFrame, minuteClickedEndUpdate, *minuteOption)
+    minuteDropEnd.grid(row = 1, column = 2)
+    endTimeFrame.pack()
+
     Label(updateTimeScreen, text="").pack()
-    Label(updateTimeScreen, text="Location", font=("new roman", 15)).pack()
+    Label(updateTimeScreen, text="New Location", font=("new roman", 15)).pack()
     location_entry = Entry(updateTimeScreen, textvariable=new_location)
     location_entry.pack()
     Label(updateTimeScreen, text="").pack()
@@ -984,6 +1035,13 @@ def updateTimeInfo(logged_admin_id, clicked_item_index, activity_id, activity_na
     activityBox.delete(clicked_item_index)
     refreshActivity(logged_admin_id)
     update_activity_feedback['text'] ='Update Success'
+    year = yearClickedUpdate.get()
+    month = monthClickedUpdate.get()
+    day = dayClickedUpdate.get()
+    startHour = hourClickedStartUpdate.get()
+    startMinute = minuteClickedStartUpdate.get()
+    endHour = hourClickedEndUpdate.get()
+    endMinute = minuteClickedEndUpdate.get()
 
 
 def refreshActivityInfo(logged_admin_id):
@@ -1087,8 +1145,16 @@ def takeAttendancePicture(logged_admin_id, view_activity_id):
     if True in matches:
         matched_face_index = matches.index(True)
         matched_member_id = members_list[matched_face_index]
-        db_controller.set_member_activity_status(logged_admin_id, view_activity_id, matched_member_id, "present")
-        verify_attendance_feedback['text'] = 'Take Attendance Success'
+        act_start = datetime.strptime(db_controller.activity_start_time(view_activity_id), '%m/%d/%y %H:%M:%S')
+        act_end = datetime.strptime(db_controller.activity_end_time(view_activity_id), '%m/%d/%y %H:%M:%S')
+        current_time = datetime.datetime.now()
+        if current_time <= act_start:
+            db_controller.set_member_activity_status(logged_admin_id, view_activity_id, matched_member_id, "On Time")
+        elif current_time > act_start and current_time < act_end:
+            db_controller.set_member_activity_status(logged_admin_id, view_activity_id, matched_member_id, "Late")
+        else:
+            db_controller.set_member_activity_status(logged_admin_id, view_activity_id, matched_member_id, "Absence")
+        # give success message
     else:
         verify_attendance_feedback['text'] = 'Take Attendance Failed'
 
@@ -1170,7 +1236,7 @@ def takeAttendance(logged_admin_id, view_activity_id):
     #     camIndex = int(f.readline())
     # except:
     #     camIndex = 0
-    camIndex = 1
+    camIndex = 0
     capture = cv2.VideoCapture(camIndex + cv2.CAP_DSHOW)
     success, frame = capture.read()
     # if not success:

@@ -95,19 +95,18 @@ frameimg = None
 capture = None
 file = None
 
-yearOption = [2020, 2021]
-monthOption = []
-for i in range(0, 12):
-    monthOption.append(i+1)
-dayOption = []
-for i in range(0,31):
-    dayOption.append(i+1)
-hourOption = []
-for i in range(0, 25):
-    hourOption.append(i)
-minuteOption = []
-for i in range(0, 61):
-    minuteOption.append(i)
+yearOption = ["2020", "2021"]
+monthOption = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]
+
+dayOption = ["01", "02", "03", "04", "05", "06", "07", "08", "09"]
+for i in range(10,32):
+    dayOption.append(str(i))
+hourOption = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09"]
+for i in range(10, 25):
+    hourOption.append(str(i))
+minuteOption = ["00", "01", "02", "03", "04", "05", "06", "07", "08", "09"]
+for i in range(10, 61):
+    minuteOption.append(str(i))
 
 
 cluster = MongoClient(
@@ -959,13 +958,13 @@ def updateTime(logged_admin_id, clicked_item_index, activity_id, activity_name):
     Label(dateFrame, text = "Month").grid(row = 0, column = 1)
     Label(dateFrame, text = "Day").grid(row = 0, column = 2)
     global yearClickedUpdate
-    yearClickedUpdate = IntVar()
+    yearClickedUpdate = StringVar()
     yearClickedUpdate.set(yearOption[0])
     global monthClickedUpdate
-    monthClickedUpdate = IntVar()
+    monthClickedUpdate = StringVar()
     monthClickedUpdate.set(monthOption[0])
     global dayClickedUpdate
-    dayClickedUpdate = IntVar()
+    dayClickedUpdate = StringVar()
     dayClickedUpdate.set(dayOption[0])
 
     yearDrop = OptionMenu(dateFrame, yearClickedUpdate, *yearOption)
@@ -983,10 +982,10 @@ def updateTime(logged_admin_id, clicked_item_index, activity_id, activity_name):
     Label(startTimeFrame, text = "").grid(row = 0, column = 1)
     Label(startTimeFrame, text = "Minute").grid(row = 0, column = 2)
     global hourClickedStartUpdate
-    hourClickedStartUpdate = IntVar()
+    hourClickedStartUpdate = StringVar()
     hourClickedStartUpdate.set(hourOption[0])
     global minuteClickedStartUpdate
-    minuteClickedStartUpdate= IntVar()
+    minuteClickedStartUpdate= StringVar()
     minuteClickedStartUpdate.set(minuteOption[0])
 
     hourDropStart = OptionMenu(startTimeFrame, hourClickedStartUpdate, *hourOption)
@@ -1002,10 +1001,10 @@ def updateTime(logged_admin_id, clicked_item_index, activity_id, activity_name):
     Label(endTimeFrame, text = "").grid(row = 0, column = 1)
     Label(endTimeFrame, text = "Minute").grid(row = 0, column = 2)
     global hourClickedEndUpdate
-    hourClickedEndUpdate = IntVar()
+    hourClickedEndUpdate = StringVar()
     hourClickedEndUpdate.set(hourOption[0])
     global minuteClickedEndUpdate
-    minuteClickedEndUpdate= IntVar()
+    minuteClickedEndUpdate= StringVar()
     minuteClickedEndUpdate.set(minuteOption[0])
 
     hourDropEnd = OptionMenu(endTimeFrame, hourClickedEndUpdate, *hourOption)
@@ -1340,13 +1339,13 @@ def createActivity(logged_admin_id):
     Label(dateFrame, text = "Month").grid(row = 0, column = 1)
     Label(dateFrame, text = "Day").grid(row = 0, column = 2)
     global yearClickedCreate
-    yearClickedCreate = IntVar()
+    yearClickedCreate = StringVar()
     yearClickedCreate.set(yearOption[0])
     global monthClickedCreate
-    monthClickedCreate = IntVar()
+    monthClickedCreate = StringVar()
     monthClickedCreate.set(monthOption[0])
     global dayClickedCreate
-    dayClickedCreate = IntVar()
+    dayClickedCreate = StringVar()
     dayClickedCreate.set(dayOption[0])
 
     yearDrop = OptionMenu(dateFrame, yearClickedCreate, *yearOption)
@@ -1365,10 +1364,10 @@ def createActivity(logged_admin_id):
     Label(startTimeFrame, text = "").grid(row = 0, column = 1)
     Label(startTimeFrame, text = "Minute").grid(row = 0, column = 2)
     global hourClickedStart
-    hourClickedStart = IntVar()
+    hourClickedStart = StringVar()
     hourClickedStart.set(hourOption[0])
     global minuteClickedStart
-    minuteClickedStart= IntVar()
+    minuteClickedStart= StringVar()
     minuteClickedStart.set(minuteOption[0])
 
     hourDropStart = OptionMenu(startTimeFrame, hourClickedStart, *hourOption)
@@ -1385,10 +1384,10 @@ def createActivity(logged_admin_id):
     Label(endTimeFrame, text = "").grid(row = 0, column = 1)
     Label(endTimeFrame, text = "Minute").grid(row = 0, column = 2)
     global hourClickedEnd
-    hourClickedEnd = IntVar()
+    hourClickedEnd = StringVar()
     hourClickedEnd.set(hourOption[0])
     global minuteClickedEnd
-    minuteClickedEnd= IntVar()
+    minuteClickedEnd= StringVar()
     minuteClickedEnd.set(minuteOption[0])
 
     hourDropEnd = OptionMenu(endTimeFrame, hourClickedEnd, *hourOption)
@@ -1415,12 +1414,20 @@ def activity_create_check(logged_admin_id):
         create_activity_feedback['text'] = 'ID has already been registered'
     else:
         newActivity(logged_admin_id)
-        create_activity_feedback['text'] = 'Create Success'
+        create_activity_feedback['text'] ='Success'
 
 
 def newActivity(logged_admin_id):
-    start_time_string = activity_date.get() + ' ' + activity_start_time.get()
-    end_time_string = activity_date.get() + ' ' + activity_end_time.get()
+    year = yearClickedCreate.get()
+    month = monthClickedCreate.get()
+    day = dayClickedCreate.get()
+    startHour = hourClickedStart.get()
+    startMinute = minuteClickedStart.get()
+    endHour = hourClickedEnd.get()
+    endMinute = minuteClickedEnd.get()
+
+    start_time_string = year + "-" + month + "-" + day + " " + startHour + ":" + startMinute + ":" + "00"
+    end_time_string = year + "-" + month + "-" + day + " " + endHour + ":" + endMinute + ":" + "00"
     activity = Activity(activity_id.get(), activity_name.get(), start_time_string, end_time_string,
                         activity_location.get())
     db_controller.add_activity(activity, logged_admin_id)
@@ -1429,14 +1436,6 @@ def newActivity(logged_admin_id):
     for i in members_id:
         db_controller.add_activity_to_member(logged_admin_id, activity_id.get(), i, " ")
     refreshActivity(logged_admin_id)
-
-    year = yearClickedCreate.get()
-    month = monthClickedCreate.get()
-    day = dayClickedCreate.get()
-    startHour = hourClickedStart.get()
-    startMinute = minuteClickedStart.get()
-    endHour = hourClickedEnd.get()
-    endMinute = minuteClickedEnd.get(
 
 
 def addAttendingMember():

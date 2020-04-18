@@ -95,6 +95,21 @@ frameimg = None
 capture = None
 file = None
 
+yearOption = [2020, 2021]
+monthOption = []
+for i in range(0, 12):
+    monthOption.append(i+1)
+dayOption = []
+for i in range(0,31):
+    dayOption.append(i+1)
+hourOption = []
+for i in range(0, 25):
+    hourOption.append(i)
+minuteOption = []
+for i in range(0, 61):
+    minuteOption.append(i)
+
+
 cluster = MongoClient(
     "mongodb+srv://wz:1999314Zwh%2F@attendancemanagementsystem-7immk.mongodb.net/test?retryWrites=true&w"
     "=majority")
@@ -1252,32 +1267,74 @@ def createActivity(logged_admin_id):
     activity_entry = Entry(screenCreateActivity, textvariable=activity_name)
     activity_entry.pack()
     # 2
-    Label(screenCreateActivity, text="").pack()
-    Label(screenCreateActivity, text="Date").pack()
-    date_entry = Entry(screenCreateActivity, textvariable=activity_date)
-    date_entry.pack()
+    Label(screenCreateActivity, text = "").pack()
+    Label(screenCreateActivity, text = "Date").pack()
+    dateFrame = Frame(screenCreateActivity)
+    Label(dateFrame, text = "Year").grid(row = 0, column = 0)
+    Label(dateFrame, text = "Month").grid(row = 0, column = 1)
+    Label(dateFrame, text = "Day").grid(row = 0, column = 2)
+    global yearClickedCreate
+    yearClickedCreate = IntVar()
+    yearClickedCreate.set(yearOption[0])
+    global monthClickedCreate
+    monthClickedCreate = IntVar()
+    monthClickedCreate.set(monthOption[0])
+    global dayClickedCreate
+    dayClickedCreate = IntVar()
+    dayClickedCreate.set(dayOption[0])
+
+    yearDrop = OptionMenu(dateFrame, yearClickedCreate, *yearOption)
+    yearDrop.grid(row = 1, column = 0)
+    monthDrop = OptionMenu(dateFrame, monthClickedCreate, *monthOption)
+    monthDrop.grid(row = 1, column = 1)
+    dayDrop = OptionMenu(dateFrame, dayClickedCreate, *dayOption)
+    dayDrop.grid(row = 1, column = 2)
+    dateFrame.pack()
+
     # 3
-    Label(screenCreateActivity, text="").pack()
-    Label(screenCreateActivity, text="Start Time").pack()
-    starttime_entry = Entry(screenCreateActivity, textvariable=activity_start_time)
-    starttime_entry.pack()
+    Label(screenCreateActivity, text = "").pack()
+    Label(screenCreateActivity, text = "Start Time").pack()
+    startTimeFrame = Frame(screenCreateActivity)
+    Label(startTimeFrame, text = "Hour").grid(row = 0, column = 0)
+    Label(startTimeFrame, text = "").grid(row = 0, column = 1)
+    Label(startTimeFrame, text = "Minute").grid(row = 0, column = 2)
+    global hourClickedStart
+    hourClickedStart = IntVar()
+    hourClickedStart.set(hourOption[0])
+    global minuteClickedStart
+    minuteClickedStart= IntVar()
+    minuteClickedStart.set(minuteOption[0])
+
+    hourDropStart = OptionMenu(startTimeFrame, hourClickedStart, *hourOption)
+    hourDropStart.grid(row = 1, column = 0)
+    minuteDropStart = OptionMenu(startTimeFrame, minuteClickedStart, *minuteOption)
+    minuteDropStart.grid(row = 1, column = 2)
+    startTimeFrame.pack()
+
     # 4
-    Label(screenCreateActivity, text="").pack()
-    Label(screenCreateActivity, text="End Time").pack()
-    endtime_entry = Entry(screenCreateActivity, textvariable=activity_end_time)
-    endtime_entry.pack()
+    Label(screenCreateActivity, text = "").pack()
+    Label(screenCreateActivity, text = "End Time").pack()
+    endTimeFrame = Frame(screenCreateActivity)
+    Label(endTimeFrame, text = "Hour").grid(row = 0, column = 0)
+    Label(endTimeFrame, text = "").grid(row = 0, column = 1)
+    Label(endTimeFrame, text = "Minute").grid(row = 0, column = 2)
+    global hourClickedEnd
+    hourClickedEnd = IntVar()
+    hourClickedEnd.set(hourOption[0])
+    global minuteClickedEnd
+    minuteClickedEnd= IntVar()
+    minuteClickedEnd.set(minuteOption[0])
 
-    Label(screenCreateActivity, text="").pack()
-    Label(screenCreateActivity, text="Location").pack()
-    location_entry = Entry(screenCreateActivity, textvariable=activity_location)
+    hourDropEnd = OptionMenu(endTimeFrame, hourClickedEnd, *hourOption)
+    hourDropEnd.grid(row = 1, column = 0)
+    minuteDropEnd = OptionMenu(endTimeFrame, minuteClickedEnd, *minuteOption)
+    minuteDropEnd.grid(row = 1, column = 2)
+    endTimeFrame.pack()
+
+    Label(screenCreateActivity, text = "").pack()
+    Label(screenCreateActivity, text = "Location").pack()
+    location_entry = Entry(screenCreateActivity)
     location_entry.pack()
-
-    global memberBox
-    Label(screenCreateActivity, text="").pack()
-    currentFrame = Frame(screenCreateActivity, padx=10, pady=3, width=400)
-    currentScroll = Scrollbar(currentFrame)
-    currentScroll.pack(side=RIGHT, fill=Y)
-    memberBox = Listbox(currentFrame, yscrollcommand=currentScroll.set, width=400, height=7, selectmode=MULTIPLE)
 
     Button(screenCreateActivity, text="Create Activity", height=3, width=20,
            command=lambda: activity_create_check(logged_admin_id)).pack()
@@ -1306,6 +1363,14 @@ def newActivity(logged_admin_id):
     for i in members_id:
         db_controller.add_activity_to_member(logged_admin_id, activity_id.get(), i, " ")
     refreshActivity(logged_admin_id)
+
+    year = yearClickedCreate.get()
+    month = monthClickedCreate.get()
+    day = dayClickedCreate.get()
+    startHour = hourClickedStart.get()
+    startMinute = minuteClickedStart.get()
+    endHour = hourClickedEnd.get()
+    endMinute = minuteClickedEnd.get(
 
 
 def addAttendingMember():

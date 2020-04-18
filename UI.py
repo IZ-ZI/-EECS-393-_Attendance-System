@@ -1128,7 +1128,7 @@ def memberStatusChange(logged_admin_id, view_activity_id):
     modified_member = StringVar()
     statusUpdateScreen = Toplevel(screen)
     statusUpdateScreen.title("Member Attendance Status Update")
-    statusUpdateScreen.geometry("300x300+50+50")
+    statusUpdateScreen.geometry("300x400+50+50")
     Label(statusUpdateScreen, text = "").pack()
     Label(statusUpdateScreen, text = "Activity ID", font = ("new roman", 15)).pack()
     Label(statusUpdateScreen, text = view_activity_id).pack()
@@ -1148,11 +1148,20 @@ def memberStatusChange(logged_admin_id, view_activity_id):
 
     Label(statusUpdateScreen, text="").pack()
     Button(statusUpdateScreen, text = "Update Attendance Status", font = ("new roman", 15), height = 2, command = lambda :updateStatus(logged_admin_id, view_activity_id)).pack()
+    global update_status_feedback
+    update_status_feedback = Label(statusUpdateScreen, text=" ", fg="green", font=("new roman", 15))
+    update_status_feedback.pack()
 
 def updateStatus(logged_admin_id, view_activity_id):
-    status = status_clicked.get()
-    db_controller.set_member_activity_status(logged_admin_id, view_activity_id, modified_member.get(), status)
-
+    member_id = modified_member.get()
+    if(db_controller.member_is_present(member_id)):
+        status = status_clicked.get()
+        db_controller.set_member_activity_status(logged_admin_id, view_activity_id, modified_member.get(), status)
+        update_status_feedback['text'] = 'Member not exists'
+    elif (member_id== ''):
+        update_status_feedback['text'] = 'Enter Member ID please'
+    else:
+        update_status_feedback['text'] = 'Update Successfully'
 
 
 def takeAttendancePicture(logged_admin_id, view_activity_id):

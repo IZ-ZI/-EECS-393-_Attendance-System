@@ -998,9 +998,40 @@ def viewActivity(logged_admin_id):
 
         Button(buttonFrame, text="Take Attendance", font=("new roman", 13), width=16, height=4,
                command=lambda: takeAttendance(logged_admin_id, view_activity_id)).grid(row=1, column=0)
-        Button(buttonFrame, text="Generate Report", font=("new roman", 13), width=16, height=4,
-               command=generateActivityReport).grid(row=1, column=1)
+        Button(buttonFrame, text="Change Status", font=("new roman", 13), width=16, height=4,
+               command=memberStatusChange).grid(row=1, column=1)
         buttonFrame.pack()
+
+def memberStatusChange():
+    global statusUpdateScreen
+    statusUpdateScreen = Toplevel(screen)
+    statusUpdateScreen.title("Member Attendance Status Update")
+    statusUpdateScreen.geometry("300x300+50+50")
+    Label(statusUpdateScreen, text = "").pack()
+    Label(statusUpdateScreen, text = "Activity ID", font = ("new roman", 15)).pack()
+    Label(statusUpdateScreen, text = "123123").pack()
+    Label(statusUpdateScreen, text="").pack()
+    Label(statusUpdateScreen, text="Member ID", font = ("new roman", 15)).pack()
+    update_entry = Entry(statusUpdateScreen)
+    update_entry.pack()
+
+    Label(statusUpdateScreen, text="").pack()
+    Label(statusUpdateScreen, text="Update Status", font=("new roman", 15)).pack()
+    options = ["On Time", "Late", "Absent"]
+    global status_clicked
+    status_clicked = StringVar()
+    status_clicked.set(options[0])
+    drop = OptionMenu(statusUpdateScreen, status_clicked, *options)
+    drop.pack()
+
+    Label(statusUpdateScreen, text="").pack()
+    Button(statusUpdateScreen, text = "Update Attendance Status", font = ("new roman", 15), height = 2, command = updateStatus).pack()
+
+def updateStatus():
+    status = status_clicked.get()
+    print(status)
+
+
 
 def takeAttendancePicture(logged_admin_id, view_activity_id):
     global frameimg, capture

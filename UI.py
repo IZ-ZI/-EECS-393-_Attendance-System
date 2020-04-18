@@ -1027,14 +1027,6 @@ def updateTime(logged_admin_id, clicked_item_index, activity_id, activity_name):
 
 
 def updateTimeInfo(logged_admin_id, clicked_item_index, activity_id, activity_name):
-    start_time_string = new_date.get() + ' ' + new_start_time.get()
-    end_time_string = new_date.get() + ' ' + new_end_time.get()
-    activity = Activity(activity_id, activity_name, start_time_string, end_time_string,
-                        new_location.get())
-    db_controller.update_activity(activity)
-    activityBox.delete(clicked_item_index)
-    refreshActivity(logged_admin_id)
-    update_activity_feedback['text'] ='Update Success'
     year = yearClickedUpdate.get()
     month = monthClickedUpdate.get()
     day = dayClickedUpdate.get()
@@ -1042,6 +1034,15 @@ def updateTimeInfo(logged_admin_id, clicked_item_index, activity_id, activity_na
     startMinute = minuteClickedStartUpdate.get()
     endHour = hourClickedEndUpdate.get()
     endMinute = minuteClickedEndUpdate.get()
+
+    start_time_string = year + "-" + month + "-" + day + " " + startHour + ":" + startMinute + ":" + "00"
+    end_time_string = year + "-" + month + "-" + day + " " + endHour + ":" + endMinute + ":" + "00"
+    activity = Activity(activity_id, activity_name, start_time_string, end_time_string,
+                        new_location.get())
+    db_controller.update_activity(activity)
+    activityBox.delete(clicked_item_index)
+    refreshActivity(logged_admin_id)
+    update_activity_feedback['text'] ='Update Success'
 
 
 def refreshActivityInfo(logged_admin_id):
@@ -1398,7 +1399,7 @@ def createActivity(logged_admin_id):
 
     Label(screenCreateActivity, text = "").pack()
     Label(screenCreateActivity, text = "Location").pack()
-    location_entry = Entry(screenCreateActivity)
+    location_entry = Entry(screenCreateActivity, textvariable=activity_name)
     location_entry.pack()
 
     Button(screenCreateActivity, text="Create Activity", height=3, width=20,
@@ -1414,7 +1415,7 @@ def activity_create_check(logged_admin_id):
         create_activity_feedback['text'] = 'ID has already been registered'
     else:
         newActivity(logged_admin_id)
-        create_activity_feedback['text'] ='Success'
+        create_activity_feedback['text'] ='Create Success'
 
 
 def newActivity(logged_admin_id):
@@ -1437,13 +1438,7 @@ def newActivity(logged_admin_id):
         db_controller.add_activity_to_member(logged_admin_id, activity_id.get(), i, " ")
     refreshActivity(logged_admin_id)
 
-    year = yearClickedCreate.get()
-    month = monthClickedCreate.get()
-    day = dayClickedCreate.get()
-    startHour = hourClickedStart.get()
-    startMinute = minuteClickedStart.get()
-    endHour = hourClickedEnd.get()
-    endMinute = minuteClickedEnd.get(
+
 
 
 def addAttendingMember():

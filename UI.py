@@ -73,7 +73,7 @@ club_email_entry = None
 club_password_entry = None
 club_confirm_password_entry = None
 
-
+modified_member = None
 currentMemberBox = None
 currentScroll = None
 currentFrame = None
@@ -1080,8 +1080,8 @@ def refreshActivityInfo(logged_admin_id, view_activity_id):
 
     Button(buttonFrame, text="Take Attendance", font=("new roman", 13), width=16, height=4,
            command=lambda: takeAttendance(logged_admin_id, view_activity_id)).grid(row=1, column=0)
-    Button(buttonFrame, text="Change Status", font=("new roman", 13), width=16, height=4,
-           command=memberStatusChange).grid(row=1, column=1)
+    Button(buttonFrame, text="Modify Status", font=("new roman", 13), width=16, height=4,
+           command=lambda: memberStatusChange(logged_admin_id, view_activity_id)).grid(row=1, column=1)
     buttonFrame.pack()
 
 
@@ -1118,21 +1118,23 @@ def viewActivity(logged_admin_id):
 
         Button(buttonFrame, text="Take Attendance", font=("new roman", 13), width=16, height=4,
                command=lambda: takeAttendance(logged_admin_id, view_activity_id)).grid(row=1, column=0)
-        Button(buttonFrame, text="Change Status", font=("new roman", 13), width=16, height=4,
-               command=memberStatusChange).grid(row=1, column=1)
+        Button(buttonFrame, text="Modify Status", font=("new roman", 13), width=16, height=4,
+               command=lambda: memberStatusChange(logged_admin_id, view_activity_id)).grid(row=1, column=1)
         buttonFrame.pack()
 
-def memberStatusChange():
+def memberStatusChange(logged_admin_id, view_activity_id):
     global statusUpdateScreen
+    global modified_member
+    modified_member = StringVar()
     statusUpdateScreen = Toplevel(screen)
     statusUpdateScreen.title("Member Attendance Status Update")
     statusUpdateScreen.geometry("300x300+50+50")
     Label(statusUpdateScreen, text = "").pack()
     Label(statusUpdateScreen, text = "Activity ID", font = ("new roman", 15)).pack()
-    Label(statusUpdateScreen, text = "123123").pack()
+    Label(statusUpdateScreen, text = view_activity_id).pack()
     Label(statusUpdateScreen, text="").pack()
     Label(statusUpdateScreen, text="Member ID", font = ("new roman", 15)).pack()
-    update_entry = Entry(statusUpdateScreen)
+    update_entry = Entry(statusUpdateScreen, textvariable=modified_member)
     update_entry.pack()
 
     Label(statusUpdateScreen, text="").pack()
@@ -1145,11 +1147,11 @@ def memberStatusChange():
     drop.pack()
 
     Label(statusUpdateScreen, text="").pack()
-    Button(statusUpdateScreen, text = "Update Attendance Status", font = ("new roman", 15), height = 2, command = updateStatus).pack()
+    Button(statusUpdateScreen, text = "Update Attendance Status", font = ("new roman", 15), height = 2, command = lambda :updateStatus(logged_admin_id, view_activity_id)).pack()
 
-def updateStatus():
+def updateStatus(logged_admin_id, view_activity_id):
     status = status_clicked.get()
-    print(status)
+    db_controller.set_member_activity_status(logged_admin_id, view_activity_id, modified_member.get(), status)
 
 
 

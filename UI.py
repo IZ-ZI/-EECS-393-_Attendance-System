@@ -541,6 +541,7 @@ def render_PIP(content_frame, camindex):
     capture.release()
     capture = cv2.VideoCapture(camindex + cv2.CAP_DSHOW)
     _, frame = capture.read()
+    capture.set(cv2.CAP_PROP_BUFFERSIZE, 3)
     capture.set(cv2.CAP_PROP_FRAME_WIDTH, screen_width / 2)
     capture.set(cv2.CAP_PROP_FRAME_HEIGHT, int(screen_height * 2 / 3))
     picture = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
@@ -1062,7 +1063,15 @@ def takeAttendancePicture(logged_admin_id, view_activity_id):
     if True in matches:
         matched_face_index = matches.index(True)
         matched_member_id = members_list[matched_face_index]
-        db_controller.set_member_activity_status(logged_admin_id, view_activity_id, matched_member_id, "present")
+        act_start = datetime.strptime(db_controller.activity_start_time(view_activity_id), '%m/%d/%y %H:%M:%S')
+        act_end = datetime.strptime(db_controller.activity_end_time(view_activity_id), '%m/%d/%y %H:%M:%S')
+        current_time = datetime.datetime.now()
+        if current_time <= act_start:
+            db_controller.set_member_activity_status(logged_admin_id, view_activity_id, matched_member_id, "On Time")
+        elif current_time > act_start and current_time < act_end:
+            db_controller.set_member_activity_status(logged_admin_id, view_activity_id, matched_member_id, "Late")
+        else:
+            db_controller.set_member_activity_status(logged_admin_id, view_activity_id, matched_member_id, "Absence")
         # give success message
     else:
         return
@@ -1144,7 +1153,7 @@ def takeAttendance(logged_admin_id, view_activity_id):
     #     camIndex = int(f.readline())
     # except:
     #     camIndex = 0
-    camIndex = 1
+    camIndex = 0
     capture = cv2.VideoCapture(camIndex + cv2.CAP_DSHOW)
     success, frame = capture.read()
     # if not success:

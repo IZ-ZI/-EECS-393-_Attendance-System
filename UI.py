@@ -1399,7 +1399,7 @@ def createActivity(logged_admin_id):
 
     Label(screenCreateActivity, text = "").pack()
     Label(screenCreateActivity, text = "Location").pack()
-    location_entry = Entry(screenCreateActivity, textvariable=activity_name)
+    location_entry = Entry(screenCreateActivity, textvariable=activity_location)
     location_entry.pack()
 
     Button(screenCreateActivity, text="Create Activity", height=3, width=20,

@@ -95,6 +95,21 @@ frameimg = None
 capture = None
 file = None
 
+yearOption = [2020, 2021]
+monthOption = []
+for i in range(0, 12):
+    monthOption.append(i+1)
+dayOption = []
+for i in range(0,31):
+    dayOption.append(i+1)
+hourOption = []
+for i in range(0, 25):
+    hourOption.append(i)
+minuteOption = []
+for i in range(0, 61):
+    minuteOption.append(i)
+
+
 cluster = MongoClient(
     "mongodb+srv://wz:1999314Zwh%2F@attendancemanagementsystem-7immk.mongodb.net/test?retryWrites=true&w"
     "=majority")

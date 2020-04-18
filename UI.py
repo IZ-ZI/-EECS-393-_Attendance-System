@@ -902,14 +902,6 @@ def refreshActivity(logged_admin_id):
     show_admin_activities(logged_admin_id)
 
 
-def deleteMember(logged_admin_id):
-    if currentMemberBox.curselection() != ():
-        clicked_item_index = currentMemberBox.curselection()[0]
-        del_member_id = db_controller.added_members(logged_admin_id)[clicked_item_index]
-        db_controller.remove_member_from_added_members(logged_admin_id, del_member_id)
-        currentMemberBox.delete(clicked_item_index)
-
-
 def deleteActivity(logged_admin_id):
     if activityBox.curselection() != ():
         clicked_item_index = activityBox.curselection()[0]
@@ -1006,9 +998,40 @@ def viewActivity(logged_admin_id):
 
         Button(buttonFrame, text="Take Attendance", font=("new roman", 13), width=16, height=4,
                command=lambda: takeAttendance(logged_admin_id, view_activity_id)).grid(row=1, column=0)
-        Button(buttonFrame, text="Generate Report", font=("new roman", 13), width=16, height=4,
-               command=generateActivityReport).grid(row=1, column=1)
+        Button(buttonFrame, text="Change Status", font=("new roman", 13), width=16, height=4,
+               command=memberStatusChange).grid(row=1, column=1)
         buttonFrame.pack()
+
+def memberStatusChange():
+    global statusUpdateScreen
+    statusUpdateScreen = Toplevel(screen)
+    statusUpdateScreen.title("Member Attendance Status Update")
+    statusUpdateScreen.geometry("300x300+50+50")
+    Label(statusUpdateScreen, text = "").pack()
+    Label(statusUpdateScreen, text = "Activity ID", font = ("new roman", 15)).pack()
+    Label(statusUpdateScreen, text = "123123").pack()
+    Label(statusUpdateScreen, text="").pack()
+    Label(statusUpdateScreen, text="Member ID", font = ("new roman", 15)).pack()
+    update_entry = Entry(statusUpdateScreen)
+    update_entry.pack()
+
+    Label(statusUpdateScreen, text="").pack()
+    Label(statusUpdateScreen, text="Update Status", font=("new roman", 15)).pack()
+    options = ["On Time", "Late", "Absent"]
+    global status_clicked
+    status_clicked = StringVar()
+    status_clicked.set(options[0])
+    drop = OptionMenu(statusUpdateScreen, status_clicked, *options)
+    drop.pack()
+
+    Label(statusUpdateScreen, text="").pack()
+    Button(statusUpdateScreen, text = "Update Attendance Status", font = ("new roman", 15), height = 2, command = updateStatus).pack()
+
+def updateStatus():
+    status = status_clicked.get()
+    print(status)
+
+
 
 def takeAttendancePicture(logged_admin_id, view_activity_id):
     global frameimg, capture
@@ -1346,7 +1369,7 @@ def acceptMember(logged_admin_id):
         pendingMemberBox.delete(clicked_item_index)
         db_controller.add_member_to_added_members(logged_admin_id, acc_member_id)
         db_controller.remove_member_from_pending_members(logged_admin_id, acc_member_id)
-        for i in db_controller.retrieve_admin(logged_admin_id)["activities"]:
+        for i in db_controller.admin_activities(logged_admin_id):
             db_controller.add_activity_to_member(logged_admin_id, i, acc_member_id, " ")
         db_controller.add_club_to_member(logged_admin_id, acc_member_id)
         refreshList(logged_admin_id)
@@ -1359,6 +1382,9 @@ def deleteMember(logged_admin_id):
         clicked_item_index = currentMemberBox.curselection()[0]
         del_member_id = db_controller.added_members(logged_admin_id)[clicked_item_index]
         db_controller.remove_member_from_added_members(logged_admin_id, del_member_id)
+        db_controller.remove_club_from_member(logged_admin_id, del_member_id)
+        for i in db_controller.admin_activities(logged_admin_id):
+            db_controller.remove_activity_from_member(logged_admin_id, i, del_member_id)
         currentMemberBox.delete(clicked_item_index)
 
 

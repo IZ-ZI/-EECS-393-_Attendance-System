@@ -679,7 +679,7 @@ def viewClub(logged_member_id):
         Label(clubInfoFrame, text=myAbsenses, font=("new roman", 13)).grid(row=3, column=1, sticky=W)
         Label(clubInfoFrame, text="Attendance Rate", font=("new roman", 13)).grid(row=4, column=0, sticky=W)
 
-        Label(clubInfoFrame, text=(len(status_list) - myAbsenses)/len(status_list), font=("new roman", 13)).grid(row=4, column=1, sticky=W)
+        Label(clubInfoFrame, text=(round((len(status_list) - myAbsenses)/len(status_list), 2)), font=("new roman", 13)).grid(row=4, column=1, sticky=W)
         clubInfoFrame.pack()
 
         '''global clubActivityBox

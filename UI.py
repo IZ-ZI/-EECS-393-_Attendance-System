@@ -1148,6 +1148,7 @@ def takeAttendancePicture(logged_admin_id, view_activity_id):
 
     matches = face_recognition.compare_faces(members_faces, face_encoding)
     if True in matches:
+        verify_attendance_feedback['text'] = 'Take Attendance Successfully'
         matched_face_index = matches.index(True)
         matched_member_id = members_list[matched_face_index]
         act_start = datetime.strptime(db_controller.activity_start_time(view_activity_id), '%m/%d/%y %H:%M:%S')
@@ -1159,7 +1160,7 @@ def takeAttendancePicture(logged_admin_id, view_activity_id):
             db_controller.set_member_activity_status(logged_admin_id, view_activity_id, matched_member_id, "Late")
         else:
             db_controller.set_member_activity_status(logged_admin_id, view_activity_id, matched_member_id, "Absence")
-        # give success message
+
     else:
         verify_attendance_feedback['text'] = 'Take Attendance Failed'
 

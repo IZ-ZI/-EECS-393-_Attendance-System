@@ -1014,14 +1014,14 @@ def takeAttendancePicture(logged_admin_id, view_activity_id):
     global frameimg, capture
 
     members_list = db_controller.added_members(logged_admin_id)
-    members_faces = numpy.array([])
+    members_faces = []
     members_names = []
     render_names = []
     for member in members_list:
         face = db_controller.retrieve_member_face_id(member)
-        numpy.append(members_faces, numpy.fromstring(face))
-        # members_names.append(db_controller.retrieve_member_name(member))
-
+        if not face == " ":
+            members_faces.append(numpy.frombuffer(face))
+            members_names.append(db_controller.retrieve_member_name(member))
 
     global capture
 
@@ -1033,14 +1033,13 @@ def takeAttendancePicture(logged_admin_id, view_activity_id):
     #photo = ec.capture(1, False, "your photo.jpg")
 
     fr_photo = face_recognition.load_image_file("pending.png")
-    face_encoding = FaceIdentification.encoding_from_photo(fr_photo)
+    face_encoding = face_recognition.face_encodings(fr_photo)[0]
 
     matches = face_recognition.compare_faces(members_faces, face_encoding)
     print(matches)
-    if not len(matches) == 0:
-        matched_face = matches[0]
-        matched_member_id = members_list[members_faces.index(matched_face)]
-        db_controller.set_member_activity_status(logged_admin_id, view_activity_id, view_activity_id, matched_member_id, "present")
+    matched_face_index = matches.index(True)
+    matched_member_id = members_list[matched_face_index]
+    db_controller.set_member_activity_status(logged_admin_id, view_activity_id, matched_member_id, "present")
 
     # while True:
     #     _, frame = capture.read()
@@ -1121,16 +1120,16 @@ def takeAttendance(logged_admin_id, view_activity_id):
     camIndex = 1
     capture = cv2.VideoCapture(camIndex + cv2.CAP_DSHOW)
     success, frame = capture.read()
-    if not success:
-        if camIndex == 0:
-            print("Camera not detected. Check connection.")
-            sys.exit(1)
-        else:
-            switch_camera(nextCam=0)
-            success, frame = capture.read()
-            if not success:
-                print("Camera not detected. Check connection.")
-                sys.exit(1)
+    # if not success:
+    #     if camIndex == 0:
+    #         print("Camera not detected. Check connection.")
+    #         sys.exit(1)
+    #     else:
+    #         switch_camera(nextCam=0)
+    #         success, frame = capture.read()
+    #         if not success:
+    #             print("Camera not detected. Check connection.")
+    #             sys.exit(1)
 
     # Label(rightFrame, text="Camera", font=("new roman", 15)).grid(row=0, column=0, sticky=W)
     Button(rightFrame, text="Verify", font=("new roman", 15), height=2, width=20,
@@ -1343,6 +1342,8 @@ def acceptMember(logged_admin_id):
         pendingMemberBox.delete(clicked_item_index)
         db_controller.add_member_to_added_members(logged_admin_id, acc_member_id)
         db_controller.remove_member_from_pending_members(logged_admin_id, acc_member_id)
+        for i in db_controller.retrieve_admin(logged_admin_id)["activities"]:
+            db_controller.add_activity_to_member(logged_admin_id, i, acc_member_id, " ")
         db_controller.add_club_to_member(logged_admin_id, acc_member_id)
         refreshList(logged_admin_id)
         refreshMember(logged_admin_id)

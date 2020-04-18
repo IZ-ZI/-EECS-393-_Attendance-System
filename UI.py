@@ -1036,10 +1036,14 @@ def takeAttendancePicture(logged_admin_id, view_activity_id):
     face_encoding = face_recognition.face_encodings(fr_photo)[0]
 
     matches = face_recognition.compare_faces(members_faces, face_encoding)
-    print(matches)
-    matched_face_index = matches.index(True)
-    matched_member_id = members_list[matched_face_index]
-    db_controller.set_member_activity_status(logged_admin_id, view_activity_id, matched_member_id, "present")
+    if True in matches:
+        matched_face_index = matches.index(True)
+        matched_member_id = members_list[matched_face_index]
+        db_controller.set_member_activity_status(logged_admin_id, view_activity_id, matched_member_id, "present")
+        # give success message
+    else:
+        return
+        # give fail message
 
     # while True:
     #     _, frame = capture.read()

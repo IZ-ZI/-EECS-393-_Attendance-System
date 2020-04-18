@@ -16,5 +16,5 @@ class FaceIdentification:
             encoding = face_recognition.face_encodings(photo)[0].tostring()
         except: # no face found
             print("encoding fail")
-            return None
+            return " "
         return encoding

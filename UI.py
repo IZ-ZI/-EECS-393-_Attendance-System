@@ -617,7 +617,6 @@ def takeFaceIDPhoto(logged_member_id):
     _, face_photo = capture.read()
     photo = cv2.imwrite('face.png', face_photo)
     # conditional statement needed
-    encoding = ""
     print("take face id photo")
     #photo = ec.capture(1, False, "your photo.jpg")
 
@@ -1370,7 +1369,7 @@ def newActivity(logged_admin_id):
     startHour = hourClickedStart.get()
     startMinute = minuteClickedStart.get()
     endHour = hourClickedEnd.get()
-    endMinute = minuteClickedEnd.get(
+    endMinute = minuteClickedEnd.get()
 
 
 def addAttendingMember():

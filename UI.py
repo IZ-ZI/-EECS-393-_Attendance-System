@@ -1145,8 +1145,8 @@ def takeAttendancePicture(logged_admin_id, view_activity_id):
     if True in matches:
         matched_face_index = matches.index(True)
         matched_member_id = members_list[matched_face_index]
-        act_start = datetime.strptime(db_controller.activity_start_time(view_activity_id), '%m/%d/%y %H:%M:%S')
-        act_end = datetime.strptime(db_controller.activity_end_time(view_activity_id), '%m/%d/%y %H:%M:%S')
+        act_start = datetime.strptime(db_controller.activity_start_time(view_activity_id), '%Y-%m-%d %H:%M:%S')
+        act_end = datetime.strptime(db_controller.activity_end_time(view_activity_id), '%Y-%m-%d %H:%M:%S')
         current_time = datetime.datetime.now()
         if current_time <= act_start:
             db_controller.set_member_activity_status(logged_admin_id, view_activity_id, matched_member_id, "On Time")
@@ -1443,7 +1443,7 @@ def newActivity(logged_admin_id):
     startHour = hourClickedStart.get()
     startMinute = minuteClickedStart.get()
     endHour = hourClickedEnd.get()
-    endMinute = minuteClickedEnd.get(
+    endMinute = minuteClickedEnd.get()
 
 
 def addAttendingMember():

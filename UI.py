@@ -679,9 +679,15 @@ def viewClub(logged_member_id):
         Label(clubInfoFrame, text=len(view_club_curse["activities"]), font=("new roman", 13)).grid(row=2, column=1,
                                                                                                    sticky=W)
         Label(clubInfoFrame, text="My Absenses", font=("new roman", 13)).grid(row=3, column=0, sticky=W)
-        Label(clubInfoFrame, text="3", font=("new roman", 13)).grid(row=3, column=1, sticky=W)
+        status_list = []
+        for i in view_club_curse["activities"]:
+            status_list.append(db_controller.member_status_in_activity(logged_member_id, view_club_id, i))
+        myAbsenses = status_list.count("Absent")
+
+        Label(clubInfoFrame, text=myAbsenses, font=("new roman", 13)).grid(row=3, column=1, sticky=W)
         Label(clubInfoFrame, text="Attendance Rate", font=("new roman", 13)).grid(row=4, column=0, sticky=W)
-        Label(clubInfoFrame, text="80", font=("new roman", 13)).grid(row=4, column=1, sticky=W)
+
+        Label(clubInfoFrame, text=(round((len(status_list) - myAbsenses)/len(status_list), 2)), font=("new roman", 13)).grid(row=4, column=1, sticky=W)
         clubInfoFrame.pack()
 
         '''global clubActivityBox
@@ -1213,7 +1219,7 @@ def takeAttendancePicture(logged_admin_id, view_activity_id):
         elif current_time > act_start and current_time < act_end:
             db_controller.set_member_activity_status(logged_admin_id, view_activity_id, matched_member_id, "Late")
         else:
-            db_controller.set_member_activity_status(logged_admin_id, view_activity_id, matched_member_id, "Absence")
+            db_controller.set_member_activity_status(logged_admin_id, view_activity_id, matched_member_id, "Absent")
         # give success message
     else:
         verify_attendance_feedback['fg'] = 'red'

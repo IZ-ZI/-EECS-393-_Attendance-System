@@ -1148,7 +1148,7 @@ def takeAttendancePicture(logged_admin_id, view_activity_id):
         matched_member_id = members_list[matched_face_index]
         act_start = datetime.strptime(db_controller.activity_start_time(view_activity_id), '%Y-%m-%d %H:%M:%S')
         act_end = datetime.strptime(db_controller.activity_end_time(view_activity_id), '%Y-%m-%d %H:%M:%S')
-        current_time = datetime.datetime.now()
+        current_time = datetime.now()
         if current_time <= act_start:
             db_controller.set_member_activity_status(logged_admin_id, view_activity_id, matched_member_id, "On Time")
         elif current_time > act_start and current_time < act_end:

@@ -902,14 +902,6 @@ def refreshActivity(logged_admin_id):
     show_admin_activities(logged_admin_id)
 
 
-def deleteMember(logged_admin_id):
-    if currentMemberBox.curselection() != ():
-        clicked_item_index = currentMemberBox.curselection()[0]
-        del_member_id = db_controller.added_members(logged_admin_id)[clicked_item_index]
-        db_controller.remove_member_from_added_members(logged_admin_id, del_member_id)
-        currentMemberBox.delete(clicked_item_index)
-
-
 def deleteActivity(logged_admin_id):
     if activityBox.curselection() != ():
         clicked_item_index = activityBox.curselection()[0]
@@ -1342,7 +1334,7 @@ def acceptMember(logged_admin_id):
         pendingMemberBox.delete(clicked_item_index)
         db_controller.add_member_to_added_members(logged_admin_id, acc_member_id)
         db_controller.remove_member_from_pending_members(logged_admin_id, acc_member_id)
-        for i in db_controller.retrieve_admin(logged_admin_id)["activities"]:
+        for i in db_controller.admin_activities(logged_admin_id):
             db_controller.add_activity_to_member(logged_admin_id, i, acc_member_id, " ")
         db_controller.add_club_to_member(logged_admin_id, acc_member_id)
         refreshList(logged_admin_id)
@@ -1355,6 +1347,9 @@ def deleteMember(logged_admin_id):
         clicked_item_index = currentMemberBox.curselection()[0]
         del_member_id = db_controller.added_members(logged_admin_id)[clicked_item_index]
         db_controller.remove_member_from_added_members(logged_admin_id, del_member_id)
+        db_controller.remove_club_from_member(logged_admin_id, del_member_id)
+        for i in db_controller.admin_activities(logged_admin_id):
+            db_controller.remove_activity_from_member(logged_admin_id, i, del_member_id)
         currentMemberBox.delete(clicked_item_index)
 
 

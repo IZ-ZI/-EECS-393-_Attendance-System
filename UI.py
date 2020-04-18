@@ -1237,7 +1237,7 @@ def takeAttendance(logged_admin_id, view_activity_id):
     #     camIndex = int(f.readline())
     # except:
     #     camIndex = 0
-    camIndex = 0
+    camIndex = 1
     capture = cv2.VideoCapture(camIndex + cv2.CAP_DSHOW)
     success, frame = capture.read()
     # if not success:

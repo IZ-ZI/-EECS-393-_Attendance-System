@@ -468,6 +468,7 @@ def clubList(logged_member_id):
 def applyClub(logged_member_id):
     global new_club_id
     global applyClubScreen
+    global apply_club_feedback
     new_club_id = StringVar()
     applyClubScreen = Toplevel(screen)
     applyClubScreen.geometry("300x200+30+30")
@@ -478,10 +479,15 @@ def applyClub(logged_member_id):
     clubID_entry.pack()
     Label(applyClubScreen, text="").pack()
     Button(applyClubScreen, text="Apply", width=20, height=2, command=lambda: submitClubID(logged_member_id)).pack()
-
+    apply_club_feedback = Label(applyClubScreen, text=" ", fg="green", font=("new roman", 15))
+    apply_club_feedback.pack()
 
 def submitClubID(logged_member_id):
-    db_controller.add_member_to_pending_members(new_club_id.get(), logged_member_id)
+    if db_controller.admin_is_present(new_club_id.get()):
+        db_controller.add_member_to_pending_members(new_club_id.get(), logged_member_id)
+        apply_club_feedback['text'] = 'Apply Success'
+    else:
+        apply_club_feedback['text'] = 'Club not exists'
 
 
 def member_login():
@@ -920,6 +926,7 @@ def updateTime(logged_admin_id, clicked_item_index, activity_id, activity_name):
     global new_start_time
     global new_end_time
     global new_location
+    global update_activity_feedback
 
     new_date = StringVar()
     new_start_time = StringVar()
@@ -950,6 +957,9 @@ def updateTime(logged_admin_id, clicked_item_index, activity_id, activity_name):
     Button(updateTimeScreen, text="Update Information", font=("new roman", 15), height=2, width=20,
            command=lambda: updateTimeInfo(logged_admin_id, clicked_item_index, activity_id, activity_name)).pack()
 
+    update_activity_feedback = Label(updateTimeScreen, text="", fg="green", font=("new roman", 15))
+    update_activity_feedback.pack()
+
 
 def updateTimeInfo(logged_admin_id, clicked_item_index, activity_id, activity_name):
     start_time_string = new_date.get() + ' ' + new_start_time.get()
@@ -959,6 +969,7 @@ def updateTimeInfo(logged_admin_id, clicked_item_index, activity_id, activity_na
     db_controller.update_activity(activity)
     activityBox.delete(clicked_item_index)
     refreshActivity(logged_admin_id)
+    update_activity_feedback['text'] ='Update Success'
 
 
 def refreshActivityInfo(logged_admin_id):
@@ -1034,7 +1045,7 @@ def updateStatus():
 
 
 def takeAttendancePicture(logged_admin_id, view_activity_id):
-    global frameimg, capture
+    global frameimg, capture, verify_attendance_feedback
 
     members_list = db_controller.added_members(logged_admin_id)
     members_faces = []
@@ -1059,10 +1070,15 @@ def takeAttendancePicture(logged_admin_id, view_activity_id):
     face_encoding = face_recognition.face_encodings(fr_photo)[0]
 
     matches = face_recognition.compare_faces(members_faces, face_encoding)
-    print(matches)
-    matched_face_index = matches.index(True)
-    matched_member_id = members_list[matched_face_index]
-    db_controller.set_member_activity_status(logged_admin_id, view_activity_id, matched_member_id, "present")
+    if True in matches:
+        matched_face_index = matches.index(True)
+        matched_member_id = members_list[matched_face_index]
+        db_controller.set_member_activity_status(logged_admin_id, view_activity_id, matched_member_id, "present")
+        verify_attendance_feedback['text'] = 'Take Attendance Success'
+    else:
+        verify_attendance_feedback['text'] = 'Take Attendance Failed'
+
+
 
     # while True:
     #     _, frame = capture.read()
@@ -1113,7 +1129,7 @@ def takeAttendancePicture(logged_admin_id, view_activity_id):
 
 
 def takeAttendance(logged_admin_id, view_activity_id):
-    global capture, file, screenAttendance
+    global capture, file, screenAttendance, verify_attendance_feedback
 
     print("taking attendance")
     screenAttendance = Toplevel(screenAdmin)
@@ -1157,6 +1173,8 @@ def takeAttendance(logged_admin_id, view_activity_id):
     # Label(rightFrame, text="Camera", font=("new roman", 15)).grid(row=0, column=0, sticky=W)
     Button(rightFrame, text="Verify", font=("new roman", 15), height=2, width=20,
            command=lambda: takeAttendancePicture(logged_admin_id, view_activity_id)).pack()
+    verify_attendance_feedback = Label(rightFrame, text="", fg="green", font=("new roman", 15))
+    verify_attendance_feedback.pack()
     cameraframe = Label(rightFrame, padx=10, pady=10, width=int(screen_height * 2 / 3),
                             height=int(screen_height * 2 / 3))
     cameraframe.pack()
@@ -1209,6 +1227,7 @@ def createActivity(logged_admin_id):
     global activity_end_time
     global activity_id
     global activity_location
+    global create_activity_feedback
     activity_name = StringVar()
     activity_date = StringVar()
     activity_start_time = StringVar()
@@ -1263,13 +1282,17 @@ def createActivity(logged_admin_id):
     Button(screenCreateActivity, text="Create Activity", height=3, width=20,
            command=lambda: activity_create_check(logged_admin_id)).pack()
 
+    create_activity_feedback = Label(screenCreateActivity, text=" ", fg="green", font=("new roman", 15))
+    create_activity_feedback.pack()
+
 
 def activity_create_check(logged_admin_id):
     global db_controller
     if db_controller.activity_is_present(activity_id.get()):
-        print("id has already been registered")
+        create_activity_feedback['text'] = 'ID has already been registered'
     else:
         newActivity(logged_admin_id)
+        create_activity_feedback['text'] = 'Create Success'
 
 
 def newActivity(logged_admin_id):

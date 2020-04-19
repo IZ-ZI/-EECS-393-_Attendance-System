@@ -508,12 +508,18 @@ def applyClub(logged_member_id):
     apply_club_feedback.pack()
 
 def submitClubID(logged_member_id):
-    if db_controller.admin_is_present(new_club_id.get()):
-        db_controller.add_member_to_pending_members(new_club_id.get(), logged_member_id)
-        apply_club_feedback['text'] = 'Apply Success'
-    else:
+    admin_email = db_controller.retrieve_admin_email(new_club_id.get())
+    member_name = db_controller.retrieve_member_name(logged_member_id)
+    if not db_controller.admin_is_present(new_club_id.get()):
         apply_club_feedback['fg'] = 'red'
         apply_club_feedback['text'] = 'Club not exists'
+    elif logged_member_id in db_controller.added_members(new_club_id.get()):
+        apply_club_feedback['fg'] = 'red'
+        apply_club_feedback['text'] = 'You are already in the club'
+    else:
+        db_controller.request_permission(new_club_id.get(), logged_member_id, admin_email, member_name)
+        apply_club_feedback['text'] = 'Apply Success'
+
 
 
 def member_login():
@@ -1611,8 +1617,12 @@ def viewMember(logged_admin_id):
         Label(infoFrame, text=member_curse["_id"], font=("new roman", 13)).grid(row=1, column=1, sticky=W)
         Label(infoFrame, text="Email: ", font=("new roman", 13)).grid(row=2, column=0, sticky=W)
         Label(infoFrame, text=member_curse["email_address"], font=("new roman", 13)).grid(row=2, column=1, sticky=W)
+        status_list = []
+        for i in db_controller.admin_activities(logged_admin_id):
+            status_list.append(db_controller.member_status_in_activity(view_member_id , logged_admin_id, i))
+        myAbsenses = status_list.count("Absent")
         Label(infoFrame, text="Attendance Rate:    ", font=("new roman", 13)).grid(row=3, column=0, sticky=W)
-        Label(infoFrame, text="50", font=("new roman", 13)).grid(row=3, column=1, sticky=W)
+        Label(infoFrame, text=(round((len(status_list) - myAbsenses)/len(status_list), 2)), font=("new roman", 13)).grid(row=3, column=1, sticky=W)
         infoFrame.pack()
 
         global joinedActivityBox

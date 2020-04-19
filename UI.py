@@ -1053,7 +1053,7 @@ def updateTimeInfo(logged_admin_id, clicked_item_index, activity_id, activity_na
     end_time_string = year + "-" + month + "-" + day + " " + endHour + ":" + endMinute + ":" + "00"
 
     if(new_location.get()==''):
-        apply_club_feedback['fg'] = 'red'
+        update_activity_feedback['fg'] = 'red'
         update_activity_feedback['text'] = 'Enter new location please'
     else:
         activity = Activity(activity_id, activity_name, start_time_string, end_time_string,
@@ -1172,10 +1172,10 @@ def updateStatus(logged_admin_id, view_activity_id):
     if(db_controller.member_is_present(member_id)):
         status = status_clicked.get()
         db_controller.set_member_activity_status(logged_admin_id, view_activity_id, modified_member.get(), status)
-        apply_club_feedback['fg'] = 'red'
+        update_status_feedback['fg'] = 'red'
         update_status_feedback['text'] = 'Member not exists'
     elif (member_id== ''):
-        apply_club_feedback['fg'] = 'red'
+        update_status_feedback['fg'] = 'red'
         update_status_feedback['text'] = 'Enter Member ID please'
     else:
         update_status_feedback['text'] = 'Update Successfully'

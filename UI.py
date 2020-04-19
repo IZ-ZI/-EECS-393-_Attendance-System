@@ -733,6 +733,7 @@ def viewActivityStatus(logged_member_id):
         Label(activityInfoFrame, text="End Time: ", font=("new roman", 13)).grid(row=3, column=0, sticky=W)
         Label(activityInfoFrame, text=view_activity_curse["end_time"], font=("new roman", 13)).grid(row=3, column=1,
                                                                                                     sticky=W)
+        
         Label(activityInfoFrame, text="Present?", font=("new roman", 13)).grid(row=4, column=0, sticky=W)
         Label(activityInfoFrame,
               text=db_controller.member_status_in_activity(logged_member_id, view_activity_curse["admin"],

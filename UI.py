@@ -1144,7 +1144,10 @@ def takeAttendancePicture(logged_admin_id, view_activity_id):
     #photo = ec.capture(1, False, "your photo.jpg")
 
     fr_photo = face_recognition.load_image_file("pending.png")
-    face_encoding = face_recognition.face_encodings(fr_photo)[0]
+    try:
+        face_encoding = face_recognition.face_encodings(fr_photo)[0]
+    except:
+        verify_attendance_feedback['text'] = 'Take Attendance Failed'
 
     matches = face_recognition.compare_faces(members_faces, face_encoding)
     if True in matches:

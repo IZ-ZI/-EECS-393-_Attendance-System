@@ -76,7 +76,7 @@ club_email_entry = None
 club_password_entry = None
 club_confirm_password_entry = None
 
-
+modified_member = None
 currentMemberBox = None
 currentScroll = None
 currentFrame = None
@@ -224,13 +224,16 @@ def raise_frame(frame):
 def club_register_check():
     global db_controller
     if (club_password.get() != club_confirm_password.get()):
+        club_register_feedback['fg'] = 'red'
         club_register_feedback['text'] = 'Password difference'
         # club_register_feedback.set("Password Difference")
     elif (
             club_id.get() == '' or club_name.get() == '' or club_email.get() == '' or club_password.get() == '' or club_confirm_password.get() == ''):
+        club_register_feedback['fg'] = 'red'
         club_register_feedback['text'] = 'Please fill all the spaces'
     elif (
             db_controller.admin_is_present(club_id.get())):
+        club_register_feedback['fg'] = 'red'
         club_register_feedback['text'] = 'This id has already been registered'
     else:
         club_info()
@@ -239,15 +242,19 @@ def club_register_check():
 def member_register_check():
     global db_controller
     if (member_password.get() != member_confirm_password.get()):
+        member_register_feedback['fg'] = 'red'
         member_register_feedback['text'] = 'Password difference'
     elif (
             member_id.get() == '' or member_name.get() == '' or member_email.get() == '' or member_password.get() == '' or member_confirm_password.get() == '' or member_apply_club_id.get() == ''):
+        member_register_feedback['fg'] = 'red'
         member_register_feedback['text'] = 'Please fill all the spaces'
     elif (
             db_controller.member_is_present(member_id.get())):
+        member_register_feedback['fg'] = 'red'
         member_register_feedback['text'] = 'User id has already been registered'
     elif (
             not db_controller.admin_is_present(member_apply_club_id.get())):
+        member_register_feedback['fg'] = 'red'
         member_register_feedback['text'] = 'Club id does not exist'
     else:
         member_info()
@@ -504,6 +511,7 @@ def submitClubID(logged_member_id):
         db_controller.add_member_to_pending_members(new_club_id.get(), logged_member_id)
         apply_club_feedback['text'] = 'Apply Success'
     else:
+        apply_club_feedback['fg'] = 'red'
         apply_club_feedback['text'] = 'Club not exists'
 
 
@@ -674,9 +682,15 @@ def viewClub(logged_member_id):
         Label(clubInfoFrame, text=len(view_club_curse["activities"]), font=("new roman", 13)).grid(row=2, column=1,
                                                                                                    sticky=W)
         Label(clubInfoFrame, text="My Absenses", font=("new roman", 13)).grid(row=3, column=0, sticky=W)
-        Label(clubInfoFrame, text="3", font=("new roman", 13)).grid(row=3, column=1, sticky=W)
+        status_list = []
+        for i in view_club_curse["activities"]:
+            status_list.append(db_controller.member_status_in_activity(logged_member_id, view_club_id, i))
+        myAbsenses = status_list.count("Absent")
+
+        Label(clubInfoFrame, text=myAbsenses, font=("new roman", 13)).grid(row=3, column=1, sticky=W)
         Label(clubInfoFrame, text="Attendance Rate", font=("new roman", 13)).grid(row=4, column=0, sticky=W)
-        Label(clubInfoFrame, text="80", font=("new roman", 13)).grid(row=4, column=1, sticky=W)
+
+        Label(clubInfoFrame, text=(round((len(status_list) - myAbsenses)/len(status_list), 2)), font=("new roman", 13)).grid(row=4, column=1, sticky=W)
         clubInfoFrame.pack()
 
         '''global clubActivityBox
@@ -1040,16 +1054,53 @@ def updateTimeInfo(logged_admin_id, clicked_item_index, activity_id, activity_na
 
     start_time_string = year + "-" + month + "-" + day + " " + startHour + ":" + startMinute + ":" + "00"
     end_time_string = year + "-" + month + "-" + day + " " + endHour + ":" + endMinute + ":" + "00"
-    activity = Activity(activity_id, activity_name, start_time_string, end_time_string,
-                        new_location.get())
-    db_controller.update_activity(activity)
-    activityBox.delete(clicked_item_index)
-    refreshActivity(logged_admin_id)
-    update_activity_feedback['text'] ='Update Success'
+
+    if(new_location.get()==''):
+        update_activity_feedback['fg'] = 'red'
+        update_activity_feedback['text'] = 'Enter new location please'
+    else:
+        activity = Activity(activity_id, activity_name, start_time_string, end_time_string,
+                            new_location.get())
+        db_controller.update_activity(activity)
+        activityBox.delete(clicked_item_index)
+        refreshActivity(logged_admin_id)
+        refreshActivityInfo(logged_admin_id, activity_id)
+        update_activity_feedback['text'] = 'Update Success'
 
 
-def refreshActivityInfo(logged_admin_id):
-    viewActivity(logged_admin_id)
+def refreshActivityInfo(logged_admin_id, view_activity_id):
+    view_activity_curse = db_controller.retrieve_activity(view_activity_id)
+    screen_width = screen.winfo_screenwidth() / 2
+    screen_height = screen.winfo_screenheight() / 2
+    bottomFrame = LabelFrame(screenAdmin, padx=10, pady=5)
+    bottomFrame.place(x=5, y=screen_height / 3 + 2, width=screen_width / 2 - 5,
+                      height=int(screen_height * 2 / 3 - 10))
+    Label(bottomFrame, text="Activity Status", font=("new roman", 15)).pack()
+
+    timeFrame = Frame(bottomFrame, padx=1, pady=3)
+    Label(timeFrame, text="Start Time", font=("new roman", 13)).grid(row=0, column=0)
+    Label(timeFrame, text="         ").grid(row=0, column=1)
+    Label(timeFrame, text="End Time", font=("new roman", 13)).grid(row=0, column=2)
+    # pull out information about the start time and end time
+    Label(timeFrame, text=view_activity_curse["start_time"], font=("new roman", 13)).grid(row=1, column=0)
+    Label(timeFrame, text="         ").grid(row=1, column=1)
+    Label(timeFrame, text=view_activity_curse["end_time"], font=("new roman", 13)).grid(row=1, column=2)
+    timeFrame.pack()
+
+    buttonFrame = Frame(bottomFrame, padx=1, pady=2)
+    Button(buttonFrame, text="Update Information", font=("new roman", 13), width=16, height=4,
+           command=lambda: updateTime(logged_admin_id, view_activity_id, view_activity_curse["_id"],
+                                      view_activity_curse["name"])).grid(row=0,
+                                                                         column=0)
+    Button(buttonFrame, text="Refresh Information", font=("new roman", 13), width=16, height=4,
+           command=lambda: refreshActivityInfo(logged_admin_id, view_activity_id)).grid(row=0, column=1)
+    buttonFrame.pack()
+
+    Button(buttonFrame, text="Take Attendance", font=("new roman", 13), width=16, height=4,
+           command=lambda: takeAttendance(logged_admin_id, view_activity_id)).grid(row=1, column=0)
+    Button(buttonFrame, text="Modify Status", font=("new roman", 13), width=16, height=4,
+           command=lambda: memberStatusChange(logged_admin_id, view_activity_id)).grid(row=1, column=1)
+    buttonFrame.pack()
 
 
 def viewActivity(logged_admin_id):
@@ -1080,26 +1131,28 @@ def viewActivity(logged_admin_id):
                                           view_activity_curse["name"])).grid(row=0,
                                                                              column=0)
         Button(buttonFrame, text="Refresh Information", font=("new roman", 13), width=16, height=4,
-               command=lambda: refreshActivityInfo(logged_admin_id)).grid(row=0, column=1)
+               command=lambda: refreshActivityInfo(logged_admin_id, view_activity_id)).grid(row=0, column=1)
         buttonFrame.pack()
 
         Button(buttonFrame, text="Take Attendance", font=("new roman", 13), width=16, height=4,
                command=lambda: takeAttendance(logged_admin_id, view_activity_id)).grid(row=1, column=0)
-        Button(buttonFrame, text="Change Status", font=("new roman", 13), width=16, height=4,
-               command=memberStatusChange).grid(row=1, column=1)
+        Button(buttonFrame, text="Modify Status", font=("new roman", 13), width=16, height=4,
+               command=lambda: memberStatusChange(logged_admin_id, view_activity_id)).grid(row=1, column=1)
         buttonFrame.pack()
 
-def memberStatusChange():
+def memberStatusChange(logged_admin_id, view_activity_id):
     global statusUpdateScreen
+    global modified_member
+    modified_member = StringVar()
     statusUpdateScreen = Toplevel(screen)
     statusUpdateScreen.title("Member Attendance Status Update")
-    statusUpdateScreen.geometry("300x300+50+50")
+    statusUpdateScreen.geometry("300x400+50+50")
     Label(statusUpdateScreen, text = "").pack()
     Label(statusUpdateScreen, text = "Activity ID", font = ("new roman", 15)).pack()
-    Label(statusUpdateScreen, text = "123123").pack()
+    Label(statusUpdateScreen, text = view_activity_id).pack()
     Label(statusUpdateScreen, text="").pack()
     Label(statusUpdateScreen, text="Member ID", font = ("new roman", 15)).pack()
-    update_entry = Entry(statusUpdateScreen)
+    update_entry = Entry(statusUpdateScreen, textvariable=modified_member)
     update_entry.pack()
 
     Label(statusUpdateScreen, text="").pack()
@@ -1112,12 +1165,23 @@ def memberStatusChange():
     drop.pack()
 
     Label(statusUpdateScreen, text="").pack()
-    Button(statusUpdateScreen, text = "Update Attendance Status", font = ("new roman", 15), height = 2, command = updateStatus).pack()
+    Button(statusUpdateScreen, text = "Update Attendance Status", font = ("new roman", 15), height = 2, command = lambda :updateStatus(logged_admin_id, view_activity_id)).pack()
+    global update_status_feedback
+    update_status_feedback = Label(statusUpdateScreen, text=" ", fg="green", font=("new roman", 15))
+    update_status_feedback.pack()
 
-def updateStatus():
-    status = status_clicked.get()
-    print(status)
-
+def updateStatus(logged_admin_id, view_activity_id):
+    member_id = modified_member.get()
+    if(db_controller.member_is_present(member_id)):
+        status = status_clicked.get()
+        db_controller.set_member_activity_status(logged_admin_id, view_activity_id, modified_member.get(), status)
+        update_status_feedback['fg'] = 'red'
+        update_status_feedback['text'] = 'Member not exists'
+    elif (member_id== ''):
+        update_status_feedback['fg'] = 'red'
+        update_status_feedback['text'] = 'Enter Member ID please'
+    else:
+        update_status_feedback['text'] = 'Update Successfully'
 
 
 def takeAttendancePicture(logged_admin_id, view_activity_id):
@@ -1143,23 +1207,28 @@ def takeAttendancePicture(logged_admin_id, view_activity_id):
     #photo = ec.capture(1, False, "your photo.jpg")
 
     fr_photo = face_recognition.load_image_file("pending.png")
-    face_encoding = face_recognition.face_encodings(fr_photo)[0]
+    try:
+        face_encoding = face_recognition.face_encodings(fr_photo)[0]
+    except:
+        verify_attendance_feedback['text'] = 'Take Attendance Failed'
 
     matches = face_recognition.compare_faces(members_faces, face_encoding)
     if True in matches:
+        verify_attendance_feedback['text'] = 'Take Attendance Successfully'
         matched_face_index = matches.index(True)
         matched_member_id = members_list[matched_face_index]
-        act_start = datetime.strptime(db_controller.activity_start_time(view_activity_id), '%m/%d/%y %H:%M:%S')
-        act_end = datetime.strptime(db_controller.activity_end_time(view_activity_id), '%m/%d/%y %H:%M:%S')
-        current_time = datetime.datetime.now()
+        act_start = datetime.strptime(db_controller.activity_start_time(view_activity_id), '%Y-%m-%d %H:%M:%S')
+        act_end = datetime.strptime(db_controller.activity_end_time(view_activity_id), '%Y-%m-%d %H:%M:%S')
+        current_time = datetime.now()
         if current_time <= act_start:
             db_controller.set_member_activity_status(logged_admin_id, view_activity_id, matched_member_id, "On Time")
         elif current_time > act_start and current_time < act_end:
             db_controller.set_member_activity_status(logged_admin_id, view_activity_id, matched_member_id, "Late")
         else:
-            db_controller.set_member_activity_status(logged_admin_id, view_activity_id, matched_member_id, "Absence")
+            db_controller.set_member_activity_status(logged_admin_id, view_activity_id, matched_member_id, "Absent")
         # give success message
     else:
+        verify_attendance_feedback['fg'] = 'red'
         verify_attendance_feedback['text'] = 'Take Attendance Failed'
 
 def takeAttendance(logged_admin_id, view_activity_id):
@@ -1173,15 +1242,9 @@ def takeAttendance(logged_admin_id, view_activity_id):
     screenAttendance.geometry("%dx%d+%d+%d" % (screen_width, screen_height, 0, 0))
 
     leftFrame = Frame(screenAttendance, padx=10, pady=10)
-    leftFrame.place(x=0, y=2, width=screen_width / 2, height=int(screen_height * 2 / 3))
-    Label(leftFrame, text="Member ID", font=("new roman", 15)).grid(row=0, column=0, sticky=W)
-    memberid_entry = Entry(leftFrame, width=20)
-    memberid_entry.grid(row=1, column=0)
-    Button(leftFrame, text="OK", font=("new roman", 15), command=getMemberPhoto).grid(row=1, column=1)
-    Label(leftFrame, text="").grid(row=2, column=0)
-    Label(leftFrame, text="Photo on File", font=("new roman", 15)).grid(row=3, column=0, sticky=W)
-    photoFrame = LabelFrame(leftFrame, padx=10, pady=10, width=screen_width / 4, height=screen_width / 4)
-    photoFrame.grid(row=4, column=0)
+    leftFrame.place(x=0, y=screen_height/3, width=screen_width / 2, height=int(screen_height*2/3))
+    Button(leftFrame, text = "Manually Take Attendance", font = ("new roman", 15), command = manualAttendance, width = 30, height = 3).pack()
+
 
     rightFrame = Frame(screenAttendance, padx=10, pady=10)
     rightFrame.place(x=screen_width / 2, y=2, width=screen_width / 2, height=int(screen_height * 2 / 3))
@@ -1219,6 +1282,37 @@ def takeAttendance(logged_admin_id, view_activity_id):
     # Button(screenAttendance, text="Verify", font=("new roman", 15), height=2, width=20, command=takePhoto).place(
     #     x=screen_width / 2 + 10, y=int(screen_height * 2 / 3) + 30)
 
+def manualAttendance():
+    global manualAttendanceScreen
+    manualAttendanceScreen = Toplevel(screen)
+    manualAttendanceScreen.title("Manually Taking Attendance")
+    manualAttendanceScreen.geometry("300x300+40+40")
+    passwordFrame = Frame(manualAttendanceScreen, width = 340, height = 340)
+    passwordFrame.grid(row = 0, column = 0)
+
+    Label(passwordFrame, text = "Administrator Password", font = ("new roman", 15)).place(x = 60, y = 60)
+    admin_entry = Entry(passwordFrame)
+    admin_entry.place(x = 55, y = 100)
+    Button(passwordFrame, text = "Confirm", font = ("new roman", 15), height = 2, width = 20, command = manualAttendanceLogin).place(x = 50, y = 200)
+
+def manualAttendanceLogin():
+    attendanceFrame = Frame(manualAttendanceScreen, width = 300, height = 300)
+    attendanceFrame.grid(row = 0, column = 0)
+    Label(attendanceFrame, text = "Member ID", font = ("new roman", 15)).place(x = 87, y = 30)
+    attendanceMember_entry = Entry(attendanceFrame)
+    attendanceMember_entry.place(x = 35, y = 60)
+    Label(attendanceFrame, text = "Status", font = ("new roman", 15)).place(x = 100, y = 100)
+    global manualStatusClicked
+    manualStatusClicked = StringVar()
+    manualStatusClicked.set("On Time")
+
+    drop = OptionMenu(attendanceFrame, manualStatusClicked, "On Time", "Late")
+    drop.place(x = 87, y = 140)
+
+    Button(attendanceFrame, text = ("Update Status"), font = ("new roman", 15), width = 15, height = 2, command = manualUpdate).place(x = 55, y = 200)
+
+def manualUpdate():
+    status = manualStatusClicked.get()
 
 def takePhoto():
     ec.capture(1, False, "your photo.jpg")
@@ -1365,6 +1459,7 @@ def createActivity(logged_admin_id):
 def activity_create_check(logged_admin_id):
     global db_controller
     if db_controller.activity_is_present(activity_id.get()):
+        create_activity_feedback['fg'] = 'red'
         create_activity_feedback['text'] = 'ID has already been registered'
     else:
         newActivity(logged_admin_id)
@@ -1391,7 +1486,13 @@ def newActivity(logged_admin_id):
         db_controller.add_activity_to_member(logged_admin_id, activity_id.get(), i, " ")
     refreshActivity(logged_admin_id)
 
-
+    year = yearClickedCreate.get()
+    month = monthClickedCreate.get()
+    day = dayClickedCreate.get()
+    startHour = hourClickedStart.get()
+    startMinute = minuteClickedStart.get()
+    endHour = hourClickedEnd.get()
+    endMinute = minuteClickedEnd.get()
 
 
 def addAttendingMember():

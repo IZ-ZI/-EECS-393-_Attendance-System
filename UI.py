@@ -1,13 +1,9 @@
 from tkinter import *
-from tkinter import messagebox
 import tkinter as tk
 import cv2
 from PIL import Image, ImageTk
 
-
 import face_recognition
-import pymsgbox as pgbox
-import smtplib, ssl
 import numpy
 
 from FaceIdentification import FaceIdentification
@@ -523,8 +519,15 @@ def member_login():
     # implement whatever needed to check for login
     logged_member_curse = db_controller.retrieve_member(login_account.get())
     if not db_controller.member_login(login_account.get(), login_password.get()):
-        print('Login Failed')
-        messagebox.showerror("Login Failed", "Incorrect Username or Password")
+        print('error')
+        screenMember = Toplevel(screen)
+        screenMember.title("Error")
+        screen_width = screen.winfo_screenwidth() / 4
+        screen_height = screen.winfo_screenheight() / 4
+        xCoor = screen_width / 2 + 20
+        yCoor = screen_height / 2 + 20
+
+        screenMember.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor, yCoor))
     else:
         screen_width = screen.winfo_screenwidth() / 2
         screen_height = screen.winfo_screenheight() / 2
@@ -1051,7 +1054,7 @@ def updateTimeInfo(logged_admin_id, clicked_item_index, activity_id, activity_na
     end_time_string = year + "-" + month + "-" + day + " " + endHour + ":" + endMinute + ":" + "00"
 
     if(new_location.get()==''):
-        update_activity_feedback['fg'] = 'red'
+        apply_club_feedback['fg'] = 'red'
         update_activity_feedback['text'] = 'Enter new location please'
     else:
         activity = Activity(activity_id, activity_name, start_time_string, end_time_string,
@@ -1170,10 +1173,10 @@ def updateStatus(logged_admin_id, view_activity_id):
     if(db_controller.member_is_present(member_id)):
         status = status_clicked.get()
         db_controller.set_member_activity_status(logged_admin_id, view_activity_id, modified_member.get(), status)
-        update_status_feedback['fg'] = 'red'
+        apply_club_feedback['fg'] = 'red'
         update_status_feedback['text'] = 'Member not exists'
     elif (member_id== ''):
-        update_status_feedback['fg'] = 'red'
+        apply_club_feedback['fg'] = 'red'
         update_status_feedback['text'] = 'Enter Member ID please'
     else:
         update_status_feedback['text'] = 'Update Successfully'
@@ -1225,6 +1228,56 @@ def takeAttendancePicture(logged_admin_id, view_activity_id):
     else:
         verify_attendance_feedback['fg'] = 'red'
         verify_attendance_feedback['text'] = 'Take Attendance Failed'
+
+
+
+    # while True:
+    #     _, frame = capture.read()
+        # capture.set(cv2.CAP_PROP_FRAME_WIDTH, screen_width / 2)
+        # capture.set(cv2.CAP_PROP_FRAME_HEIGHT, int(screen_height * 2 / 3))
+        # picture = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
+        #
+        # frameimg = Image.fromarray(picture)
+        # imgtk = ImageTk.PhotoImage(image=frameimg)
+        # content_frame.imgtk = imgtk
+        # content_frame.configure(image=imgtk)
+        #content_frame.after(10, render_pip, content_frame)
+
+        # small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
+        # rgb_small_frame = small_frame[:, :, ::-1]
+        #
+        # if process_this_frame:
+        #     face_locations = face_recognition.face_locations(rgb_small_frame)
+        #     face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
+        #
+        #     render_names = []
+        #     for face_encoding in face_encodings:
+        #         matches = face_recognition.compare_faces(members_faces, face_encoding)
+        #         name = "UNKNOWN"
+        #
+        #         face_distances = face_recognition.face_distance(members_faces, face_encoding)
+        #         best_match_index = numpy.argmin(face_distances)
+        #         if matches[best_match_index]:
+        #             name = members_names[best_match_index]
+        #
+        #         render_names.append(name)
+        # process_this_frame = not process_this_frame
+        #
+        # for (top, right, bottom, left, name) in zip(face_locations, members_names):
+        #     top *= 4
+        #     right *= 4
+        #     bottom *= 4
+        #     left *= 4
+        #
+        #     cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
+        #     cv2.rectangle(frame, (left, bottom - 35), (right, bottom), (0, 0 , 255), cv2.FILLED)
+        #     font = cv2.FONT_HERSHEY_DUPLEX
+        #     cv2.putText(frame, name, (left + 6, bottom - 6), font, 1.0, (255, 255, 255), 1)
+        #
+        # cv2.imshow('Taking Attendance', frame)
+        # if cv2.waitKey(33) & 0xFF == 27:
+        #     break
+
 
 def takeAttendance(logged_admin_id, view_activity_id):
     global capture, file, screenAttendance, verify_attendance_feedback
@@ -1500,8 +1553,15 @@ def admin_login():
     # implement whatever needed to check for login
     logged_admin_curse = db_controller.retrieve_admin(login_account.get())
     if not db_controller.admin_login(login_account.get(), login_password.get()):
-        print('Login Failed')
-        messagebox.showerror("Login Failed", "Incorrect Username or Password")
+        print('error')
+        screenMember = Toplevel(screen)
+        screenMember.title("Error")
+        screen_width = screen.winfo_screenwidth() / 4
+        screen_height = screen.winfo_screenheight() / 4
+        xCoor = screen_width / 2 + 20
+        yCoor = screen_height / 2 + 20
+
+        screenMember.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor, yCoor))
     else:
         global screenAdmin
         screen_width = screen.winfo_screenwidth() / 2
@@ -1656,6 +1716,7 @@ def member():
            fg='black').place(
         x=screen_width / 30, y=screen_height * 2 / 3)
 
+
 def display_password():
     if (show_password.get()):
         login_password_entry.config(show="")
@@ -1666,113 +1727,9 @@ def display_password():
 def login():
     print("Login session started")
 
-def retrieve_member_pass(passwordRetrieve, id_entry, email_entry):
-    if db_controller.member_is_present(id_entry):
-        if db_controller.retrieve_member_email(id_entry) == email_entry:
-            port = 587  # For starttls
-            smtp_server = "smtp.gmail.com"
-            passwrd = db_controller.retrieve_member_password(id_entry)
-            message = """\
-                             From: %s
-                             \nTo: %s
-                             \nSubject: %s
-                             \n%s
-                             """ % (
-            'Password Recovery Center', db, ('[Your Account %s Requested a Password Retrieval Service] ' % id_entry),
-            ("Here's the password associated with the account (registered with %s)\n%s" % (email_entry, passwrd)))
-            with smtplib.SMTP(smtp_server, port) as server:
-                server.starttls()
-                server.ehlo()  # Can be omitted
-                server.login('attsystem393@gmail.com', 'eecs_393')
-                server.sendmail('attsystem393@gmail.com', email_entry, message)
-                server.close()
-            label = tk.Label(passwordRetrieve, text="Success", fg="green")
-            label.grid(column=0, row=4, sticky=tk.W)
-            label.after(2000, lambda: label.destroy())
-        else:
-            label = tk.Label(passwordRetrieve, text="Email Address does Not Match", fg="red")
-            label.grid(column=0, row=4, sticky=tk.W)
-            label.after(2000, lambda: label.destroy())
-    else:
-        label = tk.Label(passwordRetrieve, text="ID Does not Exist", fg="red")
-        label.grid(column=0, row=4, sticky=tk.W)
-        label.after(2000, lambda: label.destroy())
-
-def retrieve_admin_pass(passwordRetrieve, id_entry, email_entry):
-    if db_controller.admin_is_present(id_entry):
-        if db_controller.retrieve_admin_email(id_entry) == email_entry:
-            port = 587  # For starttls
-            smtp_server = "smtp.gmail.com"
-            passwrd = db_controller.retrieve_admin_password(id_entry)
-            message = """\
-                             From: %s
-                             \nTo: %s
-                             \nSubject: %s
-                             \n%s
-                             """ % (
-                'Password Recovery Center', db,
-                ('[Your Account %s Requested a Password Retrieval Service] ' % id_entry),
-                ("Here's the password associated with the account (registered with %s)\n%s" % (email_entry, passwrd)))
-            with smtplib.SMTP(smtp_server, port) as server:
-                server.starttls()
-                server.ehlo()  # Can be omitted
-                server.login('attsystem393@gmail.com', 'eecs_393')
-                server.sendmail('attsystem393@gmail.com', email_entry, message)
-                server.close()
-            label = tk.Label(passwordRetrieve, text="Success", fg="green")
-            label.grid(column=0, row=4, sticky=tk.W)
-            label.after(2000, lambda: label.destroy())
-        else:
-            label = tk.Label(passwordRetrieve, text="Email Address does Not Match", fg="red")
-            label.grid(column=0, row=4, sticky=tk.W)
-            label.after(2000, lambda: label.destroy())
-    else:
-        label = tk.Label(passwordRetrieve, text="ID Does not Exist", fg="red")
-        label.grid(column=0, row=4, sticky=tk.W)
-        label.after(2000, lambda: label.destroy())
-
-
-def sendPasswordRetrievalEmail(passwordRetrieve, is_admin):
-    passwordRetrieve.destroy()
-    passwordRetrieve = Toplevel(screenAdmin)
-    passwordRetrieve.title("Retrieve Password")
-    screen_width = screen.winfo_screenwidth() / 6
-    screen_height = screen.winfo_screenheight() / 6
-    passwordRetrieve.geometry("%dx%d+%d+%d" % (screen_width, screen_height, screen.winfo_screenwidth() / 3, screen.winfo_screenheight() / 3))
-    if not is_admin:
-        Label(passwordRetrieve, text="Member ID", font=("new roman", 15)).grid(row=0, column=0, sticky=W)
-        id_entry = Entry(passwordRetrieve, width=20)
-        id_entry.grid(row=0, column=1)
-        Label(passwordRetrieve, text="Registered Email", font=("new roman", 15)).grid(row=1, column=0, sticky=W)
-        email_entry = Entry(passwordRetrieve, width=20)
-        email_entry.grid(row=1, column=1)
-        Button(passwordRetrieve, text="Retrieve Password", font=("new roman", 15), height = 2,
-              width = 20, command=lambda: retrieve_member_pass(passwordRetrieve, id_entry.get(),
-                                                                     email_entry.get())).grid(row=3, column=0)
-    else:
-        Label(passwordRetrieve, text="Administrator ID", font=("new roman", 15)).grid(row=0, column=0, sticky=W)
-        id_entry = Entry(passwordRetrieve, width=20)
-        id_entry.grid(row=0, column=1)
-        Label(passwordRetrieve, text="Registered Email", font=("new roman", 15)).grid(row=1, column=0, sticky=W)
-        email_entry = Entry(passwordRetrieve, width=20)
-        email_entry.grid(row=1, column=1)
-        Button(passwordRetrieve, text="Retrieve Password", font=("new roman", 15), height=2,
-               width=20,
-               command=lambda: retrieve_admin_pass(passwordRetrieve, id_entry.get(),
-                                                          email_entry.get())).grid(row=3, column=0)
 
 def forget():
-    print("Sending Password...")
-    passwordRetrieve = Toplevel(screenAdmin)
-    passwordRetrieve.title("Retrieve Password")
-    screen_width = screen.winfo_screenwidth() / 6
-    screen_height = screen.winfo_screenheight() / 6
-    passwordRetrieve.geometry("%dx%d+%d+%d" % (210, 110, screen.winfo_screenwidth() / 3, screen.winfo_screenheight() / 3))
-    Button(passwordRetrieve, text="I'm an Admin", font=("new roman", 15), height=2,
-           width=20,
-           command=lambda: sendPasswordRetrievalEmail(passwordRetrieve, True)).grid(row=1,column=1)
-    Button(passwordRetrieve, text="I'm a Member", font=("new roman", 15), height=2,
-           width=20,
-           command=lambda: sendPasswordRetrievalEmail(passwordRetrieve, False)).grid(row=2,column=1)
+    print("to be developed")
+
 
 main_screen()

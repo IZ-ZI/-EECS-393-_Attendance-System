@@ -45,16 +45,6 @@ class DBController:
             curse = self.collection_member.find_one({"_id": member_id})
             return curse['name']
 
-    def retrieve_member_email(self, member_id):
-        if self.member_is_present(member_id):
-            curse = self.collection_member.find_one({"_id": member_id})
-            return curse['email_address']
-
-    def retrieve_member_password(self, member_id):
-        if self.member_is_present(member_id):
-            curse = self.collection_member.find_one({"_id": member_id})
-            return curse['password']
-
     def delete_member(self, member_id):
         if self.member_is_present(member_id):
             self.collection_member.delete_one({"_id": member_id})
@@ -126,16 +116,6 @@ class DBController:
     def admin_is_present(self, admin_id):
         admin = self.collection_admin.find_one({"_id": admin_id})
         return admin is not None
-
-    def retrieve_admin_email(self, admin_id):
-        if self.admin_is_present(admin_id):
-            curse = self.collection_admin.find_one({"_id": admin_id})
-            return curse['email_address']
-
-    def retrieve_admin_password(self, admin_id):
-        if self.admin_is_present(admin_id):
-            curse = self.collection_admin.find_one({"_id": admin_id})
-            return curse['password']
 
     def add_admin(self, admin):
         if not self.admin_is_present(admin.get_organization_id()):

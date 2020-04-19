@@ -1,5 +1,6 @@
 from tkinter import *
 import tkinter as tk
+from tkinter import messagebox
 import cv2
 from PIL import Image, ImageTk
 
@@ -520,15 +521,8 @@ def member_login():
     # implement whatever needed to check for login
     logged_member_curse = db_controller.retrieve_member(login_account.get())
     if not db_controller.member_login(login_account.get(), login_password.get()):
-        print('error')
-        screenMember = Toplevel(screen)
-        screenMember.title("Error")
-        screen_width = screen.winfo_screenwidth() / 4
-        screen_height = screen.winfo_screenheight() / 4
-        xCoor = screen_width / 2 + 20
-        yCoor = screen_height / 2 + 20
-
-        screenMember.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor, yCoor))
+        print('Login Failed')
+        messagebox.showerror("Login Failed", "Incorrect Username or Password")
     else:
         screen_width = screen.winfo_screenwidth() / 2
         screen_height = screen.winfo_screenheight() / 2
@@ -1561,15 +1555,8 @@ def admin_login():
     # implement whatever needed to check for login
     logged_admin_curse = db_controller.retrieve_admin(login_account.get())
     if not db_controller.admin_login(login_account.get(), login_password.get()):
-        print('error')
-        screenMember = Toplevel(screen)
-        screenMember.title("Error")
-        screen_width = screen.winfo_screenwidth() / 4
-        screen_height = screen.winfo_screenheight() / 4
-        xCoor = screen_width / 2 + 20
-        yCoor = screen_height / 2 + 20
-
-        screenMember.geometry("%dx%d+%d+%d" % (screen_width, screen_height, xCoor, yCoor))
+        print('Login Failed')
+        messagebox.showerror("Login Failed", "Incorrect Username or Password")
     else:
         global screenAdmin
         screen_width = screen.winfo_screenwidth() / 2

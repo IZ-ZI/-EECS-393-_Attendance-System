@@ -1174,15 +1174,15 @@ def memberStatusChange(logged_admin_id, view_activity_id):
 
 def updateStatus(logged_admin_id, view_activity_id):
     member_id = modified_member.get()
-    if(db_controller.member_is_present(member_id)):
-        status = status_clicked.get()
-        db_controller.set_member_activity_status(logged_admin_id, view_activity_id, modified_member.get(), status)
+    if not db_controller.member_is_present(member_id):
         update_status_feedback['fg'] = 'red'
         update_status_feedback['text'] = 'Member not exists'
     elif (member_id== ''):
         update_status_feedback['fg'] = 'red'
         update_status_feedback['text'] = 'Enter Member ID please'
     else:
+        status = status_clicked.get()
+        db_controller.set_member_activity_status(logged_admin_id, view_activity_id, modified_member.get(), status)
         update_status_feedback['text'] = 'Update Successfully'
 
 

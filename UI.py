@@ -54,7 +54,7 @@ screenAdmin = None
 activityBox = None
 
 new_club_id = None
-
+InputPassword = None
 activity_name = None
 activity_date = None
 activity_start_time = None
@@ -1287,6 +1287,8 @@ def takeAttendance(logged_admin_id, view_activity_id):
 def manualAttendance(logged_admin_id, view_activity_id):
     global manualAttendanceScreen
     global attendanceMember
+    global InputPassword
+    InputPassword = StringVar()
     attendanceMember = StringVar()
     manualAttendanceScreen = Toplevel(screen)
     manualAttendanceScreen.title("Manually Taking Attendance")
@@ -1295,27 +1297,24 @@ def manualAttendance(logged_admin_id, view_activity_id):
     passwordFrame.grid(row = 0, column = 0)
 
     Label(passwordFrame, text = "Administrator Password", font = ("new roman", 15)).place(x = 60, y = 60)
-    admin_entry = Entry(passwordFrame)
+    admin_entry = Entry(passwordFrame, textvariable = InputPassword)
     admin_entry.place(x = 55, y = 100)
     Button(passwordFrame, text = "Confirm", font = ("new roman", 15), height = 2, width = 20, command = lambda: manualAttendanceLogin(logged_admin_id, view_activity_id)).place(x = 50, y = 200)
 
 def manualAttendanceLogin(logged_admin_id, view_activity_id):
-    attendanceFrame = Frame(manualAttendanceScreen, width = 300, height = 300)
-    attendanceFrame.grid(row = 0, column = 0)
-    Label(attendanceFrame, text = "Member ID", font = ("new roman", 15)).place(x = 87, y = 30)
-    attendanceMember_entry = Entry(attendanceFrame ,textvariable = attendanceMember)
-    attendanceMember_entry.place(x = 35, y = 60)
-
-
-    Label(attendanceFrame, text = "Status", font = ("new roman", 15)).place(x = 100, y = 100)
-    global manualStatusClicked
-    manualStatusClicked = StringVar()
-    manualStatusClicked.set("On Time")
-
-    drop = OptionMenu(attendanceFrame, manualStatusClicked, "On Time", "Late")
-    drop.place(x = 87, y = 140)
-
-    Button(attendanceFrame, text = ("Update Status"), font = ("new roman", 15), width = 15, height = 2, command = lambda: manualUpdate(logged_admin_id, view_activity_id)).place(x = 55, y = 200)
+    if db_controller.admin_login(logged_admin_id, InputPassword.get()):
+        attendanceFrame = Frame(manualAttendanceScreen, width = 300, height = 300)
+        attendanceFrame.grid(row = 0, column = 0)
+        Label(attendanceFrame, text = "Member ID", font = ("new roman", 15)).place(x = 87, y = 30)
+        attendanceMember_entry = Entry(attendanceFrame ,textvariable = attendanceMember)
+        attendanceMember_entry.place(x = 35, y = 60)
+        Label(attendanceFrame, text = "Status", font = ("new roman", 15)).place(x = 100, y = 100)
+        global manualStatusClicked
+        manualStatusClicked = StringVar()
+        manualStatusClicked.set("On Time")
+        drop = OptionMenu(attendanceFrame, manualStatusClicked, "On Time", "Late")
+        drop.place(x = 87, y = 140)
+        Button(attendanceFrame, text = ("Update Status"), font = ("new roman", 15), width = 15, height = 2, command = lambda: manualUpdate(logged_admin_id, view_activity_id)).place(x = 55, y = 200)
 
 def manualUpdate(logged_admin_id, view_activity_id):
     manual_member_id = attendanceMember.get()

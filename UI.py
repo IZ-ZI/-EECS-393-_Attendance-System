@@ -98,6 +98,7 @@ camSelected = None
 frameimg = None
 capture = None
 file = None
+attendanceMember = None
 
 yearOption = ["2020", "2021"]
 monthOption = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]
@@ -735,6 +736,7 @@ def viewActivityStatus(logged_member_id):
         Label(activityInfoFrame, text="End Time: ", font=("new roman", 13)).grid(row=3, column=0, sticky=W)
         Label(activityInfoFrame, text=view_activity_curse["end_time"], font=("new roman", 13)).grid(row=3, column=1,
                                                                                                     sticky=W)
+        
         Label(activityInfoFrame, text="Present?", font=("new roman", 13)).grid(row=4, column=0, sticky=W)
         Label(activityInfoFrame,
               text=db_controller.member_status_in_activity(logged_member_id, view_activity_curse["admin"],
@@ -1243,7 +1245,7 @@ def takeAttendance(logged_admin_id, view_activity_id):
 
     leftFrame = Frame(screenAttendance, padx=10, pady=10)
     leftFrame.place(x=0, y=screen_height/3, width=screen_width / 2, height=int(screen_height*2/3))
-    Button(leftFrame, text = "Manually Take Attendance", font = ("new roman", 15), command = manualAttendance, width = 30, height = 3).pack()
+    Button(leftFrame, text = "Manually Take Attendance", font = ("new roman", 15), command = lambda: manualAttendance(logged_admin_id, view_activity_id), width = 30, height = 3).pack()
 
 
     rightFrame = Frame(screenAttendance, padx=10, pady=10)
@@ -1282,8 +1284,10 @@ def takeAttendance(logged_admin_id, view_activity_id):
     # Button(screenAttendance, text="Verify", font=("new roman", 15), height=2, width=20, command=takePhoto).place(
     #     x=screen_width / 2 + 10, y=int(screen_height * 2 / 3) + 30)
 
-def manualAttendance():
+def manualAttendance(logged_admin_id, view_activity_id):
     global manualAttendanceScreen
+    global attendanceMember
+    attendanceMember = StringVar()
     manualAttendanceScreen = Toplevel(screen)
     manualAttendanceScreen.title("Manually Taking Attendance")
     manualAttendanceScreen.geometry("300x300+40+40")
@@ -1293,14 +1297,16 @@ def manualAttendance():
     Label(passwordFrame, text = "Administrator Password", font = ("new roman", 15)).place(x = 60, y = 60)
     admin_entry = Entry(passwordFrame)
     admin_entry.place(x = 55, y = 100)
-    Button(passwordFrame, text = "Confirm", font = ("new roman", 15), height = 2, width = 20, command = manualAttendanceLogin).place(x = 50, y = 200)
+    Button(passwordFrame, text = "Confirm", font = ("new roman", 15), height = 2, width = 20, command = lambda: manualAttendanceLogin(logged_admin_id, view_activity_id)).place(x = 50, y = 200)
 
-def manualAttendanceLogin():
+def manualAttendanceLogin(logged_admin_id, view_activity_id):
     attendanceFrame = Frame(manualAttendanceScreen, width = 300, height = 300)
     attendanceFrame.grid(row = 0, column = 0)
     Label(attendanceFrame, text = "Member ID", font = ("new roman", 15)).place(x = 87, y = 30)
-    attendanceMember_entry = Entry(attendanceFrame)
+    attendanceMember_entry = Entry(attendanceFrame ,textvariable = attendanceMember)
     attendanceMember_entry.place(x = 35, y = 60)
+
+
     Label(attendanceFrame, text = "Status", font = ("new roman", 15)).place(x = 100, y = 100)
     global manualStatusClicked
     manualStatusClicked = StringVar()
@@ -1309,10 +1315,13 @@ def manualAttendanceLogin():
     drop = OptionMenu(attendanceFrame, manualStatusClicked, "On Time", "Late")
     drop.place(x = 87, y = 140)
 
-    Button(attendanceFrame, text = ("Update Status"), font = ("new roman", 15), width = 15, height = 2, command = manualUpdate).place(x = 55, y = 200)
+    Button(attendanceFrame, text = ("Update Status"), font = ("new roman", 15), width = 15, height = 2, command = lambda: manualUpdate(logged_admin_id, view_activity_id)).place(x = 55, y = 200)
 
-def manualUpdate():
+def manualUpdate(logged_admin_id, view_activity_id):
+    manual_member_id = attendanceMember.get()
     status = manualStatusClicked.get()
+    db_controller.set_member_activity_status(logged_admin_id, view_activity_id,manual_member_id, status)
+
 
 def takePhoto():
     ec.capture(1, False, "your photo.jpg")

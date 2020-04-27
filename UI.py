@@ -737,7 +737,7 @@ def viewActivityStatus(logged_member_id):
         Label(activityInfoFrame, text="End Time: ", font=("new roman", 13)).grid(row=3, column=0, sticky=W)
         Label(activityInfoFrame, text=view_activity_curse["end_time"], font=("new roman", 13)).grid(row=3, column=1,
                                                                                                     sticky=W)
-        
+
         Label(activityInfoFrame, text="Present?", font=("new roman", 13)).grid(row=4, column=0, sticky=W)
         Label(activityInfoFrame,
               text=db_controller.member_status_in_activity(logged_member_id, view_activity_curse["admin"],
@@ -1258,7 +1258,11 @@ def takeAttendance(logged_admin_id, view_activity_id):
     leftFrame = Frame(screenAttendance, padx=10, pady=10)
     leftFrame.place(x=0, y=screen_height/3, width=screen_width / 2, height=int(screen_height*2/3))
     Button(leftFrame, text = "Manually Take Attendance", font = ("new roman", 15), command = lambda: manualAttendance(logged_admin_id, view_activity_id), width = 30, height = 3).pack()
-
+    Label(leftFrame, text = "").pack()
+    Label(leftFrame, text="").pack()
+    Label(leftFrame, text="").pack()
+    Label(leftFrame, text="").pack()
+    Button(leftFrame, text = "Finish Taking Attendance", font = ("new roman", 15), command = finishAttendance, width = 30, height = 3).pack()
 
     rightFrame = Frame(screenAttendance, padx=10, pady=10)
     rightFrame.place(x=screen_width / 2, y=2, width=screen_width / 2, height=int(screen_height * 2 / 3))

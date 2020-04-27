@@ -588,7 +588,7 @@ def render_PIP(content_frame, camindex):
 
 def setFaceID(logged_member_id):
     global file, screenSetfaceID, frameimg, capture
-    camIndex = 1
+    camIndex = 0
     # try:
     #     f = open(file, 'r')
     #     camIndex = int(f.readline())
@@ -1234,6 +1234,17 @@ def takeAttendancePicture(logged_admin_id, view_activity_id):
         verify_attendance_feedback['fg'] = 'red'
         verify_attendance_feedback['text'] = 'Take Attendance Failed'
 
+def attendance_deadline_tracker(cameraframe, logged_admin_id, view_activity_id):
+    members_list = db_controller.added_members(logged_admin_id)
+    current_time = datetime.now()
+    act_end = datetime.strptime(db_controller.activity_end_time(view_activity_id), '%Y-%m-%d %H:%M:%S')
+    if current_time > act_end:
+        for member in members_list:
+            if db_controller.member_status_in_activity(member, logged_admin_id, view_activity_id) is " ":
+                db_controller.set_member_activity_status(logged_admin_id, view_activity_id, member, "Absent")
+
+    cameraframe.after(1000, attendance_deadline_tracker, cameraframe, logged_admin_id, view_activity_id)
+
 def takeAttendance(logged_admin_id, view_activity_id):
     global capture, file, screenAttendance, verify_attendance_feedback
 
@@ -1256,7 +1267,7 @@ def takeAttendance(logged_admin_id, view_activity_id):
     #     camIndex = int(f.readline())
     # except:
     #     camIndex = 0
-    camIndex = 1
+    camIndex = 0
     capture = cv2.VideoCapture(camIndex + cv2.CAP_DSHOW)
     success, frame = capture.read()
     # if not success:
@@ -1279,11 +1290,7 @@ def takeAttendance(logged_admin_id, view_activity_id):
                             height=int(screen_height * 2 / 3))
     cameraframe.pack()
     render_PIP(cameraframe, camIndex)
-
-    # Button(screenAttendance, text="Attend", font=("new roman", 15), height=2, width=20, command=attend).place(
-    #     x=10, y=int(screen_height * 2 / 3) + 30)
-    # Button(screenAttendance, text="Verify", font=("new roman", 15), height=2, width=20, command=takePhoto).place(
-    #     x=screen_width / 2 + 10, y=int(screen_height * 2 / 3) + 30)
+    attendance_deadline_tracker(cameraframe, logged_admin_id, view_activity_id)
 
 def manualAttendance(logged_admin_id, view_activity_id):
     global manualAttendanceScreen

@@ -6,14 +6,6 @@ from Member import Member
 import sys
 sys.path.insert(0, 'D:\EECS393Project\-EECS-393-_Attendance-System')
 
-def constructorMock(name):
-    """Create fake constructor that returns Mock object when invoked"""
-    instance = Mock()
-    instance._name_of_parent_class = name
-    constructor = Mock(return_value=instance)
-    return constructor
-
-
 class MemberTestCase(unittest.TestCase):
     mber = None
 
@@ -51,11 +43,3 @@ class MemberTestCase(unittest.TestCase):
         score = mber.averageScore()
         self.assertEqual(score, 0)
 
-    def test_attendanceRecord(self):
-        global mber
-        attendance_data = mber.attendanceRecord()
-        self.assertIsInstance(attendance_data, list)
-
-
-if __name__ == '__main__':
-    unittest.main()

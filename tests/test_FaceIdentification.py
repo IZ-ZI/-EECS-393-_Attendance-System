@@ -20,5 +20,5 @@ class TestFaceIdentification(TestCase):
 
     def test_encoding_from_photo(self):
         encoding = fi.encoding_from_photo(self.photo4)
-        self.assertTrue(encoding == None)
+        self.assertTrue(encoding == ' ')
         self.assertTrue(self.encoding1 == fi.encoding_from_photo(self.photo1))

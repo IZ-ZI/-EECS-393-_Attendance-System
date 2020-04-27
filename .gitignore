@@ -10,6 +10,7 @@ __pycache__/
 .Python
 *.pyc
 build/
+exe/
 develop-eggs/
 dist/
 downloads/

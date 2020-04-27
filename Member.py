@@ -17,7 +17,6 @@ class Member:
         self.password = password
         self.student_ID = student_ID
         self.score = 0
-        self.attendance_record = []
         self.admin_list = []
         self.face_id = ''
 

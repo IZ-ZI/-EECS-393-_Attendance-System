@@ -1258,11 +1258,6 @@ def takeAttendance(logged_admin_id, view_activity_id):
     leftFrame = Frame(screenAttendance, padx=10, pady=10)
     leftFrame.place(x=0, y=screen_height/3, width=screen_width / 2, height=int(screen_height*2/3))
     Button(leftFrame, text = "Manually Take Attendance", font = ("new roman", 15), command = lambda: manualAttendance(logged_admin_id, view_activity_id), width = 30, height = 3).pack()
-    Label(leftFrame, text = "").pack()
-    Label(leftFrame, text="").pack()
-    Label(leftFrame, text="").pack()
-    Label(leftFrame, text="").pack()
-    Button(leftFrame, text = "Finish Taking Attendance", font = ("new roman", 15), command = finishAttendance, width = 30, height = 3).pack()
 
     rightFrame = Frame(screenAttendance, padx=10, pady=10)
     rightFrame.place(x=screen_width / 2, y=2, width=screen_width / 2, height=int(screen_height * 2 / 3))

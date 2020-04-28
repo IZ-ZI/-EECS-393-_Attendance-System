@@ -2,11 +2,6 @@
 This class represents a member object in the system. Its job is to store the personal information
 associated with a specific member of certain organization(s).
 """
-from Activity import Activity
-from Administrator import Administrator
-# from FaceIdentification import FaceIdentification
-import sendEmail as se
-
 
 class Member:
 

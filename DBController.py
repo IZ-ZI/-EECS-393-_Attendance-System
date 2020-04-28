@@ -1,7 +1,5 @@
-from pymongo import MongoClient
-import pymongo
 import sendEmail as se
-
+from passlib.hash import sha256_crypt
 
 class DBController:
 
@@ -67,7 +65,7 @@ class DBController:
             return False
 
         member = self.retrieve_member(member_id)
-        if member["password"] == password:
+        if sha256_crypt.verify(password, member["password"]):
             return True
         else:
             return False
@@ -176,7 +174,7 @@ class DBController:
             return False
 
         admin = self.retrieve_admin(admin_id)
-        if admin["password"] == password:
+        if sha256_crypt.verify(password, admin["password"]):
             return True
         else:
             return False

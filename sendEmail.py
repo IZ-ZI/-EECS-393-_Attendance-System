@@ -3,7 +3,6 @@ import pymsgbox as pgbox
 import tkinter as tk
 import re
 
-
 def construct_email(e1, e2, smtp_server, sender, receiver, password, port, name, id, type, master):
     if type == True:
         message = """\

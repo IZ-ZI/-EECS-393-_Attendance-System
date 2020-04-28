@@ -5,6 +5,7 @@ import mongomock
 from DBController import DBController
 from Member import Member
 from Administrator import Administrator
+from passlib.hash import sha256_crypt
 from Activity import Activity
 
 
@@ -17,12 +18,12 @@ class test_DBController(unittest.TestCase):
 
     def setUp(self):
         self.database = mongomock.MongoClient().db
-        post1 = {"_id": "393", "name": "software", "email_address": "eecs393@gmail.com", "password": "pass"}
+        post1 = {"_id": "393", "name": "software", "email_address": "eecs393@gmail.com", "password": sha256_crypt.hash("pass")}
 
         self.collection_admin = self.database.create_collection("Administrator")
         self.collection_admin.insert_one(post1)
 
-        post2 = {"_id": "123", "name": "Terry", "email_address": "terry@gmail.com", "password": "pass"}
+        post2 = {"_id": "123", "name": "Terry", "email_address": "terry@gmail.com", "password": sha256_crypt.hash("pass")}
         self.collection_member = self.database.create_collection("Member")
         self.collection_member.insert_one(post2)
 
@@ -38,19 +39,19 @@ class test_DBController(unittest.TestCase):
         self.assertFalse(self.db.member_is_present("000"))
 
     def test_add_member(self):
-        member1 = Member("Marcus", "847", "xxl844@gmail.com", "password")
+        member1 = Member("Marcus", "847", "xxl844@gmail.com", sha256_crypt.hash("password"))
         # member1 is not in the collection
         self.assertTrue(self.db.add_member(member1))
         # member1 already exists
         self.assertFalse(self.db.add_member(member1))
         # member2 already exists when construct
-        member2 = Member("Terry", "123", "terry@gmail.com", "pass")
+        member2 = Member("Terry", "123", "terry@gmail.com", sha256_crypt.hash("pass"))
         self.assertFalse(self.db.add_member(member2))
 
     def test_update_member(self):
-        member1 = Member("Marcus", "847", "xxl844@gmail.com", "password")
+        member1 = Member("Marcus", "847", "xxl844@gmail.com", sha256_crypt.hash("password"))
         self.assertFalse(self.db.update_member(member1))
-        member2 = Member("Terry", "123", "terry@gmail.com", "change_password")
+        member2 = Member("Terry", "123", "terry@gmail.com", sha256_crypt.hash("change_password"))
         self.assertTrue(self.db.update_member(member2))
 
     def test_retrieve_member(self):
@@ -58,7 +59,7 @@ class test_DBController(unittest.TestCase):
         self.assertIsNone(self.db.retrieve_member("000"))
 
     def test_retrieve_member_name(self):
-        member1 = Member("Marcus", "847", "xxl844@gmail.com", "password")
+        member1 = Member("Marcus", "847", "xxl844@gmail.com", sha256_crypt.hash("password"))
         self.db.add_member(member1)
         self.assertEqual(self.db.retrieve_member_name("123"), "Terry")
         self.assertEqual(self.db.retrieve_member_name("847"), "Marcus")
@@ -73,29 +74,29 @@ class test_DBController(unittest.TestCase):
         self.assertFalse(self.db.member_login("123", "wrong_password"))
 
     def test_clubs_member_added(self):
-        member1 = Member("Marcus", "847", "xxl844@gmail.com", "password")
+        member1 = Member("Marcus", "847", "xxl844@gmail.com", sha256_crypt.hash("password"))
         self.db.add_member(member1)
         # self.assertIsNotNone(self.db.clubs_member_added("123"))
         self.assertIsNotNone(self.db.clubs_member_added("847"))
         self.assertIsNone(self.db.clubs_member_added("000"))
 
     def test_add_club_to_member(self):
-        member1 = Member("Marcus", "847", "xxl844@gmail.com", "password")
+        member1 = Member("Marcus", "847", "xxl844@gmail.com", sha256_crypt.hash("password"))
         self.db.add_member(member1)
         self.assertTrue(self.db.add_club_to_member("393", "847"))
         self.assertFalse(self.db.add_club_to_member("393", "847"))
         self.assertFalse(self.db.add_club_to_member("000", "847"))
 
     def test_remove_club_from_member(self):
-        member1 = Member("Marcus", "847", "xxl844@gmail.com", "password")
+        member1 = Member("Marcus", "847", "xxl844@gmail.com", sha256_crypt.hash("password"))
         self.db.add_member(member1)
         self.db.add_club_to_member("393", "847")
         self.assertTrue(self.db.remove_club_from_member("393", "847"))
         self.assertFalse(self.db.remove_club_from_member("000", "847"))
 
     def test_request_permission(self):
-        admin1 = Administrator("terry", "110", "terry@gmail.com", "pass")
-        member1 = Member("Marcus", "847", "xxl844@gmail.com", "password")
+        admin1 = Administrator("terry", "110", "terry@gmail.com", sha256_crypt.hash("pass"))
+        member1 = Member("Marcus", "847", "xxl844@gmail.com", sha256_crypt.hash("password"))
         self.db.add_admin(admin1)
         self.db.add_member(member1)
         self.assertTrue(self.db.request_permission("110", "847", "terry@gmail.com", "Marcus"))
@@ -107,26 +108,26 @@ class test_DBController(unittest.TestCase):
         self.assertFalse(self.db.admin_is_present("000"))
 
     def test_update_member_face_id(self):
-        member1 = Member("Marcus", "847", "xxl844@gmail.com", "password")
+        member1 = Member("Marcus", "847", "xxl844@gmail.com", sha256_crypt.hash("password"))
         self.db.add_member(member1)
         self.assertTrue(self.db.update_member_face_id("847", "face_id"))
         self.assertFalse(self.db.update_member_face_id("000", "face_id"))
 
     def test_retrieve_member_face_id(self):
-        member1 = Member("Marcus", "847", "xxl844@gmail.com", "password")
+        member1 = Member("Marcus", "847", "xxl844@gmail.com", sha256_crypt.hash("password"))
         self.db.add_member(member1)
         self.db.update_member_face_id("847", "face_id")
         self.assertEqual(self.db.retrieve_member_face_id("847"), "face_id")
 
     def test_add_admin(self):
-        admin1 = Administrator("new_admin", "000", "new@gmail.com", "new_password")
+        admin1 = Administrator("new_admin", "000", "new@gmail.com", sha256_crypt.hash("new_password"))
         self.assertTrue(self.db.add_admin(admin1))
         self.assertFalse(self.db.add_admin(admin1))
 
     def test_update_admin(self):
-        admin1 = Administrator("software", "393", "new@gmail.com", "new_password")
+        admin1 = Administrator("software", "393", "new@gmail.com", sha256_crypt.hash("new_password"))
         self.assertTrue(self.db.update_admin(admin1))
-        admin2 = Administrator("new_admin", "000", "new@gmail.com", "new_password")
+        admin2 = Administrator("new_admin", "000", "new@gmail.com", sha256_crypt.hash("new_password"))
         self.assertFalse((self.db.update_admin(admin2)))
 
     def test_retrieve_admin(self):
@@ -143,8 +144,8 @@ class test_DBController(unittest.TestCase):
         self.assertFalse(self.db.admin_login("000", "pass"))
 
     def test_add_member_to_added_members(self):
-        admin1 = Administrator("terry", "110", "terry@gmail.com", "pass")
-        member1 = Member("Marcus", "847", "xxl844@gmail.com", "password")
+        admin1 = Administrator("terry", "110", "terry@gmail.com", sha256_crypt.hash("pass"))
+        member1 = Member("Marcus", "847", "xxl844@gmail.com", sha256_crypt.hash("password"))
         self.db.add_admin(admin1)
         self.db.add_member(member1)
         self.assertTrue(self.db.add_member_to_added_members("110", "847"))
@@ -152,8 +153,8 @@ class test_DBController(unittest.TestCase):
         self.assertFalse(self.db.add_member_to_added_members("000", "847"))
 
     def test_remove_member_from_added_members(self):
-        admin1 = Administrator("terry", "110", "terry@gmail.com", "pass")
-        member1 = Member("Marcus", "847", "xxl844@gmail.com", "password")
+        admin1 = Administrator("terry", "110", "terry@gmail.com", sha256_crypt.hash("pass"))
+        member1 = Member("Marcus", "847", "xxl844@gmail.com", sha256_crypt.hash("password"))
         self.db.add_admin(admin1)
         self.db.add_member(member1)
         self.db.add_member_to_added_members("110", "847")
@@ -162,16 +163,16 @@ class test_DBController(unittest.TestCase):
         self.assertTrue(self.db.remove_member_from_added_members("110", "847"))
 
     def test_add_member_to_pending_members(self):
-        admin1 = Administrator("terry", "110", "terry@gmail.com", "pass")
-        member1 = Member("Marcus", "847", "xxl844@gmail.com", "password")
+        admin1 = Administrator("terry", "110", "terry@gmail.com", sha256_crypt.hash("pass"))
+        member1 = Member("Marcus", "847", "xxl844@gmail.com", sha256_crypt.hash("password"))
         self.db.add_admin(admin1)
         self.db.add_member(member1)
         self.assertTrue(self.db.add_member_to_pending_members("110", "847"))
         self.assertFalse(self.db.add_member_to_pending_members("000", "847"))
 
     def test_remove_member_from_pending_members(self):
-        admin1 = Administrator("terry", "110", "terry@gmail.com", "pass")
-        member1 = Member("Marcus", "847", "xxl844@gmail.com", "password")
+        admin1 = Administrator("terry", "110", "terry@gmail.com", sha256_crypt.hash("pass"))
+        member1 = Member("Marcus", "847", "xxl844@gmail.com", sha256_crypt.hash("password"))
         self.db.add_admin(admin1)
         self.db.add_member(member1)
         self.db.add_member_to_pending_members("110", "847")
@@ -180,28 +181,28 @@ class test_DBController(unittest.TestCase):
         self.assertTrue(self.db.remove_member_from_pending_members("110", "847"))
 
     def test_added_members(self):
-        admin1 = Administrator("terry", "110", "terry@gmail.com", "pass")
+        admin1 = Administrator("terry", "110", "terry@gmail.com", sha256_crypt.hash("pass"))
         self.db.add_admin(admin1)
         self.assertIsNotNone(self.db.added_members("110"))
         self.assertEqual([], self.db.added_members("110"))
 
     def test_pending_members(self):
-        admin1 = Administrator("terry", "110", "terry@gmail.com", "pass")
+        admin1 = Administrator("terry", "110", "terry@gmail.com", sha256_crypt.hash("pass"))
         self.db.add_admin(admin1)
         self.assertIsNotNone(self.db.pending_members("110"))
         self.assertEqual([], self.db.pending_members("110"))
 
     def test_permit(self):
-        admin1 = Administrator("terry", "110", "terry@gmail.com", "pass")
-        member1 = Member("Marcus", "847", "xxl844@gmail.com", "password")
+        admin1 = Administrator("terry", "110", "terry@gmail.com", sha256_crypt.hash("pass"))
+        member1 = Member("Marcus", "847", "xxl844@gmail.com", sha256_crypt.hash("password"))
         self.db.add_admin(admin1)
         self.db.add_member(member1)
         self.db.add_member_to_pending_members("110", "847")
         self.assertTrue(self.db.permit("xxl844@gmail.com", "110", "terry"))
 
     def test_reject(self):
-        admin1 = Administrator("terry", "110", "terry@gmail.com", "pass")
-        member1 = Member("Marcus", "847", "xxl844@gmail.com", "password")
+        admin1 = Administrator("terry", "110", "terry@gmail.com", sha256_crypt.hash("pass"))
+        member1 = Member("Marcus", "847", "xxl844@gmail.com", sha256_crypt.hash("password"))
         self.db.add_admin(admin1)
         self.db.add_member(member1)
         self.db.add_member_to_pending_members("110", "847")
@@ -231,53 +232,53 @@ class test_DBController(unittest.TestCase):
         self.assertFalse(self.db.delete_activity("000"))
 
     def test_add_activity_to_member(self):
-        member1 = Member("Marcus", "847", "xxl844@gmail.com", "password")
+        member1 = Member("Marcus", "847", "xxl844@gmail.com", sha256_crypt.hash("password"))
         self.db.add_member(member1)
         self.assertTrue(self.db.add_activity_to_member("393", "888", "847", "on_time"))
         self.assertFalse(self.db.add_activity_to_member("393", "888", "847", "on_time"))
 
     def test_set_member_activity_status(self):
-        member1 = Member("Marcus", "847", "xxl844@gmail.com", "password")
+        member1 = Member("Marcus", "847", "xxl844@gmail.com", sha256_crypt.hash("password"))
         self.db.add_member(member1)
         self.db.add_activity_to_member("393", "888", "847", "on_time")
         self.assertTrue(self.db.set_member_activity_status("393", "888", "847", "on_time"))
         self.assertFalse(self.db.set_member_activity_status("393", "000", "847", "on_time"))
 
     def test_remove_activity_from_member(self):
-        member1 = Member("Marcus", "847", "xxl844@gmail.com", "password")
+        member1 = Member("Marcus", "847", "xxl844@gmail.com", sha256_crypt.hash("password"))
         self.db.add_member(member1)
         self.db.add_activity_to_member("393", "888", "847", "on_time")
         self.assertTrue(self.db.remove_activity_from_member("393", "888", "847"))
         self.assertFalse(self.db.remove_activity_from_member("393", "888", "847"))
 
     def test_add_activity_to_admin(self):
-        admin1 = Administrator("terry", "110", "terry@gmail.com", "pass")
+        admin1 = Administrator("terry", "110", "terry@gmail.com", sha256_crypt.hash("pass"))
         self.db.add_admin(admin1)
         self.assertTrue(self.db.add_activity_to_admin("888", "110"))
         self.assertFalse(self.db.add_activity_to_admin("888", "000"))
 
     def test_remove_activity_from_admin(self):
-        admin1 = Administrator("terry", "110", "terry@gmail.com", "pass")
+        admin1 = Administrator("terry", "110", "terry@gmail.com", sha256_crypt.hash("pass"))
         self.db.add_admin(admin1)
         self.db.add_activity_to_admin("888", "110")
         self.assertTrue(self.db.remove_activity_from_admin("888", "110"))
         self.assertFalse(self.db.remove_activity_from_admin("888", "110"))
 
     def test_member_status_in_activity(self):
-        member1 = Member("Marcus", "847", "xxl844@gmail.com", "password")
+        member1 = Member("Marcus", "847", "xxl844@gmail.com", sha256_crypt.hash("password"))
         self.db.add_member(member1)
         self.db.add_activity_to_member("393", "888", "847", "on_time")
         self.db.set_member_activity_status("393", "888", "847", "on_time")
         self.assertEqual(self.db.member_status_in_activity("847", "393", "888"), "on_time")
 
     def test_member_activities(self):
-        member1 = Member("Marcus", "847", "xxl844@gmail.com", "password")
+        member1 = Member("Marcus", "847", "xxl844@gmail.com", sha256_crypt.hash("password"))
         self.db.add_member(member1)
         self.assertEqual(self.db.member_activities("847"), [])
         self.assertIsNone(self.db.member_activities("000"))
 
     def test_admin_activities(self):
-        admin1 = Administrator("new_admin", "000", "new@gmail.com", "new_password")
+        admin1 = Administrator("new_admin", "000", "new@gmail.com", sha256_crypt.hash("new_password"))
         self.db.add_admin(admin1)
         self.assertEqual(self.db.admin_activities("000"), [])
         self.assertIsNone(self.db.admin_activities("111"))
@@ -296,13 +297,13 @@ class test_DBController(unittest.TestCase):
     #     self.assertEqual(a, "123")
     #
     def test_retrieve_member_name(self):
-        member1 = Member("Marcus", "847", "xxl844@gmail.com", "password")
+        member1 = Member("Marcus", "847", "xxl844@gmail.com", sha256_crypt.hash("password"))
         self.db.add_member(member1)
         self.assertEqual(self.db.retrieve_member_name("123"), "Terry")
         self.assertEqual(self.db.retrieve_member_name("847"), "Marcus")
 
         def test_member_status_in_activity(self):
-            member1 = Member("Marcus", "847", "xxl844@gmail.com", "password")
+            member1 = Member("Marcus", "847", "xxl844@gmail.com", sha256_crypt.hash("password"))
             self.db.add_member(member1)
             self.db.add_activity_to_member("393", "888", "847", "on_time")
             self.db.set_member_activity_status("393", "888", "847", "on_time")

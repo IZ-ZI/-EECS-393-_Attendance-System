@@ -1,14 +1,13 @@
 from tkinter import *
-from tkinter import messagebox
 import tkinter as tk
 from tkinter import messagebox
 import cv2
 from PIL import Image, ImageTk
+from passlib.hash import sha256_crypt
 
 
 import face_recognition
-import pymsgbox as pgbox
-import smtplib, ssl
+import smtplib
 import numpy
 
 from FaceIdentification import FaceIdentification
@@ -17,7 +16,6 @@ from Member import Member
 from pymongo import MongoClient
 from ecapture import ecapture as ec
 
-import pymongo
 from DBController import DBController
 from Activity import Activity
 from datetime import datetime
@@ -273,7 +271,7 @@ def club_info():
     # file.close()
     global db_controller
 
-    administrator = Administrator(club_name.get(), club_id.get(), club_email.get(), club_password.get())
+    administrator = Administrator(club_name.get(), club_id.get(), club_email.get(), sha256_crypt.hash(club_password.get()))
     db_controller.add_admin(administrator)
 
     club_id_entry.delete(0, END)
@@ -295,8 +293,7 @@ def member_info():
     # file.write(member_apply_club_id.get() + "\n")
     # file.close()
     global db_controller
-
-    new_member = Member(member_name.get(), member_id.get(), member_email.get(), member_password.get())
+    new_member = Member(member_name.get(), member_id.get(), member_email.get(), sha256_crypt.hash(member_password.get()))
     db_controller.add_member(new_member)
     print(db_controller.retrieve_admin(member_apply_club_id.get())["email_address"])
     admin_email = db_controller.retrieve_admin(member_apply_club_id.get())["email_address"]
@@ -526,12 +523,9 @@ def submitClubID(logged_member_id):
 
 def member_login():
     global screenMember
-    print("member login session started")
-    print('%s' % login_account_entry)
     # implement whatever needed to check for login
     logged_member_curse = db_controller.retrieve_member(login_account.get())
     if not db_controller.member_login(login_account.get(), login_password.get()):
-        print('Login Failed')
         messagebox.showerror("Login Failed", "Incorrect Username or Password")
     else:
         screen_width = screen.winfo_screenwidth() / 2
@@ -631,8 +625,6 @@ def takeFaceIDPhoto(logged_member_id):
     photo = cv2.imwrite('face.png', face_photo)
     # conditional statement needed
     encoding = ""
-    print("take face id photo")
-    #photo = ec.capture(1, False, "your photo.jpg")
 
     fr_photo = face_recognition.load_image_file("face.png")
     face_id = FaceIdentification.encoding_from_photo(fr_photo)
@@ -667,7 +659,6 @@ def viewClub(logged_member_id):
         clicked_item_index = clubBox.curselection()[0]
         view_club_id = db_controller.clubs_member_added(logged_member_id)[clicked_item_index]
         view_club_curse = db_controller.retrieve_admin(view_club_id)
-        print("view club info and my status")
         screen_width = screen.winfo_screenwidth() / 2
         screen_height = screen.winfo_screenheight() / 2
         bottomFrame = LabelFrame(screenMember, padx=10, pady=5)
@@ -692,26 +683,9 @@ def viewClub(logged_member_id):
         Label(clubInfoFrame, text=myAbsenses, font=("new roman", 13)).grid(row=3, column=1, sticky=W)
         Label(clubInfoFrame, text="Attendance Rate", font=("new roman", 13)).grid(row=4, column=0, sticky=W)
 
-        Label(clubInfoFrame, text=(round((len(status_list) - myAbsenses)/len(status_list), 2)), font=("new roman", 13)).grid(row=4, column=1, sticky=W)
-        clubInfoFrame.pack()
-
-        '''global clubActivityBox
-        clubActivityFrame = Frame(bottomFrame, padx=3, pady=3, height=int(screen_height / 6))
-        Label(clubActivityFrame, text="My Events", font=("new roman", 13)).pack()
-        clubActivityScroll = Scrollbar(clubActivityFrame)
-        clubActivityScroll.pack(side=RIGHT, fill=Y)
-        clubActivityBox = Listbox(clubActivityFrame, yscrollcommand=clubActivityScroll.set,
-                                  width=int(screen_width / 2 - 7),
-                                  height=4, selectmode=SINGLE)
-
-        for i in range(1, 15):
-            clubActivityBox.insert(END, "LINE" + str(i))
-
-        clubActivityBox.pack(side=LEFT)
-        clubActivityScroll.config(command=clubActivityBox.yview)
-        clubActivityFrame.pack()
-        Button(bottomFrame, text="View Activity Status", font=("new roman", 12), command=viewActivityStatus).pack()'''
-
+        if len(status_list) is not 0:
+            Label(clubInfoFrame, text=(round((len(status_list) - myAbsenses)/len(status_list), 2)), font=("new roman", 13)).grid(row=4, column=1, sticky=W)
+            clubInfoFrame.pack()
 
 def viewActivityStatus(logged_member_id):
     if myActivityBox.curselection() != ():
@@ -751,7 +725,6 @@ def viewActivityStatus(logged_member_id):
 def deleteClub():
     clicked_items = clubBox.curselection()
     clubBox.delete(clicked_items)
-    print("leave club")
 
 
 def activityList(logged_member_id):
@@ -955,7 +928,6 @@ def deleteActivity(logged_admin_id):
 
 
 def updateTime(logged_admin_id, clicked_item_index, activity_id, activity_name):
-    print("update time")
     global updateTimeScreen
     global new_date
     global new_start_time
@@ -1206,8 +1178,6 @@ def takeAttendancePicture(logged_admin_id, view_activity_id):
     photo = cv2.imwrite('pending.png', face_photo)
     # conditional statement needed
     encoding = ""
-    print("take photo")
-    #photo = ec.capture(1, False, "your photo.jpg")
 
     fr_photo = face_recognition.load_image_file("pending.png")
     try:
@@ -1248,7 +1218,6 @@ def attendance_deadline_tracker(cameraframe, logged_admin_id, view_activity_id):
 def takeAttendance(logged_admin_id, view_activity_id):
     global capture, file, screenAttendance, verify_attendance_feedback
 
-    print("taking attendance")
     screenAttendance = Toplevel(screenAdmin)
     screenAttendance.title("Taking Attendance")
     screen_width = screen.winfo_screenwidth() / 2
@@ -1328,24 +1297,17 @@ def manualUpdate(logged_admin_id, view_activity_id):
     status = manualStatusClicked.get()
     db_controller.set_member_activity_status(logged_admin_id, view_activity_id,manual_member_id, status)
 
-
 def takePhoto():
     ec.capture(1, False, "your photo.jpg")
     photo = face_recognition.load_image_file("your photo.jpg")
 
-    print("take photo")
-
-
 def attend():
     print("successfully take attendance")
-
 
 def getMemberPhoto():
     print("get Member Photo")
 
-
 def generateActivityReport():
-    print("generating report")
     global screenReport
     screenReport = Toplevel(screen)
     screenReport.title("Activity Report")
@@ -1378,7 +1340,6 @@ def createActivity(logged_admin_id):
     activity_id = StringVar()
     activity_location = StringVar()
 
-    print("create activity")
     global screenCreateActivity
     screenCreateActivity = Toplevel(screenAdmin)
     screenCreateActivity.title("New Activity")
@@ -1516,11 +1477,9 @@ def addAttendingMember():
 
 
 def admin_login():
-    print("admin login session started")
     # implement whatever needed to check for login
     logged_admin_curse = db_controller.retrieve_admin(login_account.get())
     if not db_controller.admin_login(login_account.get(), login_password.get()):
-        print('Login Failed')
         messagebox.showerror("Login Failed", "Incorrect Username or Password")
     else:
         global screenAdmin
@@ -1786,7 +1745,6 @@ def sendPasswordRetrievalEmail(passwordRetrieve, is_admin):
                                                           email_entry.get())).grid(row=3, column=0)
 
 def forget():
-    print("Sending Password...")
     passwordRetrieve = Toplevel(screenAdmin)
     passwordRetrieve.title("Retrieve Password")
     screen_width = screen.winfo_screenwidth() / 6
